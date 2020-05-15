@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'corrente-do-bem-consulta';
+  title = 'Corrente do Bem - Consulta beneficiário';
 }

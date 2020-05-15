@@ -1,0 +1,38 @@
+<label> Informe o CPF do beneficiário - apenas números</label>
+<p>
+    <input [(ngModel)]=cpfBeneficiario type="text"> &nbsp;
+</p>
+<label> Informe o ano e mês de referência no formato AAAAMM </label>
+<p>
+    <input [(ngModel)]=anoMesReferencia type="text"> &nbsp;
+    <button (click)="consultaBeneficiario()" [disabled]=emConsulta>Consulta Benefícios</button>
+</p>
+
+<div *ngIf=consultaBFDisponivel>
+    <p></p>
+    <h4>Benefício Bolsa Família</h4>
+    <p>
+        <label> Nome: </label>&nbsp;
+        <label>{{dataBF.nome}}</label>
+    </p>
+    <p>
+        <label> NIS: </label>&nbsp;
+        <label>{{dataBF.nis}}</label>
+    </p>
+    <p>
+        <label> Municipio: </label>&nbsp;
+        <label>{{dataBF.municipio}}</label>
+    </p>
+    <p>
+        <label> Dependentes: </label>&nbsp;
+        <label>{{dataBF.quantidadeDependentes}}</label>
+    </p>
+    <p>
+        <label> Valor benefício: </label>&nbsp;
+        <label>{{dataBF.valor}}</label>
+    </p>
+</div>
+
+<div *ngIf=!consultaBFDisponivel>
+    <h5>Consulta não realizada ou dados não disponíveis</h5>
+</div>
