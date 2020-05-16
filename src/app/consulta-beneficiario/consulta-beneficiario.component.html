@@ -1,38 +1,62 @@
-<label> Informe o CPF do beneficiário - apenas números</label>
-<p>
-    <input [(ngModel)]=cpfBeneficiario type="text"> &nbsp;
-</p>
-<label> Informe o ano e mês de referência no formato AAAAMM </label>
-<p>
-    <input [(ngModel)]=anoMesReferencia type="text"> &nbsp;
-    <button (click)="consultaBeneficiario()" [disabled]=emConsulta>Consulta Benefícios</button>
-</p>
+<div style="margin: 62 auto 32;" class="mat-elevation-z8">
+    <div [formGroup]="consultaForm">
+        <mat-form-field appearance="fill">
+            <mat-label>CPF do beneficiário</mat-label>
+            <input matInput maxlength="11" 
+                [formControl]="cpf" required
+                type="text">
+            <mat-error *ngIf="cpf.invalid">{{getErrorMessage()}}</mat-error>
+        </mat-form-field>
+        <mat-divider [inset]='true'></mat-divider>
+        <mat-form-field>
+            <mat-label>Mês de referência</mat-label>
+            <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp" [formControl]="date">
+            <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+            <mat-datepicker #dp
+                            startView="multi-year"
+                            (yearSelected)="chosenYearHandler($event)"
+                            (monthSelected)="chosenMonthHandler($event, dp)"
+                            panelClass="example-month-picker">
+            </mat-datepicker>  
+        </mat-form-field>
+        <button mat-icon-button (click)="consultaBeneficiario()" aria-label="Consulta Benefícios" [disabled]="!consultaForm.valid">
+            <mat-icon>search</mat-icon>
+        </button>
+    </div>
+    
+    <div *ngIf=consultaBFDisponivel>
+        <mat-card>
+            <mat-card-title>Benefício Bolsa Família</mat-card-title>
+            <mat-card-content>
+                <table>
+                    <tr>
+                        <td> Nome </td>
+                        <td> {{dataBF.nome}} </td>
+                    </tr>
+                    <tr>
+                        <td> NIS </td>
+                        <td> {{dataBF.nis}} </td>
+                    </tr>
+                    <tr>
+                        <td> Município </td>
+                        <td> {{dataBF.municipio}} </td>
+                    </tr>
+                    <tr>
+                        <td> Dependentes </td>
+                        <td style="padding-left: 2em;"> {{dataBF.quantidadeDependentes}} </td>
+                    </tr>
+                    <tr>
+                        <td> Valor </td>
+                        <td> {{dataBF.valor | currency: 'R$ '}} </td>
+                    </tr>
+                </table>
+            </mat-card-content>
+        </mat-card>
 
-<div *ngIf=consultaBFDisponivel>
-    <p></p>
-    <h4>Benefício Bolsa Família</h4>
-    <p>
-        <label> Nome: </label>&nbsp;
-        <label>{{dataBF.nome}}</label>
-    </p>
-    <p>
-        <label> NIS: </label>&nbsp;
-        <label>{{dataBF.nis}}</label>
-    </p>
-    <p>
-        <label> Municipio: </label>&nbsp;
-        <label>{{dataBF.municipio}}</label>
-    </p>
-    <p>
-        <label> Dependentes: </label>&nbsp;
-        <label>{{dataBF.quantidadeDependentes}}</label>
-    </p>
-    <p>
-        <label> Valor benefício: </label>&nbsp;
-        <label>{{dataBF.valor}}</label>
-    </p>
-</div>
-
-<div *ngIf=!consultaBFDisponivel>
-    <h5>Consulta não realizada ou dados não disponíveis</h5>
+    </div>
+    
+    <div *ngIf=!consultaBFDisponivel>
+        <h5>Consulta não realizada ou dados não disponíveis</h5>
+    </div>
+    
 </div>

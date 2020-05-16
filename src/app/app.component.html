@@ -53,9 +53,10 @@
 
   .content {
     display: flex;
-    margin: 82px auto 32px;
-    padding: 0 16px;
+    margin: 62px auto 32px;
+    padding: 0 10px;
     max-width: 960px;
+    min-width:40%;
     flex-direction: column;
     align-items: center;
   }
@@ -284,18 +285,13 @@
 <!-- Toolbar -->
 <div class="toolbar" role="banner">
   <img width="40" alt="Corrente do Bem - Brasília DF" src="assets/images/logocorrente.png" />
-  <span>Bem vindo</span>
+  <span>{{title}}</span>
   <div class="spacer"></div>
 </div>
 
 <div class="content" role="main">
 
-  <!-- Highlight Card -->
-  <div class="card highlight-card card-small">
-    <span>{{ title }}</span>
-  </div>
-
-  <div>
+  <div style="margin: 1em;">
     <app-consulta-beneficiario></app-consulta-beneficiario>
   </div>
 

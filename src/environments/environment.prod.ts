@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  apiUrlTransparencia: 'http://www.transparencia.gov.br/api-de-dados'
 };
