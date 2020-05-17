@@ -84,7 +84,6 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   }
 
   getErrorMessage() {
-    console.log('validator: ', this.cpf);
     if (this.cpf.hasError('required')) {
       return 'Informe um CPF para consultar';
     };
@@ -101,7 +100,6 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   }
 
   get emConsulta() {
-    console.log("disabled: ", this._emConsulta)
     return this._emConsulta;
   }
 
@@ -115,15 +113,9 @@ export class ConsultaBeneficiarioComponent implements OnInit {
 
   consultaBeneficiario() {
     this._emConsulta = true;
-    console.log("cpf: ", this.cpf.value);
-    console.log("date: ", this.date.value);
-    console.log("date moment: ", moment(this.date.value).month());
-    console.log("date moment: ", moment(this.date.value).format('YYYYMM'));
-    console.log("date moment: ", moment(this.date.value).year());
 
     this.consultaBeneficioService.getBeneficioBolsaFamilia(this.cpf.value, moment(this.date.value).format('YYYYMM'))
       .subscribe((data: BfDisponibilizado[]) => {
-        console.log(data);
         this._dataBF = {};
         if ( data && data.length > 0) {
           this._dataBF.nome = data[0].titularBolsaFamilia.nome;
@@ -150,7 +142,6 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   }
 
   validaCpf(inputCPF: string): boolean {
-    console.log('cpf: ', inputCPF);
     let soma = 0;
     let resto;
     if (!inputCPF || inputCPF == '00000000000') return false;
@@ -159,7 +150,6 @@ export class ConsultaBeneficiarioComponent implements OnInit {
       soma = soma + parseInt(inputCPF.substring(i - 1, i)) * (11 - i);
     }
     resto = (soma * 10) % 11;
-    console.log('digito 1: ', resto);
 
     if ((resto == 10) || (resto == 11)) resto = 0;
     if (resto != parseInt(inputCPF.substring(9, 10))) return false;
@@ -169,7 +159,6 @@ export class ConsultaBeneficiarioComponent implements OnInit {
       soma = soma + parseInt(inputCPF.substring(i - 1, i)) * (12 - i);
     }
     resto = (soma * 10) % 11;
-    console.log('digito 2: ', resto);
 
     if ((resto == 10) || (resto == 11)) resto = 0;
     if (resto != parseInt(inputCPF.substring(10, 11))) return false;
