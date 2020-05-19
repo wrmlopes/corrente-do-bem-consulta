@@ -26,7 +26,7 @@
     
     <div *ngIf=consultaBFDisponivel>
         <mat-card>
-            <mat-card-title>Benefício Bolsa Família</mat-card-title>
+            <mat-card-title>Benefícios</mat-card-title>
             <mat-card-content>
                 <table>
                     <tr>
@@ -38,16 +38,32 @@
                         <td> {{dataBF.nis}} </td>
                     </tr>
                     <tr>
-                        <td> Município </td>
-                        <td> {{dataBF.municipio}} </td>
-                    </tr>
-                    <tr>
                         <td> Dependentes </td>
                         <td style="padding-left: 2em;"> {{dataBF.quantidadeDependentes}} </td>
                     </tr>
                     <tr>
-                        <td> Valor </td>
-                        <td> {{dataBF.valor | currency: 'R$ '}} </td>
+                        <td> Município </td>
+                        <td> {{dataBF.municipio}} </td>
+                    </tr>
+                    <tr *ngIf=consultaDFDisponivel>
+                        <td> Bolsa Família </td>
+                        <td> {{dataBF.valorBolsaFamilia | currency: 'R$ '}} </td>
+                    </tr>
+                    <tr *ngIf=consultaDFDisponivel>
+                        <td> DF sem miśeria </td>
+                        <td> {{dataBF.valorDfSemMiseria | currency: 'R$ '}} </td>
+                    </tr>
+                    <tr *ngIf=consultaDFDisponivel>
+                        <td> Bolsa Social </td>
+                        <td> {{dataBF.valorBolsaSocial | currency: 'R$ '}} </td>
+                    </tr>
+                    <tr *ngIf=consultaDFDisponivel>
+                        <td> Outros </td>
+                        <td> {{dataBF.valorOutros | currency: 'R$ '}} </td>
+                    </tr>
+                    <tr *ngIf=consultaDFDisponivel>
+                        <td> Total </td>
+                        <td> {{dataBF.valorTotal | currency: 'R$ '}} </td>
                     </tr>
                 </table>
             </mat-card-content>

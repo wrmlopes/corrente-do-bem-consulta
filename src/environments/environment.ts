@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
 
-  apiUrlTransparencia: 'http://www.transparencia.gov.br/api-de-dados'
+  apiUrlTransparencia: 'http://www.transparencia.gov.br/api-de-dados',
+  apiUrlTransparenciaDF: 'http://www.transparencia.df.gov.br/api/prestando-contas'
 };
 
 /*

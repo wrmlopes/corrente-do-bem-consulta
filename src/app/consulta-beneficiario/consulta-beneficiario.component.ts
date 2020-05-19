@@ -8,7 +8,7 @@ import * as _moment from 'moment';
 import { default as _rollupMoment, Moment } from 'moment';
 
 import { ConsultaBeneficiosService } from '../services/consulta-beneficios.service';
-import { BfDisponibilizado } from '../models';
+import { BfDisponibilizado, DataBeneficioDF } from '../models';
 import { BFApresentado } from '../models/bf-apresentado.models';
 
 const moment = _rollupMoment || _moment;
@@ -44,12 +44,12 @@ export class ConsultaBeneficiarioComponent implements OnInit {
 
   constructor(
     fb: FormBuilder,
-    private consultaBeneficioService: ConsultaBeneficiosService) { 
-      this.consultaForm = fb.group({
-        "cpf": this.cpf,
-        "date": this.date
-      })
-    }
+    private consultaBeneficioService: ConsultaBeneficiosService) {
+    this.consultaForm = fb.group({
+      "cpf": this.cpf,
+      "date": this.date
+    })
+  }
 
   // controles de formulário
   consultaForm: FormGroup;
@@ -64,18 +64,19 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   _regxpCpf: RegExp = /([0-9]{11})/;
   _emConsulta: boolean = false;
   _consultaBFDisponivel: boolean = false;
+  _consultaDFDisponivel: boolean = false;
   _dataBF: BFApresentado = {};
 
   ngOnInit(): void {
   }
-  
+
   get maxDate() {
     return new Date();
   }
 
   get minDate() {
     let minDate = this.maxDate;
-    minDate.setFullYear(this.maxDate.getFullYear()-2);
+    minDate.setFullYear(this.maxDate.getFullYear() - 2);
     return minDate;
   }
 
@@ -107,6 +108,10 @@ export class ConsultaBeneficiarioComponent implements OnInit {
     return this._consultaBFDisponivel;
   }
 
+  get consultaDFDisponivel() {
+    return this._consultaDFDisponivel;
+  }
+
   get dataBF() {
     return this._dataBF;
   }
@@ -117,17 +122,34 @@ export class ConsultaBeneficiarioComponent implements OnInit {
     this.consultaBeneficioService.getBeneficioBolsaFamilia(this.cpf.value, moment(this.date.value).format('YYYYMM'))
       .subscribe((data: BfDisponibilizado[]) => {
         this._dataBF = {};
-        if ( data && data.length > 0) {
+        if (data && data.length > 0) {
           this._dataBF.nome = data[0].titularBolsaFamilia.nome;
           this._dataBF.nis = data[0].titularBolsaFamilia.nis;
           this._dataBF.municipio = data[0].municipio.nomeIBGE;
           this._dataBF.quantidadeDependentes = data[0].quantidadeDependentes;
-          this._dataBF.valor = data[0].valor;
+          this.consultaDFSM(data[0].titularBolsaFamilia.nis);
           this._consultaBFDisponivel = true;
         } else {
           this._consultaBFDisponivel = false;
         }
 
+        this._emConsulta = false;
+      });
+  }
+
+  private consultaDFSM(nis: string) {
+    this.consultaBeneficioService.getBeneficiosNoDF(nis, moment(this.date.value).format('YYYYMM'))
+      .subscribe((data: DataBeneficioDF) => {
+        if (data && data.content.length > 0) {
+          this._dataBF.valorBolsaFamilia = data.content[0].valorBolsaFamilia;
+          this._dataBF.valorDfSemMiseria = data.content[0].valorDfSemMiseria;
+          this._dataBF.valorBolsaSocial = data.content[0].valorBolsaSocial;
+          this._dataBF.valorOutros = data.content[0].valorOutros;
+          this._dataBF.valorTotal = data.content[0].valorTotal;
+          this._consultaDFDisponivel = true;
+        } else {
+          this._consultaDFDisponivel = false;
+        }
         this._emConsulta = false;
       });
   }
@@ -162,6 +184,23 @@ export class ConsultaBeneficiarioComponent implements OnInit {
 
     if ((resto == 10) || (resto == 11)) resto = 0;
     if (resto != parseInt(inputCPF.substring(10, 11))) return false;
+
+    return true;
+  }
+
+  validaNis(inputNis: string): boolean {
+    let soma = 0;
+    let resto;
+    let peso = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    if (!inputNis || inputNis == '00000000000') return false;
+
+    for (let i = 0; i < 9; i++) {
+      soma = soma + parseInt(inputNis.substring(i - 1, i)) * peso[i];
+    }
+    resto = soma % 11;
+
+    if ((resto == 10) || (resto == 11)) resto = 0;
+    if (resto != parseInt(inputNis.substring(10, 11))) return false;
 
     return true;
   }

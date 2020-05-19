@@ -3,5 +3,9 @@ export interface BFApresentado{
     nis?:string;
     municipio?:string;
     quantidadeDependentes?:number;
-    valor?:number;
+    valorBolsaFamilia?:number;
+    valorDfSemMiseria?:number;
+    valorBolsaSocial?:number;
+    valorOutros?:number;
+    valorTotal?:number;
 }

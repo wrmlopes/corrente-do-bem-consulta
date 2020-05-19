@@ -5,14 +5,17 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
-import { BfDisponibilizado } from '../models';
+import { BfDisponibilizado, DataBeneficioDF } from '../models';
 import { MessageService } from './message.service';
 
 @Injectable({ providedIn: 'root' }) 
 export class ConsultaBeneficiosService  {
 
   private urlTransparencia = environment.apiUrlTransparencia;
+  private urlTransparenciaDF = environment.apiUrlTransparenciaDF;
+
   private endpointBF = '/bolsa-familia-disponivel-por-cpf-ou-nis';
+  private endpointDFPeriodoENis = '/beneficiario/programa-social'
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -30,6 +33,17 @@ export class ConsultaBeneficiosService  {
       return this.http.get<BfDisponibilizado[]>(url).pipe(
         tap(_ => this.log("fetched Beneficio BF disponibilizado codigo="+cpfBeneficiario)),
         catchError(this.handleError<BfDisponibilizado[]>("getBeneficioBolsaFamilia cpf="+cpfBeneficiario))
+      )
+    };
+
+    getBeneficiosNoDF(nisBeneficiario: string, anoMesReferencia: string): Observable<DataBeneficioDF> {
+      const url = this.urlTransparenciaDF + this.endpointDFPeriodoENis + 
+               "?nrNisOutros=" + nisBeneficiario +
+               "&anoMes=" + anoMesReferencia + "&page=0";
+
+      return this.http.get<DataBeneficioDF>(url).pipe(
+        tap(_ => this.log("fetched Beneficio BF disponibilizado codigo="+nisBeneficiario)),
+        catchError(this.handleError<DataBeneficioDF>("getBeneficioBolsaFamilia cpf="+nisBeneficiario))
       )
     };
 
