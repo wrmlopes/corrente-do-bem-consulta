@@ -6,7 +6,9 @@ export const environment = {
   production: false,
 
   apiUrlTransparencia: 'http://www.transparencia.gov.br/api-de-dados',
-  apiUrlTransparenciaDF: 'http://www.transparencia.df.gov.br/api/prestando-contas'
+  apiUrlTransparenciaDF: 'http://www.transparencia.df.gov.br/api/prestando-contas',
+  apiUrlSigaBrasiliaDF: 'http://www.sigabrasilia.df.gov.br',
+  apiUrlCorrenteBrasilia: 'http://127.0.0.1:3000'
 };
 
 /*

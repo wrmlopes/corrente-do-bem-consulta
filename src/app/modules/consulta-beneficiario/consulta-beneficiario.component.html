@@ -1,29 +1,27 @@
 <div style="margin: 62 auto 32;" class="mat-elevation-z8">
-    <div [formGroup]="consultaForm">
-        <mat-form-field appearance="fill">
-            <mat-label>CPF do beneficiário</mat-label>
-            <input matInput maxlength="11" 
-                [formControl]="cpf" required
-                type="text">
-            <mat-error *ngIf="cpf.invalid">{{getErrorMessage()}}</mat-error>
-        </mat-form-field>
-        <mat-divider [inset]='true'></mat-divider>
-        <mat-form-field>
-            <mat-label>Mês de referência</mat-label>
-            <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp" [formControl]="date">
-            <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-            <mat-datepicker #dp
-                            startView="multi-year"
-                            (yearSelected)="chosenYearHandler($event)"
-                            (monthSelected)="chosenMonthHandler($event, dp)"
-                            panelClass="example-month-picker">
-            </mat-datepicker>  
-        </mat-form-field>
-        <button mat-icon-button (click)="consultaBeneficiario()" aria-label="Consulta Benefícios" [disabled]="!consultaForm.valid">
-            <mat-icon>search</mat-icon>
-        </button>
-    </div>
-    
+    <form [formGroup]="consultaForm" (submit)="consultaBeneficiario()">
+        <div [formGroup]="consultaForm">
+            <mat-form-field appearance="fill">
+                <mat-label>CPF ou NIS do beneficiário</mat-label>
+                <input matInput maxlength="11" [formControl]="cpfOuNis" type="text">
+                <mat-error *ngIf="cpfOuNis.invalid">{{getErrorMessage()}}</mat-error>
+            </mat-form-field>
+            <mat-divider [inset]='true'></mat-divider>
+            <mat-form-field>
+                <mat-label>Mês de referência</mat-label>
+                <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp" [formControl]="date">
+                <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event)"
+                    (monthSelected)="chosenMonthHandler($event, dp)" panelClass="example-month-picker">
+                </mat-datepicker>
+            </mat-form-field>
+            <button mat-icon-button type="submit" aria-label="Consulta Benefícios"
+                [disabled]="consultaForm.invalid">
+                <mat-icon>search</mat-icon>
+            </button>
+        </div>
+    </form>
+
     <div *ngIf=consultaBFDisponivel>
         <mat-card>
             <mat-card-title>Benefícios</mat-card-title>
@@ -62,17 +60,16 @@
                         <td> {{dataBF.valorOutros | currency: 'R$ '}} </td>
                     </tr>
                     <tr *ngIf=consultaDFDisponivel>
-                        <td> Total </td>
-                        <td> {{dataBF.valorTotal | currency: 'R$ '}} </td>
+                        <td><strong> Total </strong></td>
+                        <td><strong>{{dataBF.valorTotal | currency: 'R$ ' }} </strong></td>
                     </tr>
                 </table>
             </mat-card-content>
         </mat-card>
 
     </div>
-    
+
     <div *ngIf=!consultaBFDisponivel>
         <h5>Consulta não realizada ou dados não disponíveis</h5>
     </div>
-    
 </div>

@@ -1,7 +1,7 @@
 import { TitularBolsaFamilia } from './titular-bolsa-familia.model';
 import { Municipio } from './municipio.model';
 
-export interface BfDisponibilizado{
+export interface BfDisponibilizado {
     id?: number;
     dataMesCOmpetencia?: string;
     dataMesReferencia?: string;

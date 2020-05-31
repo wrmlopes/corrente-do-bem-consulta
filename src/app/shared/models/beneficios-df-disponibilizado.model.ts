@@ -1,4 +1,4 @@
-export interface BeneficioDFDisponibilizado{
+export interface BeneficioDFDisponibilizado {
     nome: string;
     nrNisOutros: string;
     anoMes: string;

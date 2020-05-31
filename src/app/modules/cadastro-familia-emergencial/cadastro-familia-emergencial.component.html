@@ -1,0 +1,58 @@
+<form [formGroup]="cadastroForm" (submit)="submitResponsavel()">
+    <div [formGroup]="cadastroForm">
+
+        <div class="form-group row col-lg-8">
+            <label for="nomeResponsavel">Nome do responsável</label>
+            <input type="string" [formControl]="nomeResponsavel" class="form-control text-uppercase"
+                id="nomeResponsavel" aria-describedby="nomehint">
+            <small id="nomehint" class="form-text text-muted">Informe o nome completo do responsável.</small>
+        </div>
+
+        <div class="form-group row col-lg-2">
+            <label for="dataNascto">Data de Nascimento</label>
+            <input type="date" [formControl]="dataNascto" class="form-control" id="dataNascto"
+                aria-describedby="nasctohint">
+            <small id="nasctohint" class="form-text text-muted">Data de nascimento do responsável.</small>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-2">
+                <label for="cpfResp">CPF</label>
+                <input type="text" pattern="\d*" maxlength="11" [formControl]="cpfResp"
+                    class="form-control form-control-danger" id="cpfResp" aria-describedby="cpfResphint">
+                <small *ngIf="!getErrorCpfResp()" id="cpfResphint" class="form-text text-muted">Informe apenas números
+                    no
+                    CPF.</small>
+                <small *ngIf="getErrorCpfResp()" id="cpfResphint"
+                    class="form-text text-danger">{{getErrorCpfResp()}}</small>
+            </div>
+            <div>
+                <button mat-fab color="basic" class="" type="submit" aria-label="Prosseguir Cadastro"
+                    data-toggle="tooltip" data-placement="top" title="Verificar dados do responsável"
+                    [disabled]="cadastroForm.invalid">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!--         <mat-form-field appearance="fill">
+            <mat-label>CPF ou NIS do beneficiário</mat-label>
+            <input matInput maxlength="11" [formControl]="cpfOuNis" type="text">
+            <mat-error *ngIf="cpfOuNis.invalid">{{getErrorMessage()}}</mat-error>
+        </mat-form-field>
+        <mat-divider [inset]='true'></mat-divider>
+        <mat-form-field>
+            <mat-label>Mês de referência</mat-label>
+            <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp" [formControl]="date">
+            <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+            <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event)"
+                (monthSelected)="chosenMonthHandler($event, dp)" panelClass="example-month-picker">
+            </mat-datepicker>
+        </mat-form-field>
+        <button mat-icon-button type="submit" aria-label="Consulta Benefícios"
+            [disabled]="cadastroForm.invalid">
+            <mat-icon>search</mat-icon>
+        </button>
+ -->
+    </div>
+</form>

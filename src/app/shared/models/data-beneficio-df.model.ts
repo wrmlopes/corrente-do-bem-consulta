@@ -1,7 +1,7 @@
 import { BeneficioDFDisponibilizado } from './beneficios-df-disponibilizado.model';
 
-export interface DataBeneficioDF{
-    content:BeneficioDFDisponibilizado[];
+export interface DataBeneficioDF {
+    content: BeneficioDFDisponibilizado[];
     last: boolean;
     totalPages: number;
     totalElements: number;

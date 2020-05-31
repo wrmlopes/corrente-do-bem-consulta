@@ -7,9 +7,11 @@ import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import { default as _rollupMoment, Moment } from 'moment';
 
-import { ConsultaBeneficiosService } from '../services/consulta-beneficios.service';
-import { BfDisponibilizado, DataBeneficioDF } from '../models';
-import { BFApresentado } from '../models/bf-apresentado.models';
+import { ConsultaBeneficiosDfService } from '../../core/services/consulta-beneficios-df/consulta-beneficios-df.service';
+import { BfDisponibilizado, DataBeneficioDF } from '../../shared/models';
+import { BFApresentado } from '../../shared/models/bf-apresentado.models';
+import { ConsultaBeneficiosBrService } from '../../core/services/consulta-beneficios-br/consulta-beneficios-br.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 const moment = _rollupMoment || _moment;
 export const MY_FORMATS = {
@@ -43,29 +45,32 @@ export const MY_FORMATS = {
 export class ConsultaBeneficiarioComponent implements OnInit {
 
   constructor(
-    fb: FormBuilder,
-    private consultaBeneficioService: ConsultaBeneficiosService) {
-    this.consultaForm = fb.group({
-      "cpf": this.cpf,
-      "date": this.date
-    })
+      fb: FormBuilder,
+      private consultaBeneficioDfService: ConsultaBeneficiosDfService,
+      private consultaBeneficiosBrService: ConsultaBeneficiosBrService,
+      private _snackBar: MatSnackBar
+    ) {
+      this.consultaForm = fb.group({
+        cpfOuNis: this.cpfOuNis,
+        date: this.date
+      });
   }
 
   // controles de formulário
   consultaForm: FormGroup;
-  cpf = new FormControl('', [
-    this.cpfValidator(this.validaCpf),
+  cpfOuNis = new FormControl('', [
+    this.cpfOuNisValidator(this.validaCpfOuNis.bind(this)),
     Validators.required,
     Validators.minLength(11),
     Validators.pattern(/([0-9]{11})/)]);
   date = new FormControl(moment().subtract(1, 'months'));
 
   // _regxpCpf: RegExp = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
-  _regxpCpf: RegExp = /([0-9]{11})/;
-  _emConsulta: boolean = false;
-  _consultaBFDisponivel: boolean = false;
-  _consultaDFDisponivel: boolean = false;
-  _dataBF: BFApresentado = {};
+  private _RegxpCpf: RegExp = /([0-9]{11})/;
+  private _emConsulta = false;
+  private _consultaBFDisponivel = false;
+  private _consultaDFDisponivel = false;
+  private _dataBF: BFApresentado = {};
 
   ngOnInit(): void {
   }
@@ -75,29 +80,29 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   }
 
   get minDate() {
-    let minDate = this.maxDate;
+    const minDate = this.maxDate;
     minDate.setFullYear(this.maxDate.getFullYear() - 2);
     return minDate;
   }
 
   get regxCpf() {
-    return this._regxpCpf;
+    return this._RegxpCpf;
   }
 
   getErrorMessage() {
-    if (this.cpf.hasError('required')) {
-      return 'Informe um CPF para consultar';
-    };
+    if (this.cpfOuNis.hasError('required')) {
+      return 'Informe um CPF ou NIS para consultar';
+    }
 
-    if (this.cpf.hasError('minlength')) {
-      return 'Informe todos os números do CPF';
-    };
+    if (this.cpfOuNis.hasError('minlength')) {
+      return 'Informe todos os números do CPF ou NIS';
+    }
 
-    if (this.cpf.hasError('pattern')) {
+    if (this.cpfOuNis.hasError('pattern')) {
       return 'Informe apenas números';
-    };
+    }
 
-    return this.cpf.hasError('cpf_invalido') ? 'CPF não está correto' : '';
+    return this.cpfOuNis.hasError('cpfOuNis_invalido') ? 'CPF ou NIS não é válido' : '';
   }
 
   get emConsulta() {
@@ -119,7 +124,7 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   consultaBeneficiario() {
     this._emConsulta = true;
 
-    this.consultaBeneficioService.getBeneficioBolsaFamilia(this.cpf.value, moment(this.date.value).format('YYYYMM'))
+    this.consultaBeneficiosBrService.getBeneficioBolsaFamilia(this.cpfOuNis.value, moment(this.date.value).format('YYYYMM'))
       .subscribe((data: BfDisponibilizado[]) => {
         this._dataBF = {};
         if (data && data.length > 0) {
@@ -130,6 +135,7 @@ export class ConsultaBeneficiarioComponent implements OnInit {
           this.consultaDFSM(data[0].titularBolsaFamilia.nis);
           this._consultaBFDisponivel = true;
         } else {
+          this.exibeMensagem('Não encontrou dados de benefícios para o período');
           this._consultaBFDisponivel = false;
         }
 
@@ -138,7 +144,7 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   }
 
   private consultaDFSM(nis: string) {
-    this.consultaBeneficioService.getBeneficiosNoDF(nis, moment(this.date.value).format('YYYYMM'))
+    this.consultaBeneficioDfService.getBeneficiosNoDF(nis, moment(this.date.value).format('YYYYMM'))
       .subscribe((data: DataBeneficioDF) => {
         if (data && data.content.length > 0) {
           this._dataBF.valorBolsaFamilia = data.content[0].valorBolsaFamilia;
@@ -148,59 +154,71 @@ export class ConsultaBeneficiarioComponent implements OnInit {
           this._dataBF.valorTotal = data.content[0].valorTotal;
           this._consultaDFDisponivel = true;
         } else {
+          this.exibeMensagem('Não encontrou dados de benefícios para o período');
           this._consultaDFDisponivel = false;
         }
         this._emConsulta = false;
       });
   }
 
-  cpfValidator(cb: Function): ValidatorFn {
+  cpfOuNisValidator( cb: (((_: string) => boolean))): ValidatorFn {
     return (control: AbstractControl): { [key: string]: boolean } | null => {
+      console.log("control value: [", control.value, "]");
       if (control.value !== undefined && (isNaN(control.value) || !cb(control.value))) {
-        return { 'cpf_invalido': true };
+        return { cpf_invalido: true };
       }
       return null;
-    }
+    };
   }
 
+  validaCpfOuNis(inputCPF: string): boolean {
+    console.log(`inputcpf: [${inputCPF}]`);
+    return this.validaCpf(inputCPF) || this.validaNis(inputCPF);
+  }
+  
   validaCpf(inputCPF: string): boolean {
+    console.log(`input in cpf: [${inputCPF}]`);
     let soma = 0;
     let resto;
-    if (!inputCPF || inputCPF == '00000000000') return false;
-
+    if (!inputCPF || inputCPF === '00000000000') {return false; }
+    
     for (let i = 1; i <= 9; i++) {
-      soma = soma + parseInt(inputCPF.substring(i - 1, i)) * (11 - i);
+      soma = soma + parseInt(inputCPF.substring(i - 1, i), 10) * (11 - i);
     }
     resto = (soma * 10) % 11;
-
-    if ((resto == 10) || (resto == 11)) resto = 0;
-    if (resto != parseInt(inputCPF.substring(9, 10))) return false;
-
+    
+    if ((resto === 10) || (resto === 11)) {resto = 0; }
+    if (resto !== parseInt(inputCPF.substring(9, 10), 10)) {return false; }
+    
     soma = 0;
     for (let i = 1; i <= 10; i++) {
-      soma = soma + parseInt(inputCPF.substring(i - 1, i)) * (12 - i);
+      soma = soma + parseInt(inputCPF.substring(i - 1, i), 10) * (12 - i);
     }
     resto = (soma * 10) % 11;
-
-    if ((resto == 10) || (resto == 11)) resto = 0;
-    if (resto != parseInt(inputCPF.substring(10, 11))) return false;
-
+    
+    if ((resto === 10) || (resto === 11)) {resto = 0; }
+    if (resto !== parseInt(inputCPF.substring(10, 11), 10)) {return false; }
+    
     return true;
   }
-
+  
   validaNis(inputNis: string): boolean {
+    console.log(`input in nis: [${inputNis}]`);
     let soma = 0;
     let resto;
-    let peso = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-    if (!inputNis || inputNis == '00000000000') return false;
+    const PESO = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    if (!inputNis || inputNis === '00000000000') {return false; }
 
-    for (let i = 0; i < 9; i++) {
-      soma = soma + parseInt(inputNis.substring(i - 1, i)) * peso[i];
+    for (let i = 0; i <= 9; i++) {
+      console.log("somae: ", soma, "   i: ", i);
+      console.log("nis a char: ", inputNis.substring(i , i + 1), "   peso: ",  PESO[i]);
+      soma = soma + parseInt(inputNis.substring(i, i + 1), 10) * PESO[i];
     }
-    resto = soma % 11;
+    resto = 11 - soma % 11;
+    console.log("resto nis: ", resto, " soma: ", soma);
 
-    if ((resto == 10) || (resto == 11)) resto = 0;
-    if (resto != parseInt(inputNis.substring(10, 11))) return false;
+    if ((resto === 10) || (resto === 11)) {resto = 0; }
+    if (resto !== parseInt(inputNis.substring(10, 11), 10)) {return false; }
 
     return true;
   }
@@ -218,5 +236,13 @@ export class ConsultaBeneficiarioComponent implements OnInit {
     datepicker.close();
   }
 
+
+  exibeMensagem(mensagem: string) {
+    this._snackBar.open(mensagem, ' X ', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
+  }
 
 }
