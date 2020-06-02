@@ -23,3 +23,7 @@ export function validaCpf(inputCPF: string): boolean {
 
     return true;
 }
+
+export function dateTimeTZToDate(dateTz: string){
+    return dateTz.slice(0,10);
+}

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { Observable } from 'rxjs';
@@ -23,13 +23,33 @@ export class FamiliasEmergencialService {
       .post<FamiliaEmergencial>(this.endpointService, familia, this.httpOptions);
   }
 
-  recuperarFamiliaEmergencialCPF(cpf: string) {
+  recuperarFamiliaEmergencialCPFNomeDataNascto(cpf?: string, nome?:string, dataNascto?:string): Observable<FamiliaEmergencial[]> {
 
-    // incluir where com filtros cpf/nis/nome
+    if (!cpf && !nome && !dataNascto) { throw new Error('Obrigatório informar cpf ou nome ou dataNascto !!!') }
 
+    let where:{cpf?:string, nome?:string, datanasc2?:string}={};
+
+    if (cpf){
+      where.cpf = cpf;
+    }
+
+    if (nome){
+      where.nome = nome;
+    }
+
+    if (dataNascto) {
+      where.datanasc2 = dataNascto;
+    }
+
+    console.log('where: ', where);
+
+    
+    const params = new HttpParams()
+    .append('filter', JSON.stringify({where}));
+    
+    console.log('params', params);
 
     return this.http
-      .get<Photo[]>(API + '/' + userName + '/photos');
+      .get<FamiliaEmergencial[]>(this.endpointService, {params});
   }
-
 }

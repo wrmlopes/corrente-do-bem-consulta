@@ -7,7 +7,9 @@ import { FormBuilder, FormGroup, FormControl, Validators, ValidatorFn, AbstractC
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import { default as _rollupMoment, Moment } from 'moment';
-import { validaCpf } from 'src/app/core/utils/mylibs';
+import { validaCpf, dateTimeTZToDate } from 'src/app/core/utils/mylibs';
+import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
+import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 
 
 const moment = _rollupMoment || _moment;
@@ -34,6 +36,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     fb: FormBuilder,
     private consultaBeneficioDfService: ConsultaBeneficiosDfService,
     private consultaBeneficiosBrService: ConsultaBeneficiosBrService,
+    private familiaEmergencialService: FamiliasEmergencialService,
     private _snackBar: MatSnackBar
   ) {
     this.cadastroForm = fb.group({
@@ -54,10 +57,49 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     this.cpfValidator(validaCpf.bind(this)),
     Validators.required,
     Validators.minLength(11),
-    Validators.pattern(/([0-9]{11})/)]);
+    Validators.pattern(/([0-9]{11})/)
+  ]);
 
-  submitResponsavel(){
+  // auxiliares
+  waiting = false;
+  msgError = null;
+  msgWarning = null;
 
+  submitFormulario(){
+
+  }
+  /** verifica os dados do responsável: se está cadastrado na corrente ou se já estava cadastrado */
+  verificaCPF(){
+    this.ativarLoading();
+    this.familiaEmergencialService.recuperarFamiliaEmergencialCPFNomeDataNascto(this.cpfResp.value)
+      .subscribe((data:FamiliaEmergencial[]) => {
+        this.desativarLoading();
+        if (data.length>0) {
+          if (!data[0].status || data[0].status == 0) {  
+            this.msgWarning = 'Atenção esse responsável já está cadastrado. Você poderá fazer alterações nesse cadastro.'
+          } else {
+            this.msgError = 'Esse responsável já possui família cadastrada e já foi validado. Alterações não permitidas !!!'
+          }
+        }
+        console.log('data: ', data);
+        console.log('nasc: ', dateTimeTZToDate(data[0].datanasc2));
+
+        this.cadastroForm.patchValue(
+          {
+            nomeResponsavel: data[0].nome,
+            dataNascto: dateTimeTZToDate(data[0].datanasc2)
+
+          }
+        )
+      })
+  }
+
+  private desativarLoading() {
+    this.waiting = false;
+  }
+
+  private ativarLoading() {
+    this.waiting = true;
   }
 
   cpfValidator( cb: (((_: string) => boolean))): ValidatorFn {

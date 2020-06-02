@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { CadastroFamiliaEmergencialComponent } from './cadastro-familia-emergencial.component';
 
@@ -32,6 +33,7 @@ import { CadastroFamiliaEmergencialComponent } from './cadastro-familia-emergenc
         MatDatepickerModule,
         MatCardModule,
         MatSnackBarModule,
+        MatProgressSpinnerModule,
      ],
      providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } }],
 })
