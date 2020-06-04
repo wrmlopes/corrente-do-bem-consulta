@@ -20,5 +20,6 @@ export interface FamiliaEmergencial {
     deseja_msg?: boolean,
     deseja_aux_espiritual?: boolean,
     descricao?: string,
-    status?: number    
+    status?: number,
+    recebe_aux_governo?: string,    
 }

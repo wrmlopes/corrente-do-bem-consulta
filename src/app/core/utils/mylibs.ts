@@ -1,5 +1,4 @@
 export function validaCpf(inputCPF: string): boolean {
-    console.log(`input in cpf: [${inputCPF}]`);
     let soma = 0;
     let resto;
     if (!inputCPF || inputCPF === '00000000000') { return false; }

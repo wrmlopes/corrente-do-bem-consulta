@@ -5,14 +5,8 @@ import { CadastroFamiliaEmergencialComponent } from './modules/cadastro-familia-
 
 //This is my case 
 const routes: Routes = [
-    {
-        path: '',
-        component: ConsultaBeneficiarioComponent
-    },
-    {
-        path: 'cadastro',
-        component: CadastroFamiliaEmergencialComponent
-    }
+    { path: '',  redirectTo: '', pathMatch: 'full', component: ConsultaBeneficiarioComponent },
+    { path: 'cadastro', component: CadastroFamiliaEmergencialComponent}
 ];
 
 @NgModule({

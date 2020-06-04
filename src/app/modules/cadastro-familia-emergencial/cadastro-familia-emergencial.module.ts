@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -13,6 +13,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NgxMaskModule } from 'ngx-mask';
+import { } from '@angular/common'
 
 import { CadastroFamiliaEmergencialComponent } from './cadastro-familia-emergencial.component';
 
@@ -34,7 +36,11 @@ import { CadastroFamiliaEmergencialComponent } from './cadastro-familia-emergenc
         MatCardModule,
         MatSnackBarModule,
         MatProgressSpinnerModule,
+        NgxMaskModule.forRoot(),
      ],
-     providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } }],
+     providers: [
+         { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
+        DatePipe
+    ],
 })
 export class CadastroFamiliaEmergencialModule { }

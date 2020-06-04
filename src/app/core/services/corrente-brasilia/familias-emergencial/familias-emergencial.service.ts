@@ -23,6 +23,11 @@ export class FamiliasEmergencialService {
       .post<FamiliaEmergencial>(this.endpointService, familia, this.httpOptions);
   }
 
+  atualizarFamiliaEmergencial(familia: FamiliaEmergencial): Observable<FamiliaEmergencial> {
+    return this.http
+      .put<FamiliaEmergencial>(this.endpointService + '/' + familia.codfamilia, familia, this.httpOptions);
+  }
+
   recuperarFamiliaEmergencialCPFNomeDataNascto(cpf?: string, nome?:string, dataNascto?:string): Observable<FamiliaEmergencial[]> {
 
     if (!cpf && !nome && !dataNascto) { throw new Error('Obrigatório informar cpf ou nome ou dataNascto !!!') }

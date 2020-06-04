@@ -8,7 +8,7 @@
     <div [formGroup]="cadastroForm">
 
         <div class="row">
-            <div class="col-lg-2">
+            <div class="form-group col-lg-2">
                 <label for="cpfResp">CPF</label>
                 <input type="text" pattern="\d*" maxlength="11" [formControl]="cpfResp"
                     class="form-control form-control-danger" id="cpfResp" aria-describedby="cpfResphint">
@@ -18,16 +18,6 @@
                 <small *ngIf="getErrorCpfResp()" id="cpfResphint"
                     class="form-text text-danger">{{getErrorCpfResp()}}</small>
             </div>
-            <div>
-                <button mat-fab color="basic" class="" type="button" aria-label="Prosseguir Cadastro"
-                    data-toggle="tooltip" data-placement="top" title="Verificar dados do responsável"
-                    [disabled]="cpfResp.invalid" *ngIf="!waiting" (click)="verificaCPF()">
-                    <mat-icon>search</mat-icon>
-                </button>
-                <div *ngIf="waiting" class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
         </div>
 
         <div class="form-group row col-lg-8">
@@ -35,6 +25,16 @@
             <input type="string" [formControl]="nomeResponsavel" class="form-control text-uppercase"
                 id="nomeResponsavel" aria-describedby="nomehint">
             <small id="nomehint" class="form-text text-muted">Informe o nome completo do responsável.</small>
+            <div>
+                <button mat-fab color="basic" class="" type="button" aria-label="Prosseguir Cadastro"
+                    data-toggle="tooltip" data-placement="top" title="Verificar dados do responsável"
+                    [disabled]="desativaConsulta" *ngIf="!waiting" (click)="verificaCadastro()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </div>
+            <div *ngIf="waiting" class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
 
         <div class="form-group row col-lg-2">
@@ -44,26 +44,128 @@
             <small id="nasctohint" class="form-text text-muted">Data de nascimento do responsável.</small>
         </div>
 
+        <div class="form-group row col-lg-3">
+            <label for="recebeAuxGoverno">Recebe auxílio do governo</label>
+            <select multiple class="form-control" [formControl]="recebeAuxGoverno" id="recebeauxgoverno">
+                <option *ngFor="let recebeAuxGoverno of auxGoverno" [value]="recebeAuxGoverno">
+                    {{recebeAuxGoverno}}
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group row col-lg-2">
+            <label for="telefone">Telefone</label>
+            <input type="text" [formControl]="telefone" class="form-control" id="telefone"
+                aria-describedby="telefonehint" mask="(00)00000-0000">
+            <small id="telefonehint" class="form-text text-muted">Informe o telefone de contato.</small>
+        </div>
+
+        <div class="form-group row col-lg-10">
+            <label for="endereco">Endereço completo</label>
+            <input type="text" [formControl]="endereco" class="form-control" id="endereco"
+                aria-describedby="enderecohint">
+            <small id="enderecohint" class="form-text text-muted">Informe o endereço.</small>
+        </div>
+
+        <div class="form-group row col-lg-10">
+            <label for="referencia">Ponto de referência</label>
+            <input type="text" [formControl]="referencia" class="form-control" id="referencia"
+                aria-describedby="referenciahint">
+            <small id="referenciahint" class="form-text text-muted">Informe um ponto de referência próximo ao
+                endereço.</small>
+        </div>
+
+        <div class="form-group row col-lg-3">
+            <label for="cidade">Cidade ou região</label>
+            <input type="text" [formControl]="cidade" class="form-control" id="cidade" aria-describedby="cidadehint">
+            <small id="cidadehint" class="form-text text-muted">Informe a cidade ou região.</small>
+        </div>
+
+        <div class="form-group row col-lg-3">
+            <label for="quantidade">Total de pessoas na residência</label>
+            <input type="number" mask="99" [formControl]="quantidade" class="form-control" id="quantidade"
+                aria-describedby="quantidadehint">
+            <small id="quantidadehint" class="form-text text-muted">Informe o total de pessoas na residência.</small>
+        </div>
+
+        <div class="form-group row col-lg-3">
+            <label for="quantcriancas">Total de crianças na residência</label>
+            <input type="number" mask="99" [formControl]="quantcriancas" class="form-control" id="quantcriancas"
+                aria-describedby="quantcriancashint">
+            <small id="quantcriancashint" class="form-text text-muted">Informe o total de crianças na
+                residência.</small>
+        </div>
+
+        <div class="form-group row col-lg-3">
+            <label for="tipomoradia">Tipo da moradia</label>
+            <select class="form-control" [formControl]="tipomoradia" id="tipomoradia">
+                <option *ngFor="let tipomoradia of tiposmoradia" [value]="tipomoradia">{{tipomoradia}}</option>
+            </select>
+        </div>
+
+        <div class="form-group row col-lg-3">
+            <label for="statusemprego">Situação de emprego</label>
+            <select class="form-control" [formControl]="statusemprego" id="statusemprego">
+                <option *ngFor="let statusemprego of statussemprego" [value]="statusemprego">{{statusemprego}}</option>
+            </select>
+        </div>
+
+        <div class="form-group row col-lg-2">
+            <label for="dtstatusemprego">Data situação de emprego</label>
+            <input type="date" [formControl]="dtstatusemprego" class="form-control" id="dtstatusemprego"
+                aria-describedby="dtstatusempregohint">
+            <small id="dtstatusempregohint" class="form-text text-muted">Quando ficou desempregado ?</small>
+        </div>
+
+        <div class="form-group row col-lg-8">
+            <label for="nomeConjuge">Nome do cônjuge</label>
+            <input type="string" [formControl]="nomeConjuge" class="form-control text-uppercase" id="nomeConjuge"
+                aria-describedby="nomeConjugehint">
+            <small id="nomeConjugehint" class="form-text text-muted">Informe o nome completo do cônjuge, se
+                houver.</small>
+        </div>
+
+        <div class="form-group row col-lg-2">
+            <label for="dataNasctoConjuge">Data de nascimento do cônjuge</label>
+            <input type="date" [formControl]="dataNasctoConjuge" class="form-control" id="dataNasctoConjuge"
+                aria-describedby="nasctoconjugehint">
+            <small id="nasctoconjugehint" class="form-text text-muted">Data de nascimento do cônjuge, se houver.</small>
+        </div>
+
+        <div class="form-group row col-lg-2">
+            <label for="cpfConjuge">CPF do cônjuge</label>
+            <input type="text" pattern="\d*" [formControl]="cpfConjuge" class="form-control form-control-danger"
+                id="cpfConjuge" aria-describedby="cpfConjugehint" mask="000.000.000-00">
+            <small *ngIf="!getErrorCpfConjuge()" id="cpfConjugehint" class="form-text text-muted">Informe apenas números
+                no CPF.</small>
+            <small *ngIf="getErrorCpfConjuge()" id="cpfConjugehint"
+                class="form-text text-danger">{{getErrorCpfConjuge()}}</small>
+        </div>
+
+        <div class="form-group form-check">
+            <input class="form-check-input" [formControl]="desejaMsg" type="checkbox" value="" id="desejaMsg">
+            <label class="form-check-label" for="desejaMsg">
+                Deseja receber mensagens apenas para conversar.
+            </label>
+        </div>
+
+        <div class="form-group form-check">
+            <input class="form-check-input" [formControl]="desejaAuxEspiritual" type="checkbox" value=""
+                id="desejaAuxEspiritual">
+            <label class="form-check-label" for="desejaAuxEspiritual">
+                Deseja auxílio espiritual (oração e Palavra).
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label for="descricao">Descreva você e sua família</label>
+            <textarea class="form-control" [formControl]="descricao" id="descricao" rows="4"></textarea>
+        </div>
 
 
-        <!--         <mat-form-field appearance="fill">
-            <mat-label>CPF ou NIS do beneficiário</mat-label>
-            <input matInput maxlength="11" [formControl]="cpfOuNis" type="text">
-            <mat-error *ngIf="cpfOuNis.invalid">{{getErrorMessage()}}</mat-error>
-        </mat-form-field>
-        <mat-divider [inset]='true'></mat-divider>
-        <mat-form-field>
-            <mat-label>Mês de referência</mat-label>
-            <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp" [formControl]="date">
-            <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-            <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event)"
-                (monthSelected)="chosenMonthHandler($event, dp)" panelClass="example-month-picker">
-            </mat-datepicker>
-        </mat-form-field>
-        <button mat-icon-button type="submit" aria-label="Consulta Benefícios"
-            [disabled]="cadastroForm.invalid">
-            <mat-icon>search</mat-icon>
+
+        <button mat-icon-button type="submit" aria-label="Grava dados da família" [disabled]="cadastroForm.invalid">
+            <mat-icon>save</mat-icon>
         </button>
- -->
     </div>
 </form>
