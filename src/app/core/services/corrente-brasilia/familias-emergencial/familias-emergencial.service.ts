@@ -57,4 +57,15 @@ export class FamiliasEmergencialService {
     return this.http
       .get<FamiliaEmergencial[]>(this.endpointService, {params});
   }
+
+  recuperarFamiliaEmergencialNaFilaDeAtendimento(): Observable<FamiliaEmergencial[]> {
+
+    let where = {status:"6"};
+
+    const params = new HttpParams()
+    .append('filter', JSON.stringify({where}));
+    
+    return this.http
+      .get<FamiliaEmergencial[]>(this.endpointService, {params});
+  }
 }

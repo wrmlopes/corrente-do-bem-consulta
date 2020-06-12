@@ -1,0 +1,12 @@
+
+.successo {
+    color: rgb(14, 15, 15) !important; 
+    background-color: #21b63a !important;
+    border-color: #c3e6cb !important;
+}
+
+.erro {
+    color: #d4edda !important;
+    background-color: #fc2b06 !important;
+    border-color: #c3e6cb !important;
+}

@@ -1,4 +1,6 @@
 export function validaCpf(inputCPF: string): boolean {
+    console.log("inputCpf: ", inputCPF);
+    if (!inputCPF) return true;
     let soma = 0;
     let resto;
     if (!inputCPF || inputCPF === '00000000000') { return false; }
@@ -24,5 +26,12 @@ export function validaCpf(inputCPF: string): boolean {
 }
 
 export function dateTimeTZToDate(dateTz: string){
+    if (dateTz == '') { return '' }
     return dateTz.slice(0,10);
 }
+
+export function novaDataString(dataForm: string): string {
+    console.log('data: ', dataForm);
+    if (!dataForm || dataForm =='' || dataForm == '0000-00-00') { return dataForm; };
+    return new Date(dataForm).toISOString();
+  }

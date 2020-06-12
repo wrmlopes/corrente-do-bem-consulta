@@ -1,9 +1,3 @@
-<div *ngIf="msgWarning" class="alert alert-warning" role="alert">
-    {{msgWarning}}
-</div>
-<div *ngIf="msgError" class="alert alert-danger" role="alert">
-    {{msgError}}
-</div>
 <form [formGroup]="cadastroForm" (submit)="submitFormulario()">
     <div [formGroup]="cadastroForm">
 
@@ -12,9 +6,6 @@
                 <label for="cpfResp">CPF</label>
                 <input type="text" [formControl]="cpfResp" class="form-control form-control-danger" id="cpfResp"
                     aria-describedby="cpfResphint" mask="000.000.000-00">
-                <small *ngIf="!getErrorCpfResp()" id="cpfResphint" class="form-text text-muted">Informe apenas números
-                    no
-                    CPF.</small>
                 <small *ngIf="getErrorCpfResp()" id="cpfResphint"
                     class="form-text text-danger">{{getErrorCpfResp()}}</small>
             </div>
@@ -24,17 +15,8 @@
             <label for="nomeResponsavel">Nome</label>
             <input type="string" [formControl]="nomeResponsavel" class="form-control text-uppercase"
                 id="nomeResponsavel" aria-describedby="nomehint">
-            <small id="nomehint" class="form-text text-muted">Informe o nome completo do responsável.</small>
-            <div>
-                <button mat-fab color="basic" class="" type="button" aria-label="Prosseguir Cadastro"
-                    data-toggle="tooltip" data-placement="top" title="Verificar dados do responsável"
-                    [disabled]="desativaConsulta" *ngIf="!waiting" (click)="verificaCadastro()">
-                    <mat-icon>search</mat-icon>
-                </button>
-            </div>
-            <div *ngIf="waiting" class="spinner-border" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
+            <small *ngIf="cadastroForm.get('nomeResponsavel').errors?.required" class="form-text text-danger">Nome deve
+                ser informado</small>
         </div>
 
         <div class="form-group row col-lg-2">
@@ -43,14 +25,14 @@
                 aria-describedby="nasctohint">
             <small *ngIf="cadastroForm.get('dataNascto').errors?.required" id="cpfResphint"
                 class="form-text text-danger">Data de nascimento deve ser informada</small>
+
         </div>
 
         <div class="form-group row col-lg-2">
             <label for="telefone">Telefone</label>
             <input type="text" [formControl]="telefone" class="form-control" id="telefone"
                 aria-describedby="telefonehint" mask="(00)00000-0000">
-                <small *ngIf="cadastroForm.get('telefone').errors?.required" id="foneResphint"
-                class="form-text text-danger">Telefone deve ser informado</small>
+            <small id="nasctohint" class="form-text text-muted">Data de nascimento do responsável.</small>
         </div>
 
         <div class="form-group">
@@ -62,7 +44,8 @@
             <label for="endereco">Endereço completo</label>
             <input type="text" [formControl]="endereco" class="form-control" id="endereco"
                 aria-describedby="enderecohint">
-            <small id="enderecohint" class="form-text text-muted">Informe o endereço.</small>
+            <small *ngIf="cadastroForm.get('endereco').errors?.required" class="form-text text-danger">Endereço deve ser
+                informado</small>
         </div>
 
         <div class="form-group row col-lg-10">
@@ -80,7 +63,7 @@
         </div>
 
         <div class="form-group row col-lg-3">
-            <label for="quantidade">Total de pessoas na família</label>
+            <label for="quantidade">Total de pessoas na residência</label>
             <input type="number" [formControl]="quantidade" class="form-control" id="quantidade"
                 aria-describedby="quantidadehint">
             <small *ngIf="cadastroForm.get('quantidade').errors?.min" class="form-text text-danger">Quantidade de
@@ -89,7 +72,7 @@
 
         <div class="form-group row col-lg-3">
             <label for="quantcriancas">Total de crianças na residência</label>
-            <input type="number" mask="99" [formControl]="quantcriancas" class="form-control" id="quantcriancas"
+            <input type="number" [formControl]="quantcriancas" class="form-control" id="quantcriancas"
                 aria-describedby="quantcriancashint">
             <small id="quantcriancashint" class="form-text text-muted">Informe o total de crianças na
                 residência.</small>
@@ -109,11 +92,13 @@
             </select>
         </div>
 
-        <div class="form-group row col-lg-2">
-            <label for="dtstatusemprego">Data situação de emprego</label>
-            <input type="date" [formControl]="dtstatusemprego" class="form-control" id="dtstatusemprego"
-                aria-describedby="dtstatusempregohint">
-            <small id="dtstatusempregohint" class="form-text text-muted">Quando ficou desempregado ?</small>
+        <div class="form-group row col-lg-3">
+            <label for="recebeAuxGoverno">Recebe auxílio do governo</label>
+            <select multiple class="form-control" [formControl]="recebeAuxGoverno" id="recebeauxgoverno">
+                <option *ngFor="let recebeAuxGoverno of auxGoverno" [value]="recebeAuxGoverno">
+                    {{recebeAuxGoverno}}
+                </option>
+            </select>
         </div>
 
         <div class="form-group row col-lg-8">
@@ -156,18 +141,17 @@
             </label>
         </div>
 
-        <div class="form-group row col-lg-3">
-            <label for="recebeAuxGoverno">Recebe auxílio do governo</label>
-            <select multiple class="form-control" [formControl]="recebeAuxGoverno" id="recebeauxgoverno">
-                <option *ngFor="let recebeAuxGoverno of auxGoverno" [value]="recebeAuxGoverno">
-                    {{recebeAuxGoverno}}
-                </option>
-            </select>
-        </div>
-
         <button type="submit" aria-label="Grava dados do pré-cadastro" [disabled]="cadastroForm.invalid"
-        class="btn btn-outline-primary" style="cursor: pointer;">
-        {{cadastroForm.invalid ? "Preencha os campos obrigatórios para salvar" : "Salva os dados da família"}}
-    </button>
+            class="btn btn-outline-primary" style="cursor: pointer;">
+            {{cadastroForm.invalid ? "Preencha os campos obrigatórios para salvar" : "Salva os dados da família"}}
+        </button>
+
+        <button id="botaoCancelarAtendimento" [disabled]="!emAtendimento" (click)="cancelarAtendimento()"
+            class="btn btn-outline-primary ml-3">Cancelar atendimento
+        </button>
+
+        <button id="botaoEncaminharAtendimento" [disabled]="!emAtendimento" (click)="encaminharAtendimento()"
+            class="btn btn-outline-primary ml-3">Encaminhar atendimento
+        </button>
     </div>
 </form>

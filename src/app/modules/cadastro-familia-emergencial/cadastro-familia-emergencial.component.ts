@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, FormControl, Validators, ValidatorFn, AbstractC
 
 // tslint:disable-next-line:no-duplicate-imports
 import { default as _rollupMoment } from 'moment';
-import { validaCpf, dateTimeTZToDate } from 'src/app/core/utils/mylibs';
+import { validaCpf, dateTimeTZToDate, novaDataString } from 'src/app/core/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { DatePipe } from '@angular/common';
@@ -91,9 +91,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     Validators.required
   ]);
   cpfResp = new FormControl('', [
-    this.cpfValidator(validaCpf.bind(this)),
-    Validators.minLength(11),
-    Validators.pattern(/([0-9]{11})/)
+    this.cpfValidator(validaCpf.bind(this))
   ]);
   telefone = new FormControl('', [
     Validators.required
@@ -102,13 +100,13 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     Validators.required
   ]);
   referencia = new FormControl('', [
-    Validators.required
   ]);
   cidade = new FormControl('', [
     Validators.required
   ]);
   quantidade = new FormControl('', [
-    Validators.required
+    Validators.required,
+    Validators.min(1),
   ]);
   quantcriancas = new FormControl('');
   tipomoradia = new FormControl('');
@@ -158,67 +156,50 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
   }
 
   submitFormulario() {
+    this.familiaEmergencial.nome = this.nomeResponsavel.value.toUpperCase();
+    this.familiaEmergencial.datanasc2 = new Date(this.dataNascto.value).toISOString();
+    this.familiaEmergencial.cpf = this.cpfResp.value;
+    this.familiaEmergencial.Telefone = this.telefone.value;
+    this.familiaEmergencial.quadra = this.endereco.value;
+    this.familiaEmergencial.cidade = this.cidade.value;
+    this.familiaEmergencial.referencia_endereco = this.referencia.value;
+    this.familiaEmergencial.quantcriancas = parseInt(this.quantcriancas.value);
+    this.familiaEmergencial.quantidade = parseInt(this.quantidade.value);
+    this.familiaEmergencial.Conjuge = this.nomeConjuge.value.toUpperCase();
+    this.familiaEmergencial.cpf_conjuge = this.cpfConjuge.value;
+    this.familiaEmergencial.data_nasc_conjuge = novaDataString(this.dataNasctoConjuge.value);
+    this.familiaEmergencial.tipo_moradia = this.tipomoradia.value;
+    this.familiaEmergencial.status_emprego = this.statusemprego.value;
+    this.familiaEmergencial.data_status_emprego = novaDataString(this.dtstatusemprego.value);
+    this.familiaEmergencial.deseja_msg = !!this.desejaMsg.value;
+    this.familiaEmergencial.deseja_aux_espiritual = !!this.desejaAuxEspiritual.value;
+    this.familiaEmergencial.descricao = this.descricao.value;
+    this.familiaEmergencial.recebe_aux_governo = this.recebeAuxGoverno.value ? this.recebeAuxGoverno.value.toString() : '';
+    this.familiaEmergencial.data = new Date().toISOString();
 
-      console.log( 'nomeResponsavel: ', this.nomeResponsavel.value);
-      console.log( 'dataNascto: ', this.dataNascto.value);
-      console.log( 'cpfResp: ', this.cpfResp.value);
-      console.log( 'telefone: ', this.telefone.value);
-      console.log( 'endereco: ', this.endereco.value);
-      console.log( 'referencia: ', this.referencia.value);
-      console.log( 'cidade: ', this.cidade.value);
-      console.log( 'quantidade: ', this.quantidade.value);
-      console.log( 'quantcriancas: ', this.quantcriancas.value);
-      console.log( 'tipomoradia: ', this.tipomoradia.value);
-      console.log( 'statusemprego: ', this.statusemprego.value);
-      console.log( 'dtstatusemprego: ', this.dtstatusemprego.value);
-      console.log( 'nomeConjuge: ', this.nomeConjuge.value);
-      console.log( 'cpfConjuge: ', this.cpfConjuge.value);
-      console.log( 'dataNasctoConjuge: ', this.dataNasctoConjuge.value);
-      console.log( 'desejaMsg: ', this.desejaMsg.value);
-      console.log( 'desejaAuxEspiritual: ', this.desejaAuxEspiritual.value);
-      console.log( 'descricao: ', this.descricao.value);
-      console.log( 'recebeAuxGoverno: ', this.recebeAuxGoverno.value);
+    if (this.familiaEmergencial.codfamilia) {
 
-      this.familiaEmergencial.nome = this.nomeResponsavel.value.toUpperCase();
-      this.familiaEmergencial.datanasc2= new Date(this.dataNascto.value).toISOString();
-      this.familiaEmergencial.cpf= this.cpfResp.value;
-      this.familiaEmergencial.Telefone= this.telefone.value;
-      this.familiaEmergencial.quadra= this.endereco.value;
-      this.familiaEmergencial.cidade= this.cidade.value;
-      this.familiaEmergencial.referencia_endereco= this.referencia.value;
-      this.familiaEmergencial.quantcriancas= parseInt(this.quantcriancas.value);
-      this.familiaEmergencial.quantidade= parseInt(this.quantidade.value);
-      this.familiaEmergencial.Conjuge= this.nomeConjuge.value.toUpperCase();
-      this.familiaEmergencial.cpf_conjuge= this.cpfConjuge.value;
-      this.familiaEmergencial.data_nasc_conjuge= this.dataNasctoConjuge.value ? new Date(this.dataNasctoConjuge.value).toISOString(): null;
-      this.familiaEmergencial.tipo_moradia= this.tipomoradia.value;
-      this.familiaEmergencial.status_emprego= this.statusemprego.value;
-      this.familiaEmergencial.data_status_emprego= this.dtstatusemprego.value ? new Date (this.dtstatusemprego.value).toISOString(): null;
-      this.familiaEmergencial.deseja_msg= this.desejaMsg.value;
-      this.familiaEmergencial.deseja_aux_espiritual= this.desejaAuxEspiritual.value;
-      this.familiaEmergencial.descricao= this.descricao.value;
-      this.familiaEmergencial.recebe_aux_governo= this.recebeAuxGoverno.value.toString();
-      this.familiaEmergencial.data= new Date().toISOString();
-
-      if (this.familiaEmergencial.codfamilia) {
-
-        this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
-          .subscribe(() => {
-            console.log('dados atualizados');
-          },
-          error=> {
+      this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
+        .subscribe(() => {
+          console.log('dados atualizados');
+          this.exibeMensagem('Cadastro atualizado com sucesso.')
+          this.inicializaFormulario();
+        },
+          error => {
             console.log('error: ', error);
           })
-      } else {
-        this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
-          .subscribe((data:FamiliaEmergencial) => {
-            console.log('data: ', data);
-  
-          },
-          error=> {
+    } else {
+      this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
+        .subscribe((data: FamiliaEmergencial) => {
+          console.log('data: ', data);
+          this.exibeMensagem('Família incluída com sucesso.')
+          this.inicializaFormulario();
+
+        },
+          error => {
             console.log('error: ', error);
           })
-      }
+    }
   }
   /** verifica os dados do responsável: se está cadastrado na corrente ou se já estava cadastrado */
   verificaCadastro() {
@@ -226,20 +207,21 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     this.familiaEmergencial = {};
     const nome = this.nomeResponsavel.value ? this.nomeResponsavel.value.toUpperCase() : null;
     this.familiaEmergencialService
-      .recuperarFamiliaEmergencialCPFNomeDataNascto( this.cpfResp.value, nome )
+      .recuperarFamiliaEmergencialCPFNomeDataNascto(this.cpfResp.value, nome)
       .subscribe((data: FamiliaEmergencial[]) => {
-        console.log('data: ', data);
         this.desativarLoading();
         if (data.length > 0) {
-          if (!data[0].status || data[0].status == 0) {
-            this.msgWarning = 'Atenção !! Esse responsável já está cadastrado. Você poderá fazer alterações nesse cadastro.'
+          if (!data[0].status || [0, 4, 5, 7].includes(data[0].status)) {
+            this.exibeMensagem('Atenção !! Esse responsável já está cadastrado. Você poderá fazer alterações nesse cadastro.');
           } else {
-            this.msgError = `Família já possui cadastro validado. Alterações não permitidas !!!`;
-            this.cadastroForm.reset();
+            this.exibeMensagem(`Família já possui cadastro validado. Alterações não permitidas !!!`, 'erro');
+            this.inicializaFormulario();
             return;
           }
           this.familiaEmergencial = data[0];
           this.carregaDadosFamiliaEmergencial(this.familiaEmergencial);
+        } else {
+          this.exibeMensagem('Não encontrados dados desta família !!! Prossiga com o cadastramento.', 'sucesso')
         }
       },
         error => {
@@ -251,28 +233,41 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
   private carregaDadosFamiliaEmergencial(data: FamiliaEmergencial) {
     console.log('data: ', data);
 
+    this.familiaEmergencial = data;
+    this.normalizaFamilia();
+
     console.log('date type: ', typeof data.datanasc2);
     this.cadastroForm.patchValue({
-      cpf: data.cpf,
+      cpfResp: data.cpf,
       nomeResponsavel: data.nome,
       dataNascto: data.datanasc2 ? dateTimeTZToDate(data.datanasc2) : null,
       telefone: data.Telefone,
       endereco: data.quadra,
       cidade: data.cidade,
-      quantcriancas: data.quantcriancas,
-      quantidade: data.quantidade,
+      quantcriancas: data.quantcriancas || 0,
+      quantidade: data.quantidade || 0,
       nomeConjuge: data.Conjuge,
       referencia: data.referencia_endereco,
       cpfConjuge: data.cpf_conjuge,
-      dataNasctoConjuge: data.data_nasc_conjuge ? dateTimeTZToDate(data.data_nasc_conjuge): null,
+      dataNasctoConjuge: data.data_nasc_conjuge ? dateTimeTZToDate(data.data_nasc_conjuge) : null,
       tipomoradia: data.tipo_moradia,
       statusemprego: data.status_emprego,
-      dtstatusemprego: data.data_status_emprego ? dateTimeTZToDate(data.data_status_emprego): null,
-      desejaMsg: data.deseja_msg,
-      desejaAuxEspiritual: data.deseja_aux_espiritual,
+      dtstatusemprego: data.data_status_emprego ? dateTimeTZToDate(data.data_status_emprego) : null,
+      desejaMsg: !!data.deseja_msg,
+      desejaAuxEspiritual: !!data.deseja_aux_espiritual,
       descricao: data.descricao,
       recebeAuxGoverno: data.recebe_aux_governo ? data.recebe_aux_governo.split(',') : null,
     });
+  }
+
+  normalizaFamilia() {
+    this.familiaEmergencial.nis = this.familiaEmergencial.nis || '';
+    this.familiaEmergencial.status_emprego = this.familiaEmergencial.status_emprego || '';
+    this.familiaEmergencial.data_status_emprego = this.familiaEmergencial.data_status_emprego || '';
+    this.familiaEmergencial.data_nasc_conjuge = this.familiaEmergencial.data_nasc_conjuge || '';
+    this.familiaEmergencial.cpf_conjuge = this.familiaEmergencial.cpf_conjuge || '';
+    this.familiaEmergencial.deseja_msg = !!this.familiaEmergencial.deseja_msg;
+    this.familiaEmergencial.deseja_aux_espiritual = !!this.familiaEmergencial.deseja_aux_espiritual;
   }
 
   private desativarLoading() {
@@ -325,6 +320,22 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     }
 
     return this.cpfConjuge.hasError('cpf_invalido') ? 'CPF não é válido' : null;
+  }
+
+  exibeMensagem(mensagem: string, tipo: string = 'sucesso') {
+    console.log('tipo: ', tipo);
+    this._snackBar.open(mensagem, ' X ', {
+      duration: 8000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      panelClass: [tipo],
+    });
+  }
+
+  private inicializaFormulario() {
+    this.cadastroForm.reset();
+    let elemento = document.getElementById(`cpfResp`);
+    if (elemento) elemento.focus();
   }
 
 }

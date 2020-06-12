@@ -1,0 +1,22 @@
+<div>
+
+    <div>Temos {{familiasNaFila}} 
+        <span *ngIf="loadingFamilias" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        família(s) aguardando atendimento !!!</div>
+</div>
+
+<div class="mt-3">
+    <button id="botaoCarregarProxima" [disabled]="familiasNaFila==0 || emAtendimento" (click)="carregarProximaFamilia()"
+        class="btn btn-outline-primary">Carregar próxima família
+        <span *ngIf="loadingFamilia" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    </button>
+    <button id="botaoCancelarAtendimento" [disabled]="!emAtendimento" (click)="cancelarAtendimento()"
+        class="btn btn-outline-primary ml-3">Cancelar atendimento
+    </button>
+</div>
+
+<div >
+    <div class="card shadow p-3 mb-5 bg-white rounded mt-3">
+        <app-cadastro-fila-de-atendimento></app-cadastro-fila-de-atendimento>
+    </div>
+</div>
