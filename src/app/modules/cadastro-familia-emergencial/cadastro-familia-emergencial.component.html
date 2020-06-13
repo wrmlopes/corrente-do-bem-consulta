@@ -26,8 +26,8 @@
                 id="nomeResponsavel" aria-describedby="nomehint">
             <small id="nomehint" class="form-text text-muted">Informe o nome completo do responsável.</small>
             <div>
-                <button mat-fab color="basic" class="" type="button" aria-label="Prosseguir Cadastro"
-                    data-toggle="tooltip" data-placement="top" title="Verificar dados do responsável"
+                <button mat-fab color="basic" class="" type="button" aria-label="Buscar dados do responsável"
+                    data-toggle="tooltip" data-placement="top" title="Buscar dados do responsável"
                     [disabled]="desativaConsulta" *ngIf="!waiting" (click)="verificaCadastro()">
                     <mat-icon>search</mat-icon>
                 </button>
@@ -48,7 +48,7 @@
         <div class="form-group row col-lg-2">
             <label for="telefone">Telefone</label>
             <input type="text" [formControl]="telefone" class="form-control" id="telefone"
-                aria-describedby="telefonehint" mask="(00)00000-0000">
+                aria-describedby="telefonehint" mask="(00)00000-0000" [validation]=false>
                 <small *ngIf="cadastroForm.get('telefone').errors?.required" id="foneResphint"
                 class="form-text text-danger">Telefone deve ser informado</small>
         </div>

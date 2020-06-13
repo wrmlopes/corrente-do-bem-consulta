@@ -6,6 +6,8 @@ import { MessageService } from '../message.service';
 import { BfDisponibilizado } from '../../../shared/models';
 import { tap, catchError } from 'rxjs/operators';
 
+import { AuxilioEmergencial } from '../../../shared/models/auxilio-emergencial';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,6 +16,7 @@ export class ConsultaBeneficiosBrService {
   private urlTransparencia = environment.apiUrlTransparencia;
 
   private endpointBF = '/bolsa-familia-disponivel-por-cpf-ou-nis';
+  private endpointAuxiliEmergencial = '/auxilio-emergencial-por-cpf-ou-nis';
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -32,6 +35,16 @@ export class ConsultaBeneficiosBrService {
     return this.http.get<BfDisponibilizado[]>(url).pipe(
       tap(_ => this.log('fetched Beneficio BF disponibilizado codigo=' + cpfBeneficiario)),
       catchError(this.handleError<BfDisponibilizado[]>('getBeneficioBolsaFamilia cpf=' + cpfBeneficiario))
+    );
+  }
+
+  getAuxilioEmergencial(cpfBeneficiario: string): Observable<AuxilioEmergencial[]> {
+    const url = this.urlTransparencia + this.endpointBF +
+      '?codigoBeneficiario=' + cpfBeneficiario + '&pagina=1';
+
+    return this.http.get<AuxilioEmergencial[]>(url).pipe(
+      tap(_ => this.log('fetched Auxílio Emergencial disponibilizado codigo=' + cpfBeneficiario)),
+      catchError(this.handleError<AuxilioEmergencial[]>('getBeneficioBolsaFamilia cpf=' + cpfBeneficiario))
     );
   }
 

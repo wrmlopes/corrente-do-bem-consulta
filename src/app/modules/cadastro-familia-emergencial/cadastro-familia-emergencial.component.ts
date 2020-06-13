@@ -212,7 +212,9 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
         this.desativarLoading();
         if (data.length > 0) {
           if (!data[0].status || [0, 4, 5, 7].includes(data[0].status)) {
-            this.exibeMensagem('Atenção !! Esse responsável já está cadastrado. Você poderá fazer alterações nesse cadastro.');
+            if (data[0].status === 0) {
+              this.exibeMensagem('Atenção !! Esse responsável já está cadastrado. Você poderá fazer alterações nesse cadastro.');
+            }
           } else {
             this.exibeMensagem(`Família já possui cadastro validado. Alterações não permitidas !!!`, 'erro');
             this.inicializaFormulario();
