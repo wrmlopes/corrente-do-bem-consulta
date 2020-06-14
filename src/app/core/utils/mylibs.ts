@@ -1,5 +1,4 @@
 export function validaCpf(inputCPF: string): boolean {
-    console.log("inputCpf: ", inputCPF);
     if (!inputCPF) return true;
     let soma = 0;
     let resto;
@@ -25,13 +24,31 @@ export function validaCpf(inputCPF: string): boolean {
     return true;
 }
 
-export function dateTimeTZToDate(dateTz: string){
+export function validaNis(inputNis: string): boolean {
+    if (!inputNis) return true;
+    let soma = 0;
+    let resto;
+    const PESO = [3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    if (!inputNis || inputNis === '00000000000') { return false; }
+
+    for (let i = 0; i <= 9; i++) {
+        soma = soma + parseInt(inputNis.substring(i, i + 1), 10) * PESO[i];
+    }
+    resto = 11 - soma % 11;
+
+    if ((resto === 10) || (resto === 11)) { resto = 0; }
+    if (resto !== parseInt(inputNis.substring(10, 11), 10)) { return false; }
+
+    return true;
+}
+
+export function dateTimeTZToDate(dateTz: string) {
     if (dateTz == '') { return '' }
-    return dateTz.slice(0,10);
+    return dateTz.slice(0, 10);
 }
 
 export function novaDataString(dataForm: string): string {
     console.log('data: ', dataForm);
-    if (!dataForm || dataForm =='' || dataForm == '0000-00-00') { return dataForm; };
+    if (!dataForm || dataForm == '' || dataForm == '0000-00-00') { return dataForm; };
     return new Date(dataForm).toISOString();
-  }
+}

@@ -11,7 +11,11 @@ const routes: Routes = [
     { path: '',  redirectTo: '', pathMatch: 'full', component: CadastroFamiliaEmergencialComponent },
     { path: 'consulta',  pathMatch: 'full', component: ConsultaBeneficiarioComponent },
     { path: 'cadastro', component: CadastroFamiliaEmergencialComponent},
-    { path: 'fila-de-atendimento', component: FilaDeAtendimentoComponent, canDeactivate: [CanDeactivateGuard] }
+    { path: 'fila-de-atendimento', component: FilaDeAtendimentoComponent, canDeactivate: [CanDeactivateGuard] },
+    { 
+      path: 'cestas',
+      loadChildren: () => import('./modules/cestas/cestas.module').then(m => m.CestasModule)
+  },
 ];
 
 @NgModule({

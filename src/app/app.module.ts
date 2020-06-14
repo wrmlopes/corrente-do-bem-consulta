@@ -8,6 +8,8 @@ import { ConsultaBeneficiarioModule } from './modules/consulta-beneficiario/cons
 import { CadastroFamiliaEmergencialModule } from './modules/cadastro-familia-emergencial/cadastro-familia-emergencial.module';
 import { FilaDeAtendimentoModule } from './modules/fila-de-atendimento/fila-de-atendimento.module'
 
+import { CestasRoutingModule } from './modules/cestas/cestas-routing.module';
+
 import { CanDeactivateGuard } from './core/guards/can-deactivate.guard';
 
 @NgModule({
@@ -15,11 +17,12 @@ import { CanDeactivateGuard } from './core/guards/can-deactivate.guard';
     AppComponent
   ],
   imports: [
-    AppRoutingModule,
-
     ConsultaBeneficiarioModule,
     CadastroFamiliaEmergencialModule,
     FilaDeAtendimentoModule,
+
+    AppRoutingModule,
+    CestasRoutingModule,
 
   ],
   providers: [
