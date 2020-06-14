@@ -1,24 +1,24 @@
 <div style="margin: 62 auto 32;" class="mat-elevation-z8">
     <form [formGroup]="consultaForm" (submit)="consultaBeneficiario()">
         <div [formGroup]="consultaForm">
-            <mat-form-field appearance="fill">
-                <mat-label>CPF ou NIS do beneficiário</mat-label>
-                <input matInput maxlength="11" [formControl]="cpfOuNis" type="text">
-                <mat-error *ngIf="cpfOuNis.invalid">{{getErrorMessage()}}</mat-error>
-            </mat-form-field>
-            <mat-divider [inset]='true'></mat-divider>
-            <mat-form-field>
-                <mat-label>Mês de referência</mat-label>
-                <input matInput [min]="minDate" [max]="maxDate" [matDatepicker]="dp" [formControl]="date">
-                <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-                <mat-datepicker #dp startView="multi-year" (yearSelected)="chosenYearHandler($event)"
-                    (monthSelected)="chosenMonthHandler($event, dp)" panelClass="example-month-picker">
-                </mat-datepicker>
-            </mat-form-field>
-            <button mat-icon-button type="submit" aria-label="Consulta Benefícios"
-                [disabled]="consultaForm.invalid">
-                <mat-icon>search</mat-icon>
-            </button>
+            <div class="form-group row col-lg-2 ml-1 mt-3">
+                <label>CPF ou NIS do beneficiário</label>
+                <input matInput maxlength="14" mask="000.000.000-00" [formControl]="cpfOuNis" (keyup)="ativarNovaConsulta()" type="text">
+                <small class="form-text text-danger" *ngIf="cpfOuNis.invalid">{{getErrorMessage()}}</small>
+            </div>
+            <div class="form-group row ml-1 mt-1">
+                <div class=col-lg-2>
+                    <label>Mês de referência</label>
+                    <input type="text" [formControl]="mesReferencia" mask="00/0000">
+                </div>
+
+                <div style="align-self: center;">
+                    <button mat-icon-button type="submit" aria-label="Consulta Benefícios"
+                        [disabled]="consultaForm.invalid || emConsulta">
+                        <mat-icon [inline]="true" style="font-size: xx-large;">search</mat-icon>
+                    </button>
+                </div>
+            </div>
         </div>
     </form>
 
@@ -65,11 +65,36 @@
                     </tr>
                 </table>
             </mat-card-content>
+            <div>
+                <p>Auxílio Emergencial</p>
+                <div class="row">
+                    <span class="col-lg-1">Mês </span>
+                    <span class="col-lg-2">Valor recebido </span>
+                </div>
+                <div *ngFor="let auxilio of auxilios">
+                    <div class="row">
+                        <span class="col-lg-1">{{auxilio?.mesDisponibilizacao}} </span>
+                        <span class="col-lg-2">{{auxilio?.valor | currency:'BRL' }} </span>
+                    </div>
+                </div>
+            </div>
         </mat-card>
 
     </div>
 
-    <div *ngIf=!consultaBFDisponivel>
+    <div *ngIf="!consultaBFDisponivel && !emConsulta">
         <h5>Consulta não realizada ou dados não disponíveis</h5>
+    </div>
+    <div *ngIf="waitingGovBr">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Buscando dados em gov.br ...</span>
+        </div>
+        <span class="ml-3">Buscando dados em gov.br ...</span>
+    </div>
+    <div *ngIf="waitingGovDf">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Buscando dados em gov.df ...</span>
+        </div>
+        <span class="ml-3">Buscando dados em gov.df ...</span>
     </div>
 </div>

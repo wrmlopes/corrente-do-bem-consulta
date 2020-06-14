@@ -39,7 +39,7 @@ export class ConsultaBeneficiosBrService {
   }
 
   getAuxilioEmergencial(cpfBeneficiario: string): Observable<AuxilioEmergencial[]> {
-    const url = this.urlTransparencia + this.endpointBF +
+    const url = this.urlTransparencia + this.endpointAuxiliEmergencial +
       '?codigoBeneficiario=' + cpfBeneficiario + '&pagina=1';
 
     return this.http.get<AuxilioEmergencial[]>(url).pipe(
