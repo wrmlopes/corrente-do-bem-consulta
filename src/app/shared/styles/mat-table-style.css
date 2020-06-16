@@ -1,0 +1,10 @@
+.td-action{
+    text-align: center;
+    width: 6em;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.table{
+    table-layout: auto;
+}

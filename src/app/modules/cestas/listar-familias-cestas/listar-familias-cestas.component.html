@@ -1,3 +1,72 @@
 <div>
     <h2>Famílias e Cestas</h2>
+
+    <div>
+        <div>
+            <mat-label>Filtro </mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. nome, código da família ou situação"
+                class="mr-3 col-lg-5">
+        </div>
+        <table mat-table #tblfamiliacestas [dataSource]="familiasCestas" matSort
+            class="table table-striped table-sm mt-2">
+
+            <ng-container matColumnDef="codfamilia">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+                <td mat-cell *matCellDef="let element">{{element.codfamilia}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="nome">
+                <th mat-header-cell *matHeaderCellDef>Nome</th>
+                <td mat-cell *matCellDef='let element'>{{element.nome}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="data">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Data cadastro</th>
+                <td mat-cell *matCellDef='let element'>{{element.data | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Situação</th>
+                <td mat-cell *matCellDef='let element'>{{element.status}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="qtcestas">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Cestas</th>
+                <td mat-cell *matCellDef='let element'>{{element.qtcestas}}
+                    <button mat-icon-button title="Detalhar cestas" (click)="detalharCestas(element)"
+                        class="mat-button">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acao">
+                <th mat-header-cell *matHeaderCellDef>
+                    <mat-icon title="Menu" (click)="menuGrid()" style="cursor:pointer" class="td-action mat-icon">
+                        menu
+                    </mat-icon>
+                </th>
+                <td mat-cell *matCellDef="let element" class="td-action">
+                    <button mat-icon-button title="Detalhar família" (click)="detalharFamilia(element)"
+                        class="mat-button">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[3, 5, 10]" showFirstLastButtons></mat-paginator>
+        <div *ngIf="waiting">
+            <div class="row mt-3 justify-content-center">
+                <div class="mt-2 text-center align-middle">
+                    <span class="row">Aguarde o carregamento dos dados</span>
+                    <div class="row spinner-border text-success" role="status">
+                        <span class="sr-only">Aguarde o carregamento dos dados ...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

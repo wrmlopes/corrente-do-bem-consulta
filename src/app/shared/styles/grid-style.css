@@ -1,0 +1,58 @@
+@import './mat-table-style.css';
+
+.mat-row:nth-child(even){
+    background-color: #eaf5f1;
+    }
+
+.mat-row.selected{
+    outline-style: auto;
+    }
+
+.mat-row{
+    height: 2.1em;
+}
+
+.mat-header-row{
+    height: 2.1em;
+}
+
+::ng-deep .mat-checkbox-checked .mat-checkbox-background, .mat-checkbox-indeterminate .mat-checkbox-background {
+    background-color: rgb(38, 185, 185) !important;
+}
+
+.mat-cell:first-of-type, .mat-header-cell:first-of-type {
+    padding-left: 1em !important;
+}
+
+.mat-cell, .mat-header-cell {
+    padding-left: 1em !important;
+    vertical-align: middle !important;
+}
+
+::ng-deep .mat-form-field-wrapper{
+    margin-bottom: -1.25em;
+}
+
+::ng-deep .mat-form-field-underline{
+    display: none;
+}
+
+ ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+    background: none;
+}
+
+.mat-error{
+    display: none;
+}
+
+.red-icon {
+    color: rgba(197, 5, 5, 0.952)
+}
+
+.green-icon {
+    color: rgba(48, 212, 7, 0.952)
+}
+
+.mat-icon {
+    vertical-align: middle;
+}

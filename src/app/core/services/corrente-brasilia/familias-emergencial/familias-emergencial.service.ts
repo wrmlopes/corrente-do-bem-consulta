@@ -8,11 +8,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FamiliasEmergencialService {
-
   constructor(private http: HttpClient) { }
 
   private correnteBrasiliaUrl = environment.apiUrlCorrenteBrasilia;
-  private endpointService = this.correnteBrasiliaUrl + '/familias-emergencial';
+  private familiaEmergencialService = this.correnteBrasiliaUrl + '/familias-emergencial';
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -20,12 +19,12 @@ export class FamiliasEmergencialService {
 
   incluirFamiliaEmergencial(familia: FamiliaEmergencial): Observable<FamiliaEmergencial> {
     return this.http
-      .post<FamiliaEmergencial>(this.endpointService, familia, this.httpOptions);
+      .post<FamiliaEmergencial>(this.familiaEmergencialService, familia, this.httpOptions);
   }
 
   atualizarFamiliaEmergencial(familia: FamiliaEmergencial): Observable<FamiliaEmergencial> {
     return this.http
-      .put<FamiliaEmergencial>(this.endpointService + '/' + familia.codfamilia, familia, this.httpOptions);
+      .put<FamiliaEmergencial>(this.familiaEmergencialService + '/' + familia.codfamilia, familia, this.httpOptions);
   }
 
   recuperarFamiliaEmergencialCPFNomeDataNascto(cpf?: string, nome?:string, dataNascto?:string): Observable<FamiliaEmergencial[]> {
@@ -55,7 +54,7 @@ export class FamiliasEmergencialService {
     console.log('params', params);
 
     return this.http
-      .get<FamiliaEmergencial[]>(this.endpointService, {params});
+      .get<FamiliaEmergencial[]>(this.familiaEmergencialService, {params});
   }
 
   recuperarFamiliaEmergencialNaFilaDeAtendimento(): Observable<FamiliaEmergencial[]> {
@@ -66,6 +65,13 @@ export class FamiliasEmergencialService {
     .append('filter', JSON.stringify({where}));
     
     return this.http
-      .get<FamiliaEmergencial[]>(this.endpointService, {params});
+      .get<FamiliaEmergencial[]>(this.familiaEmergencialService, {params});
+    }
+    
+    recuperarFamiliasEmergencial(): Observable<FamiliaEmergencial[]> {
+      return this.http
+        .get<FamiliaEmergencial[]>(this.familiaEmergencialService);
   }
+
+
 }
