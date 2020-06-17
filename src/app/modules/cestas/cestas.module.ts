@@ -18,9 +18,10 @@ import { FamiliaModalComponent } from './familia-modal/familia-modal/familia-mod
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { EncaminharModalComponent } from './encaminhar-modal/encaminhar-modal.component';
 
 @NgModule({
-  declarations: [ListarFamiliasCestasComponent, FamiliaModalComponent],
+  declarations: [ListarFamiliasCestasComponent, FamiliaModalComponent, EncaminharModalComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -38,7 +39,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
   ],
   entryComponents: [
-    FamiliaModalComponent
+    FamiliaModalComponent,
+    EncaminharModalComponent,
   ]
 })
 export class CestasModule { }

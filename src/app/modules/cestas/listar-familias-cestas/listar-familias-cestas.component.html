@@ -16,7 +16,7 @@
             </ng-container>
 
             <ng-container matColumnDef="cpf">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>CPF</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header >CPF</th>
                 <td mat-cell *matCellDef="let element">{{element.cpf}}</td>
             </ng-container>
 
@@ -54,8 +54,30 @@
                 <td mat-cell *matCellDef="let element" class="td-action">
                     <button mat-icon-button title="Detalhar família" (click)="detalharFamilia(element)"
                         class="mat-button">
-                        <mat-icon>search</mat-icon>
+                        <mat-icon>person_search</mat-icon>
                     </button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acao_direita">
+                <th mat-header-cell *matHeaderCellDef>
+                    <mat-icon title="Incluir" (click)="menuGrid()" style="cursor:pointer" class="td-action mat-icon">
+                        add
+                    </mat-icon>
+                </th>
+                <td mat-cell *matCellDef="let element" class="td-action">
+                    <button mat-icon-button title="Encaminhar" (click)="encaminharFamilia(element)"
+                        [disabled]="element.familia.status!=6"
+                        class="mat-button"
+                        *ngIf="element.familia.status!=4; else cancelaEncaminhamento">
+                        <mat-icon>contacts</mat-icon>
+                    </button>
+                    <ng-template #cancelaEncaminhamento>
+                        <button mat-icon-button title="Cancela encaminhamento" (click)="cancelarEncaminhamento(element)"
+                            class="mat-button">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                    </ng-template>
                 </td>
             </ng-container>
 

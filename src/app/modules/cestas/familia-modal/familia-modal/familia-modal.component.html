@@ -22,14 +22,15 @@
                     <label for="nomeResponsavel">Nome</label>
                     <input type="string" [formControl]="nomeResponsavel" class="form-control text-uppercase"
                         id="nomeResponsavel" aria-describedby="nomehint">
-                    <small id="nomehint" class="form-text text-muted">Informe o nome completo do responsável.</small>
+                    <small *ngIf="cadastroForm.get('nomeResponsavel').errors?.required" id="nomehint"
+                        class="form-text text-danger">Nome completo deve ser informado !!!</small>
                 </div>
 
                 <div class="form-group row col-lg-4">
                     <label for="dataNascto">Data de Nascimento</label>
                     <input type="date" [formControl]="dataNascto" class="form-control" id="dataNascto"
                         aria-describedby="nasctohint">
-                    <small *ngIf="cadastroForm.get('dataNascto').errors?.required" id="cpfResphint"
+                    <small *ngIf="cadastroForm.get('dataNascto').errors?.required" id="dataNasctohint"
                         class="form-text text-danger">Data de nascimento deve ser informada</small>
                 </div>
 
@@ -50,7 +51,8 @@
                     <label for="endereco">Endereço completo</label>
                     <input type="text" [formControl]="endereco" class="form-control" id="endereco"
                         aria-describedby="enderecohint">
-                    <small id="enderecohint" class="form-text text-muted">Informe o endereço.</small>
+                    <small *ngIf="cadastroForm.get('endereco').errors?.required" id="enderecohint"
+                        class="form-text text-danger">Endereço deve ser informado</small>
                 </div>
 
                 <div class="form-group row col-lg-10">
@@ -68,16 +70,17 @@
                     <small id="cidadehint" class="form-text text-muted">Informe a cidade ou região.</small>
                 </div>
 
-                <div class="form-group row col-lg-3">
+                <div class="form-group row col-lg-4">
                     <label for="quantidade">Total de pessoas na família</label>
                     <input type="number" [formControl]="quantidade" class="form-control" id="quantidade"
                         aria-describedby="quantidadehint">
                     <small *ngIf="cadastroForm.get('quantidade').errors?.min" class="form-text text-danger">Quantidade
-                        de
-                        pessoas na família deve ser informada</small>
+                        de pessoas na família deve ser miaor do que ZERO</small>
+                    <small *ngIf="cadastroForm.get('quantidade').errors?.required" class="form-text text-danger">Quantidade
+                        de pessoas na família deve ser informada</small>
                 </div>
 
-                <div class="form-group row col-lg-3">
+                <div class="form-group row col-lg-4">
                     <label for="quantcriancas">Total de crianças na residência</label>
                     <input type="number" mask="99" [formControl]="quantcriancas" class="form-control" id="quantcriancas"
                         aria-describedby="quantcriancashint">
@@ -134,31 +137,18 @@
                         Deseja auxílio espiritual (oração e Palavra).
                     </label>
                 </div>
-
-                <!-- <div class="form-group row col-lg-5">
-                    <label for="recebeAuxGoverno">Recebe auxílio do governo</label>
-                    <select multiple class="form-control" [formControl]="recebeAuxGoverno" id="recebeauxgoverno">
-                        <option *ngFor="let recebeAuxGoverno of auxGoverno" [value]="recebeAuxGoverno">
-                            {{recebeAuxGoverno}}
-                        </option>
-                    </select>
-                </div> -->
-
-                <button type="submit" aria-label="Salva as alterações" [disabled]="cadastroForm.invalid"
-                    class="btn btn-outline-primary" style="cursor: pointer;">
-                    {{cadastroForm.invalid ? "Preencha os campos obrigatórios para salvar" : "Salvar"}}
-                </button>
-
-                <button type="button" aria-label="Grava dados do pré-cadastro" 
-                    class="btn btn-outline-danger ml-4" style="cursor: pointer;"
-                    (click)="onNoClick()">
-                    "Cancelar"
-                </button>
             </div>
         </form>
     </div>
 </div>
 <div mat-dialog-actions align="center">
-    <button mat-raised-button [mat-dialog-close]="data" cdkFocusInitial class="button"> Voltar </button>
-    <!-- <button mat-raised-button (click)="onNoClick()">Cancelar</button> -->
+    <button type="button" aria-label="Salva as alterações" [disabled]="cadastroForm.invalid"
+        class="btn btn-outline-primary" style="cursor: pointer;" (click)="submitFormulario()">
+        {{cadastroForm.invalid ? "Preencha os campos obrigatórios para salvar" : "Salvar"}}
+    </button>
+
+    <button type="button" aria-label="Fecha a janela sem gravar os dados !!!" class="btn btn-outline-danger ml-4"
+        style="cursor: pointer;" (click)="onNoClick()">
+        Cancelar
+    </button>
 </div>

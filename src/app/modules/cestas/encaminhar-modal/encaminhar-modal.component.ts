@@ -1,20 +1,20 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FamiliaModalComponent } from '../familia-modal/familia-modal/familia-modal.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
-import { MensagemBarraService } from '../../../../core/services/mensagem-barra/mensagem-barra.service';
-import { cpfValidator } from '../../../../core/validators/cpfValidator';
-import { dateTimeTZToDate, novaDataString } from 'src/app/core/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
+import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensagem-barra.service';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
+import { cpfValidator } from 'src/app/core/validators/cpfValidator';
+import { dateTimeTZToDate, novaDataString } from 'src/app/core/utils/mylibs';
 
 @Component({
-  selector: 'app-familia-modal',
-  templateUrl: './familia-modal.component.html',
-  styleUrls: ['./familia-modal.component.css']
+  selector: 'app-encaminhar-modal',
+  templateUrl: './encaminhar-modal.component.html',
+  styleUrls: ['./encaminhar-modal.component.css']
 })
-export class FamiliaModalComponent implements OnInit {
+export class EncaminharModalComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<FamiliaModalComponent>,
@@ -22,7 +22,7 @@ export class FamiliaModalComponent implements OnInit {
     private familiaEmergencialService: FamiliasEmergencialService,
     private mensagem: MensagemBarraService,
     private fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { familia: FamiliaEmergencial }
+    @Inject(MAT_DIALOG_DATA) public data: {familia: FamiliaEmergencial}
   ) {
     this.cadastroForm = fb.group({
       nomeResponsavel: this.nomeResponsavel,
@@ -44,6 +44,7 @@ export class FamiliaModalComponent implements OnInit {
       desejaAuxEspiritual: this.desejaAuxEspiritual,
       descricao: this.descricao,
       recebeAuxGoverno: this.recebeAuxGoverno,
+      voluntario: this.voluntario,
     });
     this.carregaFormulario();
   }
@@ -81,6 +82,7 @@ export class FamiliaModalComponent implements OnInit {
   desejaAuxEspiritual = new FormControl('');
   descricao = new FormControl('');
   recebeAuxGoverno = new FormControl('');
+  voluntario = new FormControl('');
 
   statussemprego = [
     'EMPREGADO',
@@ -134,6 +136,7 @@ export class FamiliaModalComponent implements OnInit {
       desejaAuxEspiritual: !!familia.deseja_aux_espiritual,
       descricao: familia.descricao,
       recebeAuxGoverno: familia.recebe_aux_governo ? familia.recebe_aux_governo.split(',') : null,
+      voluntario: familia.voluntario || ''
     });
 
   }
@@ -148,51 +151,25 @@ export class FamiliaModalComponent implements OnInit {
     this.familiaEmergencial.deseja_aux_espiritual = !!this.familiaEmergencial.deseja_aux_espiritual;
   }
 
-  submitFormulario() {
-    this.familiaEmergencial.nome = this.nomeResponsavel.value.toUpperCase();
-    this.familiaEmergencial.datanasc2 = new Date(this.dataNascto.value).toISOString();
-    this.familiaEmergencial.cpf = this.cpfResp.value;
-    this.familiaEmergencial.Telefone = this.telefone.value;
-    this.familiaEmergencial.quadra = this.endereco.value;
-    this.familiaEmergencial.cidade = this.cidade.value;
-    this.familiaEmergencial.referencia_endereco = this.referencia.value;
-    this.familiaEmergencial.quantcriancas = parseInt(this.quantcriancas.value);
-    this.familiaEmergencial.quantidade = parseInt(this.quantidade.value);
-    this.familiaEmergencial.Conjuge = this.nomeConjuge.value.toUpperCase();
-    this.familiaEmergencial.cpf_conjuge = this.cpfConjuge.value;
-    this.familiaEmergencial.data_nasc_conjuge = novaDataString(this.dataNasctoConjuge.value);
-    this.familiaEmergencial.tipo_moradia = this.tipomoradia.value;
-    this.familiaEmergencial.status_emprego = this.statusemprego.value;
-    this.familiaEmergencial.data_status_emprego = novaDataString(this.dtstatusemprego.value);
-    this.familiaEmergencial.deseja_msg = !!this.desejaMsg.value;
-    this.familiaEmergencial.deseja_aux_espiritual = !!this.desejaAuxEspiritual.value;
-    this.familiaEmergencial.descricao = this.descricao.value;
-    this.familiaEmergencial.recebe_aux_governo = this.recebeAuxGoverno.value ? this.recebeAuxGoverno.value.toString() : '';
-    this.familiaEmergencial.status = 7;
+  encaminharParaAtendimento() {
 
     if (this.familiaEmergencial.codfamilia) {
+      this.familiaEmergencial.status = 4;
+      this.familiaEmergencial.voluntario = this.voluntario.value;
+
       this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
           console.log('dados atualizados');
-          this.mensagem.exibeMensagemBarra('Cadastro atualizado com sucesso.', 'sucesso');
+          this.mensagem.exibeMensagemBarra('Família encaminhada com sucesso.', 'sucesso');
           this.fechadialogo(this.familiaEmergencial);
         },
           error => {
-            this.mensagem.exibeMensagemBarra('Erro ao salvar os dados da família !!!', 'erro');
+            this.mensagem.exibeMensagemBarra('Erro ao encaminhar família para atendimento !!!', 'erro');
             console.log('error: ', error);
           })
-    } else {
-      this.familiaEmergencial.data = new Date().toISOString();
-      this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
-        .subscribe((data: FamiliaEmergencial) => {
-          this.mensagem.exibeMensagemBarra('Família incluída com sucesso.', 'sucesso');
-          this.fechadialogo(this.familiaEmergencial);
-        },
-          error => {
-            this.mensagem.exibeMensagemBarra('Erro ao incluir os dados da família !!!');
-            console.log('error: ', error);
-          })
+        } else {
+          this.mensagem.exibeMensagemBarra('Erro ao encaminhar família para atendimento !!!');
     }
   }
 
@@ -216,23 +193,6 @@ export class FamiliaModalComponent implements OnInit {
     }
 
     return this.cpfResp.hasError('cpf_invalido') ? 'CPF não é válido' : null;
-  }
-
-  getErrorCpfConjuge() {
-    if (!this.cpfConjuge.value) return null;
-    if (this.cpfConjuge.hasError('required')) {
-      return 'Informe o CPF';
-    }
-
-    if (this.cpfConjuge.hasError('minlength')) {
-      return 'Informe todos os números do CPF';
-    }
-
-    if (this.cpfConjuge.hasError('pattern')) {
-      return 'Informe apenas números';
-    }
-
-    return this.cpfConjuge.hasError('cpf_invalido') ? 'CPF não é válido' : null;
   }
 
 }

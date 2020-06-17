@@ -11,6 +11,7 @@ import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasi
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { DatePipe } from '@angular/common';
 import { NavigationEnd, Router, ActivatedRoute } from '@angular/router';
+import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensagem-barra.service';
 
 
 export const MY_FORMATS = {
@@ -37,6 +38,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     private consultaBeneficioDfService: ConsultaBeneficiosDfService,
     private consultaBeneficiosBrService: ConsultaBeneficiosBrService,
     private familiaEmergencialService: FamiliasEmergencialService,
+    private mensagem: MensagemBarraService,
     private _snackBar: MatSnackBar,
     private datePipe: DatePipe,
     private route: ActivatedRoute,
@@ -182,7 +184,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
           console.log('dados atualizados');
-          this.exibeMensagem('Cadastro atualizado com sucesso.')
+          this.mensagem.exibeMensagemBarra('Cadastro atualizado com sucesso.', 'sucesso');
           this.inicializaFormulario();
         },
           error => {
@@ -193,7 +195,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
       this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
         .subscribe((data: FamiliaEmergencial) => {
           console.log('data: ', data);
-          this.exibeMensagem('Família incluída com sucesso.')
+          this.mensagem.exibeMensagemBarra('Família incluída com sucesso.', 'sucesso')
           this.inicializaFormulario();
 
         },
@@ -214,17 +216,17 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
         if (data.length > 0) {
           if (!data[0].status || [0, 4, 5, 7].includes(data[0].status)) {
             if (data[0].status === 0) {
-              this.exibeMensagem('Atenção !! Esse responsável já está cadastrado. Você poderá fazer alterações nesse cadastro.');
+              this.mensagem.exibeMensagemBarra('Atenção !! Você fará alterações nesse cadastro.', 'sucesso');
             }
           } else {
-            this.exibeMensagem(`Família já possui cadastro validado. Alterações não permitidas !!!`, 'erro');
+            this.mensagem.exibeMensagemBarra(`Família já possui cadastro validado. Alterações não permitidas !!!`, 'erro', 10000);
             this.inicializaFormulario();
             return;
           }
           this.familiaEmergencial = data[0];
           this.carregaDadosFamiliaEmergencial(this.familiaEmergencial);
         } else {
-          this.exibeMensagem('Não encontrados dados desta família !!! Prossiga com o cadastramento.', 'sucesso')
+          this.mensagem.exibeMensagemBarra('Você irá incluir os dados desta família.', 'sucesso')
         }
       },
         error => {
@@ -323,16 +325,6 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     }
 
     return this.cpfConjuge.hasError('cpf_invalido') ? 'CPF não é válido' : null;
-  }
-
-  exibeMensagem(mensagem: string, tipo: string = 'sucesso') {
-    console.log('tipo: ', tipo);
-    this._snackBar.open(mensagem, ' X ', {
-      duration: 8000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      panelClass: [tipo],
-    });
   }
 
   private inicializaFormulario() {

@@ -10,6 +10,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { FamiliaModalComponent } from '../familia-modal/familia-modal/familia-modal.component';
 import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensagem-barra.service';
+import { EncaminharModalComponent } from '../encaminhar-modal/encaminhar-modal.component';
 
 
 interface FamiliaCestas {
@@ -45,7 +46,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
   familiasCestas: MatTableDataSource<FamiliaCestas>;
   displayedColumns: string[] = [
-    'acao', 'nome', 'cpf', 'data', 'status', 'qtcestas'
+    'acao', 'nome', 'cpf', 'data', 'status', 'qtcestas', 'acao_direita'
   ]
 
   waiting: boolean;
@@ -151,6 +152,25 @@ export class ListarFamiliasCestasComponent implements OnInit {
       })
   }
 
+  encaminharFamilia(elemento: FamiliaCestas){
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = { familia: elemento.familia };
+    dialogConfig.width = "900px";
+
+    const dialogRef = this.dialog.open(EncaminharModalComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .subscribe(result => {
+        console.log('result: ', result);
+        if (result) {
+          this.atualizaFamiliaNoDatasource(result);
+        }
+      })
+
+  }
+
   private atualizaFamiliaNoDatasource(result: FamiliaEmergencial | undefined) {
     const dataPrev: FamiliaCestas[] = this.familiasCestas.data;
     let index = dataPrev.findIndex( familiaCesta => familiaCesta.familia.codfamilia == result.codfamilia);
@@ -168,7 +188,11 @@ export class ListarFamiliasCestasComponent implements OnInit {
   }
 
   detalharCestas(elemento){
+    this.emBreve();
+  }
 
+  private emBreve() {
+    this.mensagem.exibeMensagemBarra('Estamos trabalhando nisso. Aguarde !!!', 'sucesso');
   }
 
   menuGrid(){
@@ -178,6 +202,23 @@ export class ListarFamiliasCestasComponent implements OnInit {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.familiasCestas.filter = filterValue.trim().toUpperCase();
+  }
+
+  cancelarEncaminhamento(element: FamiliaCestas) {
+    if (confirm("A família voltará para a Fila de Atendimento. Confirma ?")) {
+      const familia: FamiliaEmergencial = element.familia;
+      familia.status = 6; // fila de espera
+      familia.dataAtualizacao = new Date().toISOString();
+      this.familiaEmergencialService.atualizarFamiliaEmergencial(familia)
+        .subscribe(
+          () => {
+            this.atualizaFamiliaNoDatasource(familia);
+          },
+          error => console.log('erro: ', error)
+        )
+    } else {
+      this.mensagem.exibeMensagemBarra('Encaminhamento não cancelado !!!', 'sucesso', 2000);
+    }
   }
 
 }
