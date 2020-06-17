@@ -14,6 +14,7 @@ import { FamiliaModalComponent } from '../familia-modal/familia-modal/familia-mo
 interface FamiliaCestas {
   codfamilia: number,
   nome: string,
+  cpf: string, 
   data: string,
   status: string,
   qtcestas: number,
@@ -40,9 +41,9 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
   ) { }
 
-  familiasCestas: MatTableDataSource<any>;
+  familiasCestas: MatTableDataSource<FamiliaCestas>;
   displayedColumns: string[] = [
-    'acao', 'codfamilia', 'nome', 'data', 'status', 'qtcestas'
+    'acao', 'nome', 'cpf', 'data', 'status', 'qtcestas'
   ]
 
   waiting: boolean;
@@ -82,6 +83,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
           dataPrev.push({
             codfamilia: familia.codfamilia,
             nome: familia.nome,
+            cpf: familia.cpf,
             data: familia.data,
             qtcestas: cestas.length,
             status: this.getStatus(familia.status),
