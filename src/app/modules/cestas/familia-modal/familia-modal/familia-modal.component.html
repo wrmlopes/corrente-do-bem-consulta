@@ -144,9 +144,15 @@
                     </select>
                 </div> -->
 
-                <button type="submit" aria-label="Grava dados do pré-cadastro" [disabled]="cadastroForm.invalid"
+                <button type="submit" aria-label="Salva as alterações" [disabled]="cadastroForm.invalid"
                     class="btn btn-outline-primary" style="cursor: pointer;">
-                    {{cadastroForm.invalid ? "Preencha os campos obrigatórios para salvar" : "Salva os dados da família"}}
+                    {{cadastroForm.invalid ? "Preencha os campos obrigatórios para salvar" : "Salvar"}}
+                </button>
+
+                <button type="button" aria-label="Grava dados do pré-cadastro" 
+                    class="btn btn-outline-danger ml-4" style="cursor: pointer;"
+                    (click)="onNoClick()">
+                    "Cancelar"
                 </button>
             </div>
         </form>

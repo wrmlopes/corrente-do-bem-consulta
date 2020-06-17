@@ -1,13 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-
+import { MensagemBarraService } from '../../../../core/services/mensagem-barra/mensagem-barra.service';
 import { cpfValidator } from '../../../../core/validators/cpfValidator';
 import { dateTimeTZToDate, novaDataString } from 'src/app/core/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-familia-modal',
@@ -20,6 +20,7 @@ export class FamiliaModalComponent implements OnInit {
     public dialogRef: MatDialogRef<FamiliaModalComponent>,
     private _snackBar: MatSnackBar,
     private familiaEmergencialService: FamiliasEmergencialService,
+    private mensagem: MensagemBarraService,
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: {familia: FamiliaEmergencial}
   ) {
@@ -174,33 +175,30 @@ export class FamiliaModalComponent implements OnInit {
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
           console.log('dados atualizados');
-          this.exibeMensagem('Cadastro atualizado com sucesso.')
+          this.mensagem.exibeMensagemBarra('Cadastro atualizado com sucesso.');
+          this.fechadialogo(this.familiaEmergencial);
         },
           error => {
+            this.mensagem.exibeMensagemBarra('Erro ao salvar os dados da família !!!');
             console.log('error: ', error);
           })
-    } else {
-      this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
-        .subscribe((data: FamiliaEmergencial) => {
-          console.log('data: ', data);
-          this.exibeMensagem('Família incluída com sucesso.')
-        },
+        } else {
+          this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
+          .subscribe((data: FamiliaEmergencial) => {
+            this.mensagem.exibeMensagemBarra('Família incluída com sucesso.', 'sucesso');
+            this.fechadialogo(this.familiaEmergencial);
+          },
           error => {
+            this.mensagem.exibeMensagemBarra('Erro ao incluir os dados da família !!!');
             console.log('error: ', error);
           })
     }
   }
 
-  exibeMensagem(mensagem: string, tipo: string = 'sucesso') {
-    console.log('tipo: ', tipo);
-    this._snackBar.open(mensagem, ' X ', {
-      duration: 8000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      panelClass: [tipo],
-    });
-  }
 
+  private fechadialogo(dataRetorno: any) {
+    this.dialogRef.close(dataRetorno);
+  }
 
   getErrorCpfResp() {
     if (!this.cpfResp.value) return null;

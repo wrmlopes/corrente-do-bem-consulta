@@ -1,0 +1,29 @@
+::ng-deep .snack-sucesso {
+    background-color: green !important;
+    color: white !important;
+  }
+
+  ::ng-deep .snack-sucesso button {
+    background-color: green !important;
+    color: white !important;
+  }
+
+  ::ng-deep .snack-alerta {
+    background-color: yellow !important;
+    color: black !important;
+  }
+
+  ::ng-deep .snack-alerta button {
+    background-color: yellow !important;
+    color: black !important;
+  }
+
+  ::ng-deep .snack-erro {
+    background-color: red !important;
+    color: white !important;
+  }
+
+  ::ng-deep .snack-error button {
+    background-color: red !important;
+    color: white !important;
+  }

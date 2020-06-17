@@ -9,6 +9,7 @@ import { FamiliaEmergencialCestasBasicasService } from 'src/app/core/services/co
 import { MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { FamiliaModalComponent } from '../familia-modal/familia-modal/familia-modal.component';
+import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensagem-barra.service';
 
 
 interface FamiliaCestas {
@@ -37,6 +38,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
     private cestasBasicasService: CestasBasicasService,
     private cestasDaFamiliaService: FamiliaEmergencialCestasBasicasService,
     private changeDetectorRefs: ChangeDetectorRef,
+    private mensagem: MensagemBarraService,
     private dialog: MatDialog,
 
   ) { }
@@ -138,10 +140,31 @@ export class ListarFamiliasCestasComponent implements OnInit {
     dialogConfig.data = { familia: elemento.familia };
     dialogConfig.width = "900px";
 
-    this.dialog.open(FamiliaModalComponent, dialogConfig);
+    const dialogRef = this.dialog.open(FamiliaModalComponent, dialogConfig);
 
+    dialogRef.afterClosed()
+      .subscribe(result => {
+        console.log('result: ', result);
+        if (result) {
+          this.atualizaFamiliaNoDatasource(result);
+        }
+      })
+  }
 
-
+  private atualizaFamiliaNoDatasource(result: FamiliaEmergencial | undefined) {
+    const dataPrev: FamiliaCestas[] = this.familiasCestas.data;
+    let index = dataPrev.findIndex( familiaCesta => familiaCesta.familia.codfamilia == result.codfamilia);
+    if (index != -1) {
+      dataPrev[index].codfamilia = result.codfamilia;
+      dataPrev[index].nome = result.nome;
+      dataPrev[index].cpf = result.cpf;
+      dataPrev[index].data = result.data;
+      dataPrev[index].status = this.getStatus(result.status);
+      dataPrev[index].familia = result;
+      this.familiasCestas.data = dataPrev;
+    } else {
+      this.mensagem.exibeMensagemBarra('Não foi possível atualizar dados do grid. Recarregue a página.');
+    }
   }
 
   detalharCestas(elemento){
