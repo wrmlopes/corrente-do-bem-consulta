@@ -175,10 +175,10 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     this.familiaEmergencial.deseja_aux_espiritual = !!this.desejaAuxEspiritual.value;
     this.familiaEmergencial.descricao = this.descricao.value;
     this.familiaEmergencial.recebe_aux_governo = this.recebeAuxGoverno.value ? this.recebeAuxGoverno.value.toString() : '';
-    this.familiaEmergencial.data = new Date().toISOString();
+    this.familiaEmergencial.status = 7;
 
     if (this.familiaEmergencial.codfamilia) {
-
+      this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
           console.log('dados atualizados');
@@ -189,6 +189,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
             console.log('error: ', error);
           })
     } else {
+      this.familiaEmergencial.data = new Date().toISOString();
       this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
         .subscribe((data: FamiliaEmergencial) => {
           console.log('data: ', data);
