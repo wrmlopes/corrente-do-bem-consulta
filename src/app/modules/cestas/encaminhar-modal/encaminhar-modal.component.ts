@@ -7,7 +7,7 @@ import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensa
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { cpfValidator } from 'src/app/core/validators/cpfValidator';
-import { dateTimeTZToDate, novaDataString } from 'src/app/core/utils/mylibs';
+import { dateTimeTZToDate, novaDataString, consolelog } from 'src/app/shared/utils/mylibs';
 
 @Component({
   selector: 'app-encaminhar-modal',
@@ -18,10 +18,9 @@ export class EncaminharModalComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<FamiliaModalComponent>,
-    private _snackBar: MatSnackBar,
     private familiaEmergencialService: FamiliasEmergencialService,
     private mensagem: MensagemBarraService,
-    private fb: FormBuilder,
+    fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: {familia: FamiliaEmergencial}
   ) {
     this.cadastroForm = fb.group({
@@ -100,7 +99,7 @@ export class EncaminharModalComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    console.log('data init: ', this.data);
+    consolelog('data init: ', this.data);
     // this.carregaFormulario();
   }
 
@@ -109,13 +108,13 @@ export class EncaminharModalComponent implements OnInit {
   }
 
   private carregaFormulario() {
-    console.log('data carga: ', this.data);
+    consolelog('data carga: ', this.data);
 
     this.familiaEmergencial = this.data.familia;
     let familia = this.data.familia;
     this.normalizaFamilia();
 
-    console.log('date type: ', typeof familia.datanasc2);
+    consolelog('date type: ', typeof familia.datanasc2);
     this.cadastroForm.patchValue({
       cpfResp: familia.cpf,
       nomeResponsavel: familia.nome,
@@ -160,13 +159,13 @@ export class EncaminharModalComponent implements OnInit {
       this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
-          console.log('dados atualizados');
+          consolelog('dados atualizados');
           this.mensagem.exibeMensagemBarra('Família encaminhada com sucesso.', 'sucesso');
           this.fechadialogo(this.familiaEmergencial);
         },
           error => {
             this.mensagem.exibeMensagemBarra('Erro ao encaminhar família para atendimento !!!', 'erro');
-            console.log('error: ', error);
+            consolelog('error: ', error);
           })
         } else {
           this.mensagem.exibeMensagemBarra('Erro ao encaminhar família para atendimento !!!');

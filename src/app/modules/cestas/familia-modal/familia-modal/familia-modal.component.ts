@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { MensagemBarraService } from '../../../../core/services/mensagem-barra/mensagem-barra.service';
 import { cpfValidator } from '../../../../core/validators/cpfValidator';
-import { dateTimeTZToDate, novaDataString } from 'src/app/core/utils/mylibs';
+import { dateTimeTZToDate, novaDataString, consolelog } from 'src/app/shared/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
 
 @Component({
@@ -98,7 +98,7 @@ export class FamiliaModalComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    console.log('data init: ', this.data);
+    consolelog('data init: ', this.data);
     // this.carregaFormulario();
   }
 
@@ -107,13 +107,13 @@ export class FamiliaModalComponent implements OnInit {
   }
 
   private carregaFormulario() {
-    console.log('data carga: ', this.data);
+    consolelog('data carga: ', this.data);
 
     this.familiaEmergencial = this.data.familia;
     let familia = this.data.familia;
     this.normalizaFamilia();
 
-    console.log('date type: ', typeof familia.datanasc2);
+    consolelog('date type: ', typeof familia.datanasc2);
     this.cadastroForm.patchValue({
       cpfResp: familia.cpf,
       nomeResponsavel: familia.nome,
@@ -174,13 +174,13 @@ export class FamiliaModalComponent implements OnInit {
       this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
-          console.log('dados atualizados');
+          consolelog('dados atualizados');
           this.mensagem.exibeMensagemBarra('Cadastro atualizado com sucesso.', 'sucesso');
           this.fechadialogo(this.familiaEmergencial);
         },
           error => {
             this.mensagem.exibeMensagemBarra('Erro ao salvar os dados da família !!!', 'erro');
-            console.log('error: ', error);
+            consolelog('error: ', error);
           })
     } else {
       this.familiaEmergencial.data = new Date().toISOString();
@@ -191,7 +191,7 @@ export class FamiliaModalComponent implements OnInit {
         },
           error => {
             this.mensagem.exibeMensagemBarra('Erro ao incluir os dados da família !!!');
-            console.log('error: ', error);
+            consolelog('error: ', error);
           })
     }
   }

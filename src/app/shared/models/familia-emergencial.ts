@@ -1,3 +1,5 @@
+import { CestaBasica } from './cesta-basica';
+
 export interface FamiliaEmergencial {
     codfamilia?: number,
     nome?: string,
@@ -23,5 +25,6 @@ export interface FamiliaEmergencial {
     status?: number,
     recebe_aux_governo?: string, 
     dataAtualizacao?: string,
-    voluntario?: string,   
+    voluntario?: string,
+    cestasBasicasDaFamilia?: CestaBasica[]
 }

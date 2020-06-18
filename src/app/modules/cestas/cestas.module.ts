@@ -19,9 +19,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { EncaminharModalComponent } from './encaminhar-modal/encaminhar-modal.component';
+import { CestasModalComponent } from './cestas-modal/cestas-modal.component';
 
 @NgModule({
-  declarations: [ListarFamiliasCestasComponent, FamiliaModalComponent, EncaminharModalComponent],
+  declarations: [
+    ListarFamiliasCestasComponent, 
+    FamiliaModalComponent, 
+    EncaminharModalComponent, 
+    CestasModalComponent
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -41,6 +47,7 @@ import { EncaminharModalComponent } from './encaminhar-modal/encaminhar-modal.co
   entryComponents: [
     FamiliaModalComponent,
     EncaminharModalComponent,
+    CestasModalComponent,
   ]
 })
 export class CestasModule { }
