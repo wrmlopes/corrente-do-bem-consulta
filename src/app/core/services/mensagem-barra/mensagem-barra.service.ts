@@ -22,4 +22,9 @@ export class MensagemBarraService {
     this.snackBarConfig.panelClass = `snack-${tipo}`;
     this.snackBarRef = this.snackBar.open(message, 'x', this.snackBarConfig);
   }
+
+  emBreve() {
+    this.exibeMensagemBarra('Estamos trabalhando nisso. Aguarde !!!', 'sucesso');
+  }
+
 }
