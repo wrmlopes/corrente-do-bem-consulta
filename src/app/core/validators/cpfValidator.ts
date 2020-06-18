@@ -1,5 +1,5 @@
 import { AbstractControl, ValidatorFn } from '@angular/forms';
-import { validaCpf } from '../utils/mylibs';
+import { validaCpf } from '../../shared/utils/mylibs';
 
 function xcpfValidator(cb: (((_: string) => boolean))): ValidatorFn {
     return (control: AbstractControl): { [key: string]: boolean } | null => {

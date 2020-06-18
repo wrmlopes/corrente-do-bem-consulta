@@ -1,3 +1,5 @@
+import { environment } from '../../../environments/environment';
+
 export function validaCpf(inputCPF: string): boolean {
     if (!inputCPF) return true;
     let soma = 0;
@@ -51,4 +53,10 @@ export function novaDataString(dataForm: string): string {
     console.log('data: ', dataForm);
     if (!dataForm || dataForm == '' || dataForm == '0000-00-00') { return dataForm; };
     return new Date(dataForm).toISOString();
+}
+
+export function consolelog( ...args){
+    if (!environment.production) {
+        console.log( ...args );
+    }
 }
