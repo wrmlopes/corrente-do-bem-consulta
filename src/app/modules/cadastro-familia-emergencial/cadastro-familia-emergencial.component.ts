@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, FormControl, Validators, ValidatorFn, AbstractC
 
 // tslint:disable-next-line:no-duplicate-imports
 import { default as _rollupMoment } from 'moment';
-import { validaCpf, dateTimeTZToDate, novaDataString } from 'src/app/core/utils/mylibs';
+import { validaCpf, dateTimeTZToDate, novaDataString, consolelog } from 'src/app/shared/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { DatePipe } from '@angular/common';
@@ -183,24 +183,24 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
       this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
-          console.log('dados atualizados');
+          consolelog('dados atualizados');
           this.mensagem.exibeMensagemBarra('Cadastro atualizado com sucesso.', 'sucesso');
           this.inicializaFormulario();
         },
           error => {
-            console.log('error: ', error);
+            consolelog('error: ', error);
           })
     } else {
       this.familiaEmergencial.data = new Date().toISOString();
       this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
         .subscribe((data: FamiliaEmergencial) => {
-          console.log('data: ', data);
+          consolelog('data: ', data);
           this.mensagem.exibeMensagemBarra('Família incluída com sucesso.', 'sucesso')
           this.inicializaFormulario();
 
         },
           error => {
-            console.log('error: ', error);
+            consolelog('error: ', error);
           })
     }
   }
@@ -236,12 +236,12 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
   }
 
   private carregaDadosFamiliaEmergencial(data: FamiliaEmergencial) {
-    console.log('data: ', data);
+    consolelog('data: ', data);
 
     this.familiaEmergencial = data;
     this.normalizaFamilia();
 
-    console.log('date type: ', typeof data.datanasc2);
+    consolelog('date type: ', typeof data.datanasc2);
     this.cadastroForm.patchValue({
       cpfResp: data.cpf,
       nomeResponsavel: data.nome,
@@ -285,7 +285,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
 
   cpfValidator(cb: (((_: string) => boolean))): ValidatorFn {
     return (control: AbstractControl): { [key: string]: boolean } | null => {
-      console.log("control value: [", control.value, "]");
+      consolelog("control value: [", control.value, "]");
       if (control.value !== undefined && (isNaN(control.value) || !cb(control.value))) {
         return { cpf_invalido: true };
       }

@@ -15,7 +15,7 @@ import { ConsultaBeneficiosBrService } from '../../core/services/consulta-benefi
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuxilioEmergencial } from 'src/app/shared/models/auxilio-emergencial';
 import { registerLocaleData } from '@angular/common';
-import { validaCpf, validaNis } from 'src/app/core/utils/mylibs';
+import { validaCpf, validaNis, consolelog } from 'src/app/shared/utils/mylibs';
 
 registerLocaleData(localept, 'pt');
 
@@ -152,7 +152,7 @@ export class ConsultaBeneficiarioComponent implements OnInit {
     this.waitingGovBr = true;
     this.consultaBeneficiosBrService.getAuxilioEmergencial(this.cpfOuNis.value)
       .subscribe((data: AuxilioEmergencial[]) => {
-        console.log('data aux: ', data);
+        consolelog('data aux: ', data);
         this.auxilios = data;
         this.waitingGovBr = false;
       })
