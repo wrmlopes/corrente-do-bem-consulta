@@ -179,6 +179,8 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     this.familiaEmergencial.recebe_aux_governo = this.recebeAuxGoverno.value ? this.recebeAuxGoverno.value.toString() : '';
     this.familiaEmergencial.status = 7;
 
+    this.normalizaFamilia();
+
     if (this.familiaEmergencial.codfamilia) {
       this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
@@ -216,17 +218,17 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
         if (data.length > 0) {
           if (!data[0].status || [0, 4, 5, 7].includes(data[0].status)) {
             if (data[0].status === 0) {
-              this.mensagem.exibeMensagemBarra('Atenção !! Você fará alterações nesse cadastro.', 'sucesso');
+              this.mensagem.sucesso('Atenção !! Você fará alterações nesse cadastro.');
             }
           } else {
-            this.mensagem.exibeMensagemBarra(`Família já possui cadastro validado. Alterações não permitidas !!!`, 'erro', 10000);
+            this.mensagem.erro(`Família já possui cadastro validado. Alterações não permitidas !!!`, 10000);
             this.inicializaFormulario();
             return;
           }
           this.familiaEmergencial = data[0];
           this.carregaDadosFamiliaEmergencial(this.familiaEmergencial);
         } else {
-          this.mensagem.exibeMensagemBarra('Você irá incluir os dados desta família.', 'sucesso')
+          this.mensagem.info('Você irá incluir os dados desta família.')
         }
       },
         error => {
