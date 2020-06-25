@@ -23,6 +23,22 @@ export class MensagemBarraService {
     this.snackBarRef = this.snackBar.open(message, 'x', this.snackBarConfig);
   }
 
+  sucesso(mensagem, duracao: number = 3000){
+    this.exibeMensagemBarra( mensagem, 'sucesso', duracao);
+  }
+
+  erro(mensagem, duracao: number = 3000){
+    this.exibeMensagemBarra( mensagem, 'erro', duracao);
+  }
+
+  alerta(mensagem, duracao: number = 3000){
+    this.exibeMensagemBarra( mensagem, 'alerta', duracao);
+  }
+
+  info(mensagem, duracao: number = 3000){
+    this.exibeMensagemBarra( mensagem, 'info', duracao);
+  }
+
   emBreve() {
     this.exibeMensagemBarra('Estamos trabalhando nisso. Aguarde !!!', 'sucesso');
   }
