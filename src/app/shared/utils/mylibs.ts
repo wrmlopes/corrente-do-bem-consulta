@@ -49,6 +49,15 @@ export function dateTimeTZToDate(dateTz: string) {
     return dateTz.slice(0, 10);
 }
 
+export function dateIntltoDateBrString(data: any): string {
+    return (data.substring(8,10) + '/' + data.substring(5,7) + '/' + data.substring(0,4));
+  }
+
+export function dataBrtoDateIntlString(data: any): string {
+    let datas = data.substring(4,8) + '/' + data.substring(2,4) + '/' + data.substring(0,2);
+    return new Date(datas).toISOString();
+  }
+
 export function novaDataString(dataForm: string): string {
     console.log('data: ', dataForm);
     if (!dataForm || dataForm == '' || dataForm == '0000-00-00') { return dataForm; };
