@@ -6,7 +6,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { MensagemBarraService } from '../../../../core/services/mensagem-barra/mensagem-barra.service';
 import { cpfValidator } from '../../../../core/validators/cpfValidator';
-import { dateTimeTZToDate, novaDataString, consolelog } from 'src/app/shared/utils/mylibs';
+import { dataValidator } from '../../../../core/validators/dataValidators';
+import { dateTimeTZToDate, novaDataString, consolelog, dateIntltoDateBrString, dataBrtoDateIntlString } from 'src/app/shared/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
 
 @Component({
@@ -53,7 +54,8 @@ export class FamiliaModalComponent implements OnInit {
   nomeResponsavel = new FormControl('', [
     Validators.required
   ]);
-  dataNascto = new FormControl('',);
+  dataNascto = new FormControl('',
+    dataValidator);
   cpfResp = new FormControl('', [
     cpfValidator
   ]);
@@ -117,7 +119,7 @@ export class FamiliaModalComponent implements OnInit {
     this.cadastroForm.patchValue({
       cpfResp: familia.cpf,
       nomeResponsavel: familia.nome,
-      dataNascto: familia.datanasc2 ? dateTimeTZToDate(familia.datanasc2) : null,
+      dataNascto: familia.datanasc2 ? dateIntltoDateBrString(familia.datanasc2) : null,
       telefone: familia.Telefone,
       endereco: familia.quadra,
       cidade: familia.cidade,
@@ -150,7 +152,7 @@ export class FamiliaModalComponent implements OnInit {
 
   submitFormulario() {
     this.familiaEmergencial.nome = this.nomeResponsavel.value.toUpperCase();
-    this.familiaEmergencial.datanasc2 = new Date(this.dataNascto.value).toISOString();
+    this.familiaEmergencial.datanasc2 = dataBrtoDateIntlString(this.dataNascto.value);
     this.familiaEmergencial.cpf = this.cpfResp.value;
     this.familiaEmergencial.Telefone = this.telefone.value;
     this.familiaEmergencial.quadra = this.endereco.value;
@@ -170,27 +172,29 @@ export class FamiliaModalComponent implements OnInit {
     this.familiaEmergencial.recebe_aux_governo = this.recebeAuxGoverno.value ? this.recebeAuxGoverno.value.toString() : '';
     this.familiaEmergencial.status = 7;
 
+    this.normalizaFamilia();
+
     if (this.familiaEmergencial.codfamilia) {
       this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
           consolelog('dados atualizados');
-          this.mensagem.exibeMensagemBarra('Cadastro atualizado com sucesso.', 'sucesso');
+          this.mensagem.sucesso('Cadastro atualizado com sucesso.');
           this.fechadialogo(this.familiaEmergencial);
         },
           error => {
-            this.mensagem.exibeMensagemBarra('Erro ao salvar os dados da família !!!', 'erro');
+            this.mensagem.erro('Erro ao salvar os dados da família !!!');
             consolelog('error: ', error);
           })
     } else {
       this.familiaEmergencial.data = new Date().toISOString();
       this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
         .subscribe((data: FamiliaEmergencial) => {
-          this.mensagem.exibeMensagemBarra('Família incluída com sucesso.', 'sucesso');
+          this.mensagem.sucesso('Família incluída com sucesso.');
           this.fechadialogo(this.familiaEmergencial);
         },
           error => {
-            this.mensagem.exibeMensagemBarra('Erro ao incluir os dados da família !!!');
+            this.mensagem.erro('Erro ao incluir os dados da família !!!');
             consolelog('error: ', error);
           })
     }
