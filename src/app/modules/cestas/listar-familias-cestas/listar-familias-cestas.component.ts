@@ -13,6 +13,7 @@ import { EncaminharModalComponent } from '../encaminhar-modal/encaminhar-modal.c
 import { consolelog } from 'src/app/shared/utils/mylibs';
 import { CestasModalComponent } from '../cestas-modal/cestas-modal.component';
 import { FamiliasExcluidasService } from 'src/app/core/services/corrente-brasilia/familias-excluidas/familias-excluidas.service';
+import { PlatformDetectorService } from 'src/app/core/plataform-detector/platform-detector.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
     private familiasExcluidasService: FamiliasExcluidasService,
     private cestasDaFamiliaService: FamiliaEmergencialCestasBasicasService,
     private mensagem: MensagemBarraService,
+    private isBrowser: PlatformDetectorService,
     private dialog: MatDialog,
 
   ) { }
@@ -51,6 +53,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
   ngOnInit(): void {
     this.recuperarFamilias();
+    consolelog('isbrowser: ', this.isBrowser.isPlatformBrowser());
   }
 
   recuperarFamilias() {
@@ -188,7 +191,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
     const dataPrev: FamiliaEmergencial[] = this.familiasCestas.data;
     let index = dataPrev.findIndex(familiaCesta => familiaCesta.codfamilia == result.codfamilia);
     if (index != -1) {
-      dataPrev.splice(index,1);
+      dataPrev.splice(index, 1);
       this.familiasCestas.data = dataPrev;
     } else {
       this.mensagem.exibeMensagemBarra('Não foi possível atualizar dados do grid. Recarregue a página.');
@@ -216,7 +219,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
   excluirFamilia(elemento) {
     if (confirm("Confirma a exclusão da família ? ")) {
-      const familia: FamiliaEmergencial = elemento;
+      const familia: FamiliaEmergencial = this.normalizaFamilia(elemento);
       this.familiasExcluidasService.gravarFamiliaExcluida(familia)
         .subscribe((data: FamiliaEmergencial) => {
           this.familiaEmergencialService.excluirFamiliaEmergencial(familia)
@@ -329,6 +332,18 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
   cpfDuplicado(cpf: string): boolean {
     return this.cpfsDuplicados.indexOf(cpf) != -1;
+  }
+
+  private normalizaFamilia(familia: FamiliaEmergencial): FamiliaEmergencial {
+    familia.nis = familia.nis || '';
+    familia.status_emprego = familia.status_emprego || '';
+    familia.datanasc2 = familia.datanasc2 || '';
+    familia.data_status_emprego = familia.data_status_emprego || '';
+    familia.data_nasc_conjuge = familia.data_nasc_conjuge || '';
+    familia.cpf_conjuge = familia.cpf_conjuge || '';
+    familia.deseja_msg = !!familia.deseja_msg;
+    familia.deseja_aux_espiritual = !!familia.deseja_aux_espiritual;
+    return familia;
   }
 
 }
