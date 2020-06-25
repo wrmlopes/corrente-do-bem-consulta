@@ -111,9 +111,8 @@ export class FamiliaModalComponent implements OnInit {
   private carregaFormulario() {
     consolelog('data carga: ', this.data);
 
-    this.familiaEmergencial = this.data.familia;
-    let familia = this.data.familia;
-    this.normalizaFamilia();
+    const {cestasBasicasDaFamilia, ...familia} = this.data.familia;
+    this.familiaEmergencial = familia;
 
     consolelog('date type: ', typeof familia.datanasc2);
     this.cadastroForm.patchValue({
