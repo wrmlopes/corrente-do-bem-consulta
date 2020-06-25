@@ -4,7 +4,7 @@
     <div>
         <div>
             <mat-label>Filtro </mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. nome, cpf ou situação"
+            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. nome, cpf, cidade ou situação"
                 class="mr-3 col-lg-5">
         </div>
         <table mat-table #tblfamiliacestas [dataSource]="familiasCestas" matSort (matSortChange)= "sortColumn($event)"
@@ -17,7 +17,9 @@
 
             <ng-container matColumnDef="cpf">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header >CPF</th>
-                <td mat-cell *matCellDef="let element">{{element.cpf}}</td>
+                <td mat-cell *matCellDef="let element">{{element.cpf}}
+                    <mat-icon id="falha" *ngIf="cpfDuplicado(element.cpf)" class="red-icon" title="Cpf Duplicado">not_interested</mat-icon>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="nome">
@@ -27,12 +29,17 @@
 
             <ng-container matColumnDef="data">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Data cadastro</th>
-                <td mat-cell *matCellDef='let element'>{{element.data | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                <td mat-cell *matCellDef='let element'>{{element.data | date: 'dd/MM/yyyy' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="cidade">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Cidade ou Região</th>
+                <td mat-cell *matCellDef='let element'>{{element.cidade}}</td>
             </ng-container>
 
             <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Situação</th>
-                <td mat-cell *matCellDef='let element'>{{getStatus(element.status)}}</td>
+                <td mat-cell *matCellDef='let element' [title]="element.voluntario">{{getStatus(element.status)}}</td>
             </ng-container>
 
             <ng-container matColumnDef="qtcestas">
@@ -79,7 +86,7 @@
                         </button>
                     </ng-template>
                     <button mat-icon-button title="Excluir" (click)="excluirFamilia(element)"
-                    class="mat-button">
+                    class="mat-button" [disabled]="element.cestasBasicasDaFamilia?.length > 0">
                     <mat-icon>delete</mat-icon>
                 </button>
 

@@ -12,6 +12,7 @@ import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensa
 import { EncaminharModalComponent } from '../encaminhar-modal/encaminhar-modal.component';
 import { consolelog } from 'src/app/shared/utils/mylibs';
 import { CestasModalComponent } from '../cestas-modal/cestas-modal.component';
+import { FamiliasExcluidasService } from 'src/app/core/services/corrente-brasilia/familias-excluidas/familias-excluidas.service';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
   constructor(
     private familiaEmergencialService: FamiliasEmergencialService,
-    private cestasBasicasService: CestasBasicasService,
+    private familiasExcluidasService: FamiliasExcluidasService,
     private cestasDaFamiliaService: FamiliaEmergencialCestasBasicasService,
     private mensagem: MensagemBarraService,
     private dialog: MatDialog,
@@ -36,8 +37,9 @@ export class ListarFamiliasCestasComponent implements OnInit {
   ) { }
 
   familiasCestas: MatTableDataSource<FamiliaEmergencial>;
+  cpfsDuplicados: string[];
   displayedColumns: string[] = [
-    'acao', 'nome', 'cpf', 'data', 'status', 'qtcestas', 'acao_direita'
+    'acao', 'nome', 'cpf', 'data', 'cidade', 'status', 'qtcestas', 'acao_direita'
   ]
 
   waiting: boolean;
@@ -58,6 +60,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
       .subscribe((data: FamiliaEmergencial[]) => {
         consolelog('data: ', data);
         this.waiting = false;
+        this.verificarCpfDuplicado(data);
         this.atualizarFamilias(data);
       })
   }
@@ -66,6 +69,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
    * a partir dos dados recebidos recupera as cestas da família e atualiza o datasource
    */
   private atualizarFamilias(data: FamiliaEmergencial[]) {
+    consolelog('atualizar familias');
     if (!this.familiasCestas) {
       this.inicializaFamiliaCestas();
     };
@@ -148,6 +152,9 @@ export class ListarFamiliasCestasComponent implements OnInit {
   }
 
   encaminharFamilia(elemento: FamiliaEmergencial) {
+
+
+
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
@@ -177,14 +184,25 @@ export class ListarFamiliasCestasComponent implements OnInit {
     }
   }
 
+  private excluirFamiliaNoDatasource(result: FamiliaEmergencial | undefined) {
+    const dataPrev: FamiliaEmergencial[] = this.familiasCestas.data;
+    let index = dataPrev.findIndex(familiaCesta => familiaCesta.codfamilia == result.codfamilia);
+    if (index != -1) {
+      dataPrev.splice(index,1);
+      this.familiasCestas.data = dataPrev;
+    } else {
+      this.mensagem.exibeMensagemBarra('Não foi possível atualizar dados do grid. Recarregue a página.');
+    }
+  }
+
   detalharCestas(elemento: FamiliaEmergencial) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
-    dialogConfig.data = { 
+    dialogConfig.data = {
       cestas: elemento.cestasBasicasDaFamilia,
       nome: elemento.nome
-     };
+    };
     dialogConfig.width = "700px";
 
     const dialogRef = this.dialog.open(CestasModalComponent, dialogConfig);
@@ -197,10 +215,30 @@ export class ListarFamiliasCestasComponent implements OnInit {
   }
 
   excluirFamilia(elemento) {
-    this.mensagem.emBreve();
+    if (confirm("Confirma a exclusão da família ? ")) {
+      const familia: FamiliaEmergencial = elemento;
+      this.familiasExcluidasService.gravarFamiliaExcluida(familia)
+        .subscribe((data: FamiliaEmergencial) => {
+          this.familiaEmergencialService.excluirFamiliaEmergencial(familia)
+            .subscribe(
+              () => {
+                this.excluirFamiliaNoDatasource(familia);
+                this.mensagem.info('Família foi excluída !!!');
+              },
+              error => consolelog('erro: ', error)
+            )
+        },
+          error => {
+            this.mensagem.erro('Erro ao tentar excluir família emergencial !!!');
+            consolelog('erro ao excluir família: ', error);
+          })
+
+    } else {
+      this.mensagem.info('Família não foi excluída !!!');
+    }
   }
 
-  
+
   menuGrid() {
 
   }
@@ -256,10 +294,10 @@ export class ListarFamiliasCestasComponent implements OnInit {
           // consolelog( 'current: ', currentTerm);
           // consolelog( 'key: ', key);
           // consolelog( 'datai: ', (data as { [key: string]: any })[key]);
-          if (['nome', 'cpf', 'status'].includes(key)) {
+          if (['nome', 'cpf', 'status', 'cidade'].includes(key)) {
             let termo: string;
             if (key === 'status') {
-              termo = this.getStatus( data.status );
+              termo = this.getStatus(data.status);
             } else {
               termo = (data as { [key: string]: any })[key];
             }
@@ -274,6 +312,23 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
       return dataStr.indexOf(transformedFilter) != -1;
     }
+  }
+
+  verificarCpfDuplicado(data: FamiliaEmergencial[]) {
+    this.cpfsDuplicados = [];
+    data.filter((familia: FamiliaEmergencial, index) => {
+      if (!familia.cpf || familia.cpf.trim() == '') { return; }
+      let idx = data.findIndex(x => x.cpf == familia.cpf);
+      if (idx != index) {
+        if (this.cpfsDuplicados.indexOf(familia.cpf) == -1) {
+          this.cpfsDuplicados.push(familia.cpf);
+        }
+      }
+    })
+  }
+
+  cpfDuplicado(cpf: string): boolean {
+    return this.cpfsDuplicados.indexOf(cpf) != -1;
   }
 
 }
