@@ -27,3 +27,14 @@
     background-color: red !important;
     color: white !important;
   }
+
+  ::ng-deep .snack-info {
+    background-color: rgba(9, 103, 190, 0.938) !important;
+    color: white !important;
+  }
+
+  ::ng-deep .snack-info button {
+    background-color: rgba(9, 103, 190, 0.938) !important;
+    color: white !important;
+  }
+  
