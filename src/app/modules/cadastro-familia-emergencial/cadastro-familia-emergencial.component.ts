@@ -172,7 +172,6 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     this.familiaEmergencial.data_nasc_conjuge = novaDataString(this.dataNasctoConjuge.value);
     this.familiaEmergencial.tipo_moradia = this.tipomoradia.value;
     this.familiaEmergencial.status_emprego = this.statusemprego.value;
-    this.familiaEmergencial.data_status_emprego = novaDataString(this.dtstatusemprego.value);
     this.familiaEmergencial.deseja_msg = !!this.desejaMsg.value;
     this.familiaEmergencial.deseja_aux_espiritual = !!this.desejaAuxEspiritual.value;
     this.familiaEmergencial.descricao = this.descricao.value;
@@ -259,7 +258,6 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
       dataNasctoConjuge: data.data_nasc_conjuge ? dateTimeTZToDate(data.data_nasc_conjuge) : null,
       tipomoradia: data.tipo_moradia,
       statusemprego: data.status_emprego,
-      dtstatusemprego: data.data_status_emprego ? dateTimeTZToDate(data.data_status_emprego) : null,
       desejaMsg: !!data.deseja_msg,
       desejaAuxEspiritual: !!data.deseja_aux_espiritual,
       descricao: data.descricao,
@@ -270,7 +268,6 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
   normalizaFamilia() {
     this.familiaEmergencial.nis = this.familiaEmergencial.nis || '';
     this.familiaEmergencial.status_emprego = this.familiaEmergencial.status_emprego || '';
-    this.familiaEmergencial.data_status_emprego = this.familiaEmergencial.data_status_emprego || '';
     this.familiaEmergencial.data_nasc_conjuge = this.familiaEmergencial.data_nasc_conjuge || '';
     this.familiaEmergencial.cpf_conjuge = this.familiaEmergencial.cpf_conjuge || '';
     this.familiaEmergencial.deseja_msg = !!this.familiaEmergencial.deseja_msg;

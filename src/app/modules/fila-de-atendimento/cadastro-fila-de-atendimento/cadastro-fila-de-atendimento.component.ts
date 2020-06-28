@@ -80,7 +80,6 @@ export class CadastroFilaDeAtendimentoComponent implements OnInit {
       dataNasctoConjuge: data.data_nasc_conjuge ? dateTimeTZToDate(data.data_nasc_conjuge) : '',
       tipomoradia: data.tipo_moradia,
       statusemprego: data.status_emprego,
-      dtstatusemprego: data.data_status_emprego ? dateTimeTZToDate(data.data_status_emprego) : '',
       desejaMsg: data.deseja_msg,
       desejaAuxEspiritual: data.deseja_aux_espiritual,
       descricao: data.descricao,
@@ -231,7 +230,6 @@ export class CadastroFilaDeAtendimentoComponent implements OnInit {
   normalizaFamilia() {
     this.familiaEmergencial.nis = this.familiaEmergencial.nis || '';
     this.familiaEmergencial.status_emprego = this.familiaEmergencial.status_emprego || '';
-    this.familiaEmergencial.data_status_emprego = this.familiaEmergencial.data_status_emprego || '';
     this.familiaEmergencial.data_nasc_conjuge = this.familiaEmergencial.data_nasc_conjuge || '';
     this.familiaEmergencial.cpf_conjuge = this.familiaEmergencial.cpf_conjuge || '';
     this.familiaEmergencial.deseja_msg = !!this.familiaEmergencial.deseja_msg;

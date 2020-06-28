@@ -40,7 +40,7 @@
                 <div class="form-group row col-lg-4">
                     <label for="telefone">Telefone</label>
                     <input type="text" [formControl]="telefone" class="form-control" id="telefone"
-                        aria-describedby="telefonehint" mask="(00)00000-0000" [validation]=false>
+                        aria-describedby="telefonehint" mask="(00) 0000-0000 || (00) 00000-0000" [validation]=false>
                     <small *ngIf="cadastroForm.get('telefone').errors?.required" id="foneResphint"
                         class="form-text text-danger">Telefone deve ser informado</small>
                 </div>
@@ -109,10 +109,11 @@
 
                 <div class="form-group row col-lg-4">
                     <label for="dataNasctoConjuge">Data de nascimento do cônjuge</label>
-                    <input type="date" [formControl]="dataNasctoConjuge" class="form-control" id="dataNasctoConjuge"
-                        aria-describedby="nasctoconjugehint">
-                    <small id="nasctoconjugehint" class="form-text text-muted">Data de nascimento do cônjuge, se
-                        houver.</small>
+                    <input type="text" mask="00/00/0000" [formControl]="dataNasctoConjuge" class="form-control" id="dataNasctoConjuge"
+                        aria-describedby="nasctohint">
+                    <small id="nascconjtohint" class="form-text text-muted"> </small>
+                    <small *ngIf="cadastroForm.get('dataNasctoConjuge').errors?.data_invalida" id="dataNasctohint"
+                        class="form-text text-danger">Informe usando DD/MM/AAAA </small>
                 </div>
 
                 <div class="form-group row col-lg-4">

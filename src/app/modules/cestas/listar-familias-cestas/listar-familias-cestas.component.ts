@@ -347,7 +347,6 @@ export class ListarFamiliasCestasComponent implements OnInit {
     familia.nis = familia.nis || '';
     familia.status_emprego = familia.status_emprego || '';
     familia.datanasc2 = familia.datanasc2 || '';
-    familia.data_status_emprego = familia.data_status_emprego || '';
     familia.data_nasc_conjuge = familia.data_nasc_conjuge || '';
     familia.cpf_conjuge = familia.cpf_conjuge || '';
     familia.deseja_msg = !!familia.deseja_msg;

@@ -21,7 +21,7 @@ export class EncaminharModalComponent implements OnInit {
     private familiaEmergencialService: FamiliasEmergencialService,
     private mensagem: MensagemBarraService,
     fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: {familia: FamiliaEmergencial}
+    @Inject(MAT_DIALOG_DATA) public data: { familia: FamiliaEmergencial }
   ) {
     this.cadastroForm = fb.group({
       nomeResponsavel: this.nomeResponsavel,
@@ -35,7 +35,6 @@ export class EncaminharModalComponent implements OnInit {
       quantcriancas: this.quantcriancas,
       tipomoradia: this.tipomoradia,
       statusemprego: this.statusemprego,
-      dtstatusemprego: this.dtstatusemprego,
       nomeConjuge: this.nomeConjuge,
       cpfConjuge: this.cpfConjuge,
       dataNasctoConjuge: this.dataNasctoConjuge,
@@ -130,7 +129,6 @@ export class EncaminharModalComponent implements OnInit {
       dataNasctoConjuge: familia.data_nasc_conjuge ? dateTimeTZToDate(familia.data_nasc_conjuge) : null,
       tipomoradia: familia.tipo_moradia,
       statusemprego: familia.status_emprego,
-      dtstatusemprego: familia.data_status_emprego ? dateTimeTZToDate(familia.data_status_emprego) : null,
       desejaMsg: !!familia.deseja_msg,
       desejaAuxEspiritual: !!familia.deseja_aux_espiritual,
       descricao: familia.descricao,
@@ -143,7 +141,6 @@ export class EncaminharModalComponent implements OnInit {
   private normalizaFamilia() {
     this.familiaEmergencial.nis = this.familiaEmergencial.nis || '';
     this.familiaEmergencial.status_emprego = this.familiaEmergencial.status_emprego || '';
-    this.familiaEmergencial.data_status_emprego = this.familiaEmergencial.data_status_emprego || '';
     this.familiaEmergencial.data_nasc_conjuge = this.familiaEmergencial.data_nasc_conjuge || '';
     this.familiaEmergencial.cpf_conjuge = this.familiaEmergencial.cpf_conjuge || '';
     this.familiaEmergencial.deseja_msg = !!this.familiaEmergencial.deseja_msg;
@@ -152,24 +149,26 @@ export class EncaminharModalComponent implements OnInit {
 
   encaminharParaAtendimento() {
 
-    if (this.familiaEmergencial.codfamilia) {
-      this.familiaEmergencial.status = 4;
-      this.familiaEmergencial.voluntario = this.voluntario.value;
+    let familiaAtualizar: FamiliaEmergencial = {
+      codfamilia: this.familiaEmergencial.codfamilia,
+      status: 4,
+      voluntario: this.voluntario.value,
+      dataAtualizacao: new Date().toISOString()
+    };
 
-      this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
-      this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
-        .subscribe(() => {
-          consolelog('dados atualizados');
-          this.mensagem.exibeMensagemBarra('Família encaminhada com sucesso.', 'sucesso');
-          this.fechadialogo(this.familiaEmergencial);
-        },
-          error => {
-            this.mensagem.exibeMensagemBarra('Erro ao encaminhar família para atendimento !!!', 'erro');
-            consolelog('error: ', error);
-          })
-        } else {
-          this.mensagem.exibeMensagemBarra('Erro ao encaminhar família para atendimento !!!');
-    }
+    this.familiaEmergencial.status = 4;
+    this.familiaEmergencial.voluntario = this.voluntario.value;
+
+    this.familiaEmergencialService.atualizarFamiliaEmergencial(familiaAtualizar)
+      .subscribe(() => {
+        consolelog('dados atualizados');
+        this.mensagem.sucesso('Família encaminhada com sucesso.');
+        this.fechadialogo(this.familiaEmergencial);
+      },
+        error => {
+          this.mensagem.erro('Erro ao encaminhar família para atendimento !!!');
+          consolelog('error: ', error);
+        })
   }
 
 

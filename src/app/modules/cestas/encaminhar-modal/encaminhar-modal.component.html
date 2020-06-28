@@ -9,11 +9,6 @@
                         <label for="cpfResp">CPF</label>
                         <input type="text" [formControl]="cpfResp" class="form-control form-control-danger" id="cpfResp"
                             aria-describedby="cpfResphint" mask="000.000.000-00" readonly>
-                        <small *ngIf="!getErrorCpfResp()" 
-                            id="cpfResphint" 
-                            class="form-text text-muted">Informe apenas números no CPF.</small>
-                        <small *ngIf="getErrorCpfResp()" id="cpfResphint"
-                            class="form-text text-danger">{{getErrorCpfResp()}}</small>
                     </div>
                 </div>
 
@@ -21,24 +16,18 @@
                     <label for="nomeResponsavel">Nome</label>
                     <input type="string" [formControl]="nomeResponsavel" class="form-control text-uppercase"
                         id="nomeResponsavel" aria-describedby="nomehint" readonly>
-                    <small *ngIf="cadastroForm.get('nomeResponsavel').errors?.required" id="nomehint"
-                        class="form-text text-danger">Nome completo deve ser informado !!!</small>
                 </div>
 
                 <div class="form-group row col-lg-4">
                     <label for="dataNascto">Data de Nascimento</label>
                     <input type="date" [formControl]="dataNascto" class="form-control" id="dataNascto"
                         aria-describedby="nasctohint" readonly>
-                    <small *ngIf="cadastroForm.get('dataNascto').errors?.required" id="dataNasctohint"
-                        class="form-text text-danger">Data de nascimento deve ser informada</small>
                 </div>
 
                 <div class="form-group row col-lg-4">
                     <label for="telefone">Telefone</label>
                     <input type="text" [formControl]="telefone" class="form-control" id="telefone"
-                        aria-describedby="telefonehint" mask="(00)00000-0000" [validation]=false readonly>
-                    <small *ngIf="cadastroForm.get('telefone').errors?.required" id="foneResphint"
-                        class="form-text text-danger">Telefone deve ser informado</small>
+                        aria-describedby="telefonehint" mask="(00) 00000-0000 || (00) 0000-0000" [validation]=false readonly>
                 </div>
 
                 <div class="form-group">
@@ -50,7 +39,6 @@
                     <label for="cidade">Cidade ou região</label>
                     <input type="text" [formControl]="cidade" class="form-control" id="cidade"
                         aria-describedby="cidadehint" readonly>
-                    <small id="cidadehint" class="form-text text-muted">Informe a cidade ou região.</small>
                 </div>
 
                 <div class="form-group row col-lg-6">

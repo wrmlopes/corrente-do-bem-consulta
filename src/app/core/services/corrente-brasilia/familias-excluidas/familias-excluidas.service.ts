@@ -25,7 +25,6 @@ export class FamiliasExcluidasService {
   private normalizaFamilia(familia: FamiliaEmergencial): FamiliaEmergencial {
     familia.nis = familia.nis || '';
     familia.status_emprego = familia.status_emprego || '';
-    familia.data_status_emprego = familia.data_status_emprego || '';
     familia.data_nasc_conjuge = familia.data_nasc_conjuge || '';
     familia.cpf_conjuge = familia.cpf_conjuge || '';
     familia.deseja_msg = !!familia.deseja_msg;

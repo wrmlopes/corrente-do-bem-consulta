@@ -26,9 +26,13 @@ export class FamiliasEmergencialService {
       .post<FamiliaEmergencial>(this.familiaEmergencialUrl, familia, this.httpOptions);
   }
 
+  /**
+   * atualiza os campos informados no regstro de família emergencial
+   * @param familia 
+   */
   atualizarFamiliaEmergencial(familia: FamiliaEmergencial): Observable<FamiliaEmergencial> {
     return this.http
-      .put<FamiliaEmergencial>(this.familiaEmergencialUrl + '/' + familia.codfamilia, familia, this.httpOptions);
+      .patch<FamiliaEmergencial>(this.familiaEmergencialUrl + '/' + familia.codfamilia, familia, this.httpOptions);
   }
 
   excluirFamiliaEmergencial(familia: FamiliaEmergencial): Observable<any> {

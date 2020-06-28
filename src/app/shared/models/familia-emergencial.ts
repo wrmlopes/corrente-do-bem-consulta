@@ -17,7 +17,6 @@ export interface FamiliaEmergencial {
     data_nasc_conjuge?: string,
     tipo_moradia?: string,
     status_emprego?: string,
-    data_status_emprego?: string,
     nis?: string,
     deseja_msg?: boolean,
     deseja_aux_espiritual?: boolean,

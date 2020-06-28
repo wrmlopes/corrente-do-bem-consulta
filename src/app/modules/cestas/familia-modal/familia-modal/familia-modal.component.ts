@@ -127,10 +127,9 @@ export class FamiliaModalComponent implements OnInit {
       nomeConjuge: familia.Conjuge,
       referencia: familia.referencia_endereco,
       cpfConjuge: familia.cpf_conjuge,
-      dataNasctoConjuge: familia.data_nasc_conjuge ? dateTimeTZToDate(familia.data_nasc_conjuge) : null,
+      dataNasctoConjuge: familia.data_nasc_conjuge ? dateIntltoDateBrString(familia.data_nasc_conjuge) : null,
       tipomoradia: familia.tipo_moradia,
       statusemprego: familia.status_emprego,
-      dtstatusemprego: familia.data_status_emprego ? dateTimeTZToDate(familia.data_status_emprego) : null,
       desejaMsg: !!familia.deseja_msg,
       desejaAuxEspiritual: !!familia.deseja_aux_espiritual,
       descricao: familia.descricao,
@@ -142,7 +141,6 @@ export class FamiliaModalComponent implements OnInit {
   private normalizaFamilia() {
     this.familiaEmergencial.nis = this.familiaEmergencial.nis || '';
     this.familiaEmergencial.status_emprego = this.familiaEmergencial.status_emprego || '';
-    this.familiaEmergencial.data_status_emprego = this.familiaEmergencial.data_status_emprego || '';
     this.familiaEmergencial.data_nasc_conjuge = this.familiaEmergencial.data_nasc_conjuge || '';
     this.familiaEmergencial.cpf_conjuge = this.familiaEmergencial.cpf_conjuge || '';
     this.familiaEmergencial.deseja_msg = !!this.familiaEmergencial.deseja_msg;
@@ -161,10 +159,9 @@ export class FamiliaModalComponent implements OnInit {
     this.familiaEmergencial.quantidade = parseInt(this.quantidade.value);
     this.familiaEmergencial.Conjuge = this.nomeConjuge.value.toUpperCase();
     this.familiaEmergencial.cpf_conjuge = this.cpfConjuge.value;
-    this.familiaEmergencial.data_nasc_conjuge = novaDataString(this.dataNasctoConjuge.value);
+    this.familiaEmergencial.data_nasc_conjuge = dataBrtoDateString(this.dataNasctoConjuge.value);
     this.familiaEmergencial.tipo_moradia = this.tipomoradia.value;
     this.familiaEmergencial.status_emprego = this.statusemprego.value;
-    this.familiaEmergencial.data_status_emprego = novaDataString(this.dtstatusemprego.value);
     this.familiaEmergencial.deseja_msg = !!this.desejaMsg.value;
     this.familiaEmergencial.deseja_aux_espiritual = !!this.desejaAuxEspiritual.value;
     this.familiaEmergencial.descricao = this.descricao.value;

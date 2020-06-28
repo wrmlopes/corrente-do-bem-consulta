@@ -67,7 +67,7 @@ export function dataBrtoDateString(data: any): string {
     } else {
         datas = (data.substring(6,10)|| '0000' ) + '-' + (data.substring(3,5) || '00') + '-' + (data.substring(0,2) || '00');
     }
-    console.log( 'mylibs data: ', data, '  datas: ', datas);
+    consolelog( 'mylibs data: ', data, '  datas: ', datas);
     return datas;
     // return datas == '0000/00/00' ? '' : new Date(datas).toISOString();
   }
