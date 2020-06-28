@@ -3,6 +3,8 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { CestaBasica } from 'src/app/shared/models/cesta-basica';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensagem-barra.service';
+import { CestasBasicasService } from 'src/app/core/services/corrente-brasilia/cestas-basicas/cestas-basicas.service';
+import { consolelog } from 'src/app/shared/utils/mylibs';
 
 @Component({
   selector: 'app-cestas-modal',
@@ -14,6 +16,7 @@ export class CestasModalComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<CestaBasica>,
+    private cestasBasicasService: CestasBasicasService,
     private mensagem: MensagemBarraService,
     @Inject(MAT_DIALOG_DATA) private data: {
       cestas: CestaBasica[],
@@ -43,8 +46,26 @@ export class CestasModalComponent implements OnInit {
     this.cestasDaFamilia = new MatTableDataSource<CestaBasica>();
   }
 
-  excluirCesta(element) {
-    this.mensagem.emBreve()
+  excluirCesta(element: CestaBasica) {
+    console.log('cesta a excluir: ', element);
+    if (confirm(`Confirma a exclusão da cesta entregue à família de "${this.data.nome}" ?`)) {
+      const cesta: CestaBasica = element;
+      this.cestasBasicasService.excluirCestaBasica(cesta)
+      .subscribe((data) => {
+          this.mensagem.sucesso('Entrega da cesta básica excluída !!!')
+          const dataPrev = this.cestasDaFamilia.data.filter((cesta: CestaBasica) => {
+            return cesta != element;
+          });
+          this.cestasDaFamilia.data = dataPrev;
+        },
+          error => {
+            this.mensagem.erro('Erro ao tentar excluir a cesta básica !!!');
+            consolelog('erro ao excluir família: ', error);
+          })
+
+    } else {
+      this.mensagem.info('Cesta não foi excluída !!!');
+    }
   }
 
   incluirCesta() {

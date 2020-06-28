@@ -7,7 +7,7 @@ import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { MensagemBarraService } from '../../../../core/services/mensagem-barra/mensagem-barra.service';
 import { cpfValidator } from '../../../../core/validators/cpfValidator';
 import { dataValidator } from '../../../../core/validators/dataValidators';
-import { dateTimeTZToDate, novaDataString, consolelog, dateIntltoDateBrString, dataBrtoDateIntlString } from 'src/app/shared/utils/mylibs';
+import { dateTimeTZToDate, novaDataString, consolelog, dateIntltoDateBrString, dataBrtoDateString } from 'src/app/shared/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
 
 @Component({
@@ -114,7 +114,7 @@ export class FamiliaModalComponent implements OnInit {
     const {cestasBasicasDaFamilia, ...familia} = this.data.familia;
     this.familiaEmergencial = familia;
 
-    consolelog('date type: ', typeof familia.datanasc2);
+    consolelog('date type: ', familia.datanasc2);
     this.cadastroForm.patchValue({
       cpfResp: familia.cpf,
       nomeResponsavel: familia.nome,
@@ -151,7 +151,7 @@ export class FamiliaModalComponent implements OnInit {
 
   submitFormulario() {
     this.familiaEmergencial.nome = this.nomeResponsavel.value.toUpperCase();
-    this.familiaEmergencial.datanasc2 = dataBrtoDateIntlString(this.dataNascto.value);
+    this.familiaEmergencial.datanasc2 = dataBrtoDateString(this.dataNascto.value);
     this.familiaEmergencial.cpf = this.cpfResp.value;
     this.familiaEmergencial.Telefone = this.telefone.value;
     this.familiaEmergencial.quadra = this.endereco.value;

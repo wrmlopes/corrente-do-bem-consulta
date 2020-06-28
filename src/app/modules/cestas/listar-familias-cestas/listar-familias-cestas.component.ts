@@ -212,6 +212,15 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
     dialogRef.afterClosed()
       .subscribe(result => {
+        if (!result) { return };
+        const dataPrev: FamiliaEmergencial[] = this.familiasCestas.data;
+        let index = dataPrev.findIndex(familiaCesta => familiaCesta.codfamilia == elemento.codfamilia);
+        if (index != -1) {
+          dataPrev[index].cestasBasicasDaFamilia = result;
+          this.familiasCestas.data = dataPrev;
+        } else {
+          this.mensagem.info('Não foi possível atualizar dados. Recarregue a página.');
+        }
         consolelog('result: ', result);
       })
 

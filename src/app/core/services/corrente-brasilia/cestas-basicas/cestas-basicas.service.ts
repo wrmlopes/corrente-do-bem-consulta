@@ -13,7 +13,7 @@ export class CestasBasicasService {
   constructor(private http: HttpClient) { }
 
   private correnteBrasiliaUrl = environment.apiUrlCorrenteBrasilia;
-  private cestaBasicaService = this.correnteBrasiliaUrl + '/cestasbasicas';
+  private cestaBasicaUrl = this.correnteBrasiliaUrl + '/cestasbasicas';
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -21,16 +21,22 @@ export class CestasBasicasService {
 
   recuperarCestasBasicas(): Observable<CestaBasica[]> {
     return this.http
-      .get<CestaBasica[]>(this.cestaBasicaService, this.httpOptions);
+      .get<CestaBasica[]>(this.cestaBasicaUrl, this.httpOptions);
   }
 
   incluirCestaBasica(familia: CestaBasica): Observable<CestaBasica> {
     return this.http
-      .post<CestaBasica>(this.cestaBasicaService, familia, this.httpOptions);
+      .post<CestaBasica>(this.cestaBasicaUrl, familia, this.httpOptions);
+  }
+
+  excluirCestaBasica(cestaBasica: CestaBasica): Observable<any> {
+    const URL_EXCLUIR = `${this.cestaBasicaUrl}/${cestaBasica.codcestabasica}`
+    return this.http
+      .delete<CestaBasica>(URL_EXCLUIR, this.httpOptions);
   }
 
   atualizarCestaBasica(cestabasica: CestaBasica): Observable<CestaBasica> {
     return this.http
-      .put<CestaBasica>(this.cestaBasicaService + '/' + cestabasica.codfamilia, cestabasica, this.httpOptions);
+      .put<CestaBasica>(this.cestaBasicaUrl + '/' + cestabasica.codfamilia, cestabasica, this.httpOptions);
   }
 }

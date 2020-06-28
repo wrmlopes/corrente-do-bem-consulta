@@ -53,13 +53,27 @@ export function dateIntltoDateBrString(data: any): string {
     return (data.substring(8,10) + '/' + data.substring(5,7) + '/' + data.substring(0,4));
   }
 
-export function dataBrtoDateIntlString(data: any): string {
-    let datas = data.substring(4,8) + '/' + data.substring(2,4) + '/' + data.substring(0,2);
-    return new Date(datas).toISOString();
+  /*
+   * recebe data no format dd/mm/aaaa ou ddmmaaaa e retorna no formato aaaa-mm-dd
+   * para atender formatação do backend - se aplica ao tipo date e não se aplica
+   * aos tipos datetime e timestamp 
+   * @param data 
+   */
+export function dataBrtoDateString(data: any): string {
+    if (!data) {return '0000-01-01'; };
+    let datas: string;
+    if (data.length === 8){
+        datas = data.substring(4,8) + '-' + data.substring(2,4) + '-' + data.substring(0,2);
+    } else {
+        datas = (data.substring(6,10)|| '0000' ) + '-' + (data.substring(3,5) || '00') + '-' + (data.substring(0,2) || '00');
+    }
+    console.log( 'mylibs data: ', data, '  datas: ', datas);
+    return datas;
+    // return datas == '0000/00/00' ? '' : new Date(datas).toISOString();
   }
 
 export function novaDataString(dataForm: string): string {
-    console.log('data: ', dataForm);
+    consolelog('data: ', dataForm);
     if (!dataForm || dataForm == '' || dataForm == '0000-00-00') { return dataForm; };
     return new Date(dataForm).toISOString();
 }

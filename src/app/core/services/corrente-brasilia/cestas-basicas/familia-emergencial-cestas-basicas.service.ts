@@ -29,7 +29,7 @@ export class FamiliaEmergencialCestasBasicasService {
   recuperarFamiliaEmergencialECestas(): Observable<FamiliaEmergencial[]> {
 
     return this.http
-      .get<CestaBasica[]>(
+      .get<FamiliaEmergencial[]>(
         `${this.cestasBasicasDaFamiliaEmergencialService}/cestasbasicas`);
   }
 }
