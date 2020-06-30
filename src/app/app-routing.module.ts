@@ -8,10 +8,15 @@ import { CanDeactivateGuard } from './core/guards/can-deactivate.guard';
 
 //This is my case 
 const routes: Routes = [
-    { path: '',  redirectTo: '', pathMatch: 'full', component: CadastroFamiliaEmergencialComponent },
+    // { path: '',  redirectTo: '', pathMatch: 'full', component: CadastroFamiliaEmergencialComponent },
+    { path: '',  redirectTo: 'home', pathMatch: 'full' },
     { path: 'consulta',  pathMatch: 'full', component: ConsultaBeneficiarioComponent },
     { path: 'cadastro', component: CadastroFamiliaEmergencialComponent},
     { path: 'fila-de-atendimento', component: FilaDeAtendimentoComponent, canDeactivate: [CanDeactivateGuard] },
+    { 
+      path: 'home',
+      loadChildren: () => import('./core/home/home.module').then(m => m.HomeModule)
+  },
     { 
       path: 'cestas',
       loadChildren: () => import('./modules/cestas/cestas.module').then(m => m.CestasModule)
