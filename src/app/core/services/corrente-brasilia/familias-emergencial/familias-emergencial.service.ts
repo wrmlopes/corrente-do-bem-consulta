@@ -45,14 +45,14 @@ export class FamiliasEmergencialService {
 
     if (!cpf && !nome && !dataNascto) { throw new Error('Obrigatório informar cpf ou nome ou dataNascto !!!') }
 
-    let where: { cpf?: string, nome?: string, datanasc2?: string } = {};
+    let where: { cpf?: string, nome?: any, datanasc2?: string } = {};
 
     if (cpf) {
       where.cpf = cpf;
     }
 
     if (nome) {
-      where.nome = nome;
+      where.nome = { regexp: `/^${nome}/`};
     }
 
     if (dataNascto) {

@@ -3,7 +3,7 @@
     <div>
         <h5>{{nome}}</h5>
 
-        <div>
+        <div *ngIf="displayTabela; else displayInclusao">
             <table mat-table #tblcestas [dataSource]="cestasDaFamilia" 
                 class="table table-striped table-sm mt-2">
 
@@ -14,7 +14,7 @@
 
                 <ng-container matColumnDef="data">
                     <th mat-header-cell *matHeaderCellDef>Data entrega</th>
-                    <td mat-cell *matCellDef='let element'>{{element.data | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                    <td mat-cell *matCellDef='let element'>{{element.data | date: 'dd/MM/yyyy' : 'UTC' }}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="acao_direita">
@@ -35,6 +35,10 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
         </div>
+        <ng-template #displayInclusao>
+            <p>inclusao works</p>
+            <button  (click)="fimInclusao()">Fim inclusao</button>
+        </ng-template>
     </div>
 </div>
 <div mat-dialog-actions align="center">

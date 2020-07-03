@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, FormControl, Validators, ValidatorFn, AbstractC
 
 // tslint:disable-next-line:no-duplicate-imports
 import { default as _rollupMoment } from 'moment';
-import { validaCpf, dateTimeTZToDate, novaDataString, consolelog } from 'src/app/shared/utils/mylibs';
+import { validaCpf, dateTimeTZToDate, novaDataString, consolelog, dateIntltoDateBrString, dataBrtoDateString } from 'src/app/shared/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { DatePipe } from '@angular/common';
@@ -65,24 +65,17 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
       descricao: this.descricao,
       recebeAuxGoverno: this.recebeAuxGoverno,
     });
-
-    // para reload do componente from https://github.com/angular/angular/issues/13831
-    this.router.routeReuseStrategy.shouldReuseRoute = function () {
-      return false;
-    }
-
-    this.router.events.subscribe((evt) => {
-      if (evt instanceof NavigationEnd) {
-        // trick the Router into believing it's last link wasn't previously loaded
-        this.router.navigated = false;
-        // if you need to scroll back to top, here is the right place
-        window.scrollTo(0, 0);
-      }
-    });
   }
 
   ngOnInit(): void {
   }
+
+  displayPesquisa = true;
+  displayGrid = false;
+  cpf: string = '';
+  nome: string = '';
+  familias: FamiliaEmergencial[]=[];
+  inConsulta = false;
 
   // controles de formulário
   cadastroForm: FormGroup;
@@ -159,7 +152,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
 
   submitFormulario() {
     this.familiaEmergencial.nome = this.nomeResponsavel.value.toUpperCase();
-    this.familiaEmergencial.datanasc2 = new Date(this.dataNascto.value).toISOString();
+    this.familiaEmergencial.datanasc2 = dataBrtoDateString(this.dataNascto.value);
     this.familiaEmergencial.cpf = this.cpfResp.value;
     this.familiaEmergencial.Telefone = this.telefone.value;
     this.familiaEmergencial.quadra = this.endereco.value;
@@ -169,7 +162,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     this.familiaEmergencial.quantidade = parseInt(this.quantidade.value);
     this.familiaEmergencial.Conjuge = this.nomeConjuge.value.toUpperCase();
     this.familiaEmergencial.cpf_conjuge = this.cpfConjuge.value;
-    this.familiaEmergencial.data_nasc_conjuge = novaDataString(this.dataNasctoConjuge.value);
+    this.familiaEmergencial.data_nasc_conjuge = dataBrtoDateString(this.dataNasctoConjuge.value);
     this.familiaEmergencial.tipo_moradia = this.tipomoradia.value;
     this.familiaEmergencial.status_emprego = this.statusemprego.value;
     this.familiaEmergencial.deseja_msg = !!this.desejaMsg.value;
@@ -185,52 +178,94 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
           consolelog('dados atualizados');
-          this.mensagem.exibeMensagemBarra('Cadastro atualizado com sucesso.', 'sucesso');
-          this.inicializaFormulario();
+          this.mensagem.sucesso('Cadastro atualizado com sucesso.');
+          this.novaPesquisa();
         },
           error => {
+            this.mensagem.erro('Erro ao salvar os dados da família !!!');
             consolelog('error: ', error);
           })
     } else {
       this.familiaEmergencial.data = new Date().toISOString();
       this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
         .subscribe((data: FamiliaEmergencial) => {
-          consolelog('data: ', data);
-          this.mensagem.exibeMensagemBarra('Família incluída com sucesso.', 'sucesso')
-          this.inicializaFormulario();
-
+          this.mensagem.sucesso('Família incluída com sucesso.');
+          this.novaPesquisa();
         },
           error => {
+            this.mensagem.erro('Erro ao incluir os dados da família !!!');
             consolelog('error: ', error);
           })
     }
   }
+
+  novaPesquisa() {
+    this.nome = '';
+    this.cpf = '';
+    this.familias = [];
+    this.displayGrid = false;
+    this.displayPesquisa = true;
+    this.inConsulta = false;
+  }
+
+  // captura clique na família escolhida e carrega os dados para o cadastro
+  clicou(i: number){
+    this.carregaDadosFamiliaEmergencial(this.familias[i]);
+  }
+
   /** verifica os dados do responsável: se está cadastrado na corrente ou se já estava cadastrado */
-  verificaCadastro() {
+  pesquisa() {
+    this.inConsulta = true;
     this.ativarLoading();
     this.familiaEmergencial = {};
-    const nome = this.nomeResponsavel.value ? this.nomeResponsavel.value.toUpperCase() : null;
+    const nome = this.nome.length ? this.nome.toUpperCase() : null;
     this.familiaEmergencialService
-      .recuperarFamiliaEmergencialCPFNomeDataNascto(this.cpfResp.value, nome)
+      .recuperarFamiliaEmergencialCPFNomeDataNascto(this.cpf, nome)
       .subscribe((data: FamiliaEmergencial[]) => {
         this.desativarLoading();
-        if (data.length > 0) {
-          if (!data[0].status || [0, 4, 5, 7].includes(data[0].status)) {
-            if (data[0].status === 0) {
-              this.mensagem.sucesso('Atenção !! Você fará alterações nesse cadastro.');
-            }
-          } else {
-            this.mensagem.erro(`Família já possui cadastro validado. Alterações não permitidas !!!`, 10000);
-            this.inicializaFormulario();
-            return;
-          }
-          this.familiaEmergencial = data[0];
-          this.carregaDadosFamiliaEmergencial(this.familiaEmergencial);
-        } else {
-          this.mensagem.info('Você irá incluir os dados desta família.')
+
+        if (!data.length) {
+          this.mensagem.info('Não encontramos família com os dados informados. Refaça a pesquisa !!');
+          this.novaPesquisa();
+          return;
         }
+
+        if (data.length > 5){
+          this.mensagem.alerta(`Foram encontradas ${data.length} famílias com os dados informados. Repita a busca informando mais caracteres no nome.`);
+          this.inConsulta = false;
+          return;
+        }
+
+        if (data.length === 1){
+          this.carregaDadosFamiliaEmergencial(data[0]);
+          return;
+        };
+
+        // apresenta o grid para seleção da família
+        this.displayGrid = true;
+        this.familias = data;
+
+        // a próxima ação vem do grid ou dos menus da aplicação
+
+        // console.log('data: ', data);
+        // if (data.length > 0) {
+        //   if (!data[0].status || [0, 4, 5, 7].includes(data[0].status)) {
+        //     if (data[0].status === 0) {
+        //       this.mensagem.sucesso('Atenção !! Você fará alterações nesse cadastro.');
+        //     }
+        //   } else {
+        //     this.mensagem.erro(`Família já possui cadastro validado. Alterações não permitidas !!!`, 10000);
+        //     this.inicializaFormulario();
+        //     return;
+        //   }
+        //   this.familiaEmergencial = data[0];
+        //   this.carregaDadosFamiliaEmergencial(this.familiaEmergencial);
+        // } else {
+        //   this.mensagem.info('Você irá incluir os dados desta família.')
+        // }
       },
         error => {
+          this.mensagem.erro('Ocorreu um erro quando buscava família. Tente novamente mais tarde !!!');
           this.desativarLoading()
         }
       )
@@ -239,14 +274,11 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
   private carregaDadosFamiliaEmergencial(data: FamiliaEmergencial) {
     consolelog('data: ', data);
 
-    this.familiaEmergencial = data;
-    this.normalizaFamilia();
-
-    consolelog('date type: ', typeof data.datanasc2);
+    consolelog('date type: ', data.datanasc2);
     this.cadastroForm.patchValue({
       cpfResp: data.cpf,
       nomeResponsavel: data.nome,
-      dataNascto: data.datanasc2 ? dateTimeTZToDate(data.datanasc2) : null,
+      dataNascto: data.datanasc2 ? dateIntltoDateBrString(data.datanasc2) : null,
       telefone: data.Telefone,
       endereco: data.quadra,
       cidade: data.cidade,
@@ -255,7 +287,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
       nomeConjuge: data.Conjuge,
       referencia: data.referencia_endereco,
       cpfConjuge: data.cpf_conjuge,
-      dataNasctoConjuge: data.data_nasc_conjuge ? dateTimeTZToDate(data.data_nasc_conjuge) : null,
+      dataNasctoConjuge: data.data_nasc_conjuge ? dateIntltoDateBrString(data.data_nasc_conjuge) : null,
       tipomoradia: data.tipo_moradia,
       statusemprego: data.status_emprego,
       desejaMsg: !!data.deseja_msg,
@@ -263,9 +295,15 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
       descricao: data.descricao,
       recebeAuxGoverno: data.recebe_aux_governo ? data.recebe_aux_governo.split(',') : null,
     });
+
+    this.familiaEmergencial = data;
+    // this.normalizaFamilia();
+
+    this.displayPesquisa = false;
+
   }
 
-  normalizaFamilia() {
+  private normalizaFamilia() {
     this.familiaEmergencial.nis = this.familiaEmergencial.nis || '';
     this.familiaEmergencial.status_emprego = this.familiaEmergencial.status_emprego || '';
     this.familiaEmergencial.data_nasc_conjuge = this.familiaEmergencial.data_nasc_conjuge || '';

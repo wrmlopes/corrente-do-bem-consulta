@@ -60,7 +60,8 @@ export class FamiliaModalComponent implements OnInit {
     cpfValidator
   ]);
   telefone = new FormControl('', [
-    Validators.required
+    Validators.required,
+    Validators.minLength(8)
   ]);
   endereco = new FormControl('', [
     Validators.required

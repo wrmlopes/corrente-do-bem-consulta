@@ -20,13 +20,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { EncaminharModalComponent } from './encaminhar-modal/encaminhar-modal.component';
 import { CestasModalComponent } from './cestas-modal/cestas-modal.component';
+import { CestabasicaComponent } from './cestas-modal/cestabasica/cestabasica.component';
 
 @NgModule({
   declarations: [
     ListarFamiliasCestasComponent, 
     FamiliaModalComponent, 
     EncaminharModalComponent, 
-    CestasModalComponent
+    CestasModalComponent, CestabasicaComponent
   ],
   imports: [
     CommonModule,

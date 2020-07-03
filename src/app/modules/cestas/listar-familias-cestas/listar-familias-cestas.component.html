@@ -46,7 +46,7 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Cestas</th>
                 <td mat-cell *matCellDef='let element'>{{element.cestasBasicasDaFamilia?.length || "0"}}
                     <button mat-icon-button title="Detalhar cestas" (click)="detalharCestas(element)"
-                        class="mat-button" [disabled]="element.cestasBasicasDaFamilia?.length < 1">
+                        class="mat-button" [disabled]="[6,4,5].includes(element.status)">
                         <mat-icon>search</mat-icon>
                     </button>
                 </td>

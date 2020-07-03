@@ -14,6 +14,7 @@ import { consolelog } from 'src/app/shared/utils/mylibs';
 import { CestasModalComponent } from '../cestas-modal/cestas-modal.component';
 import { FamiliasExcluidasService } from 'src/app/core/services/corrente-brasilia/familias-excluidas/familias-excluidas.service';
 import { PlatformDetectorService } from 'src/app/core/plataform-detector/platform-detector.service';
+import { element } from 'protractor';
 
 
 @Component({
@@ -204,9 +205,12 @@ export class ListarFamiliasCestasComponent implements OnInit {
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
       cestas: elemento.cestasBasicasDaFamilia,
-      nome: elemento.nome
+      nome: elemento.nome,
+      codfamilia: elemento.codfamilia
     };
     dialogConfig.width = "700px";
+
+    console.log('cestas: ', elemento.cestasBasicasDaFamilia);
 
     const dialogRef = this.dialog.open(CestasModalComponent, dialogConfig);
 

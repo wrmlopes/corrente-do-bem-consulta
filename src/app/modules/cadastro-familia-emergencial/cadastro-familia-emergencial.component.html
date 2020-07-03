@@ -1,173 +1,200 @@
-<div *ngIf="msgWarning" class="alert alert-warning" role="alert">
-    {{msgWarning}}
-</div>
-<div *ngIf="msgError" class="alert alert-danger" role="alert">
-    {{msgError}}
-</div>
-<form [formGroup]="cadastroForm" (submit)="submitFormulario()">
-    <div [formGroup]="cadastroForm">
-
-        <div class="row">
-            <div class="form-group col-lg-2">
-                <label for="cpfResp">CPF</label>
-                <input type="text" [formControl]="cpfResp" class="form-control form-control-danger" id="cpfResp"
-                    aria-describedby="cpfResphint" mask="000.000.000-00">
-                <small *ngIf="!getErrorCpfResp()" id="cpfResphint" class="form-text text-muted">Informe apenas números
-                    no
-                    CPF.</small>
-                <small *ngIf="getErrorCpfResp()" id="cpfResphint"
-                    class="form-text text-danger">{{getErrorCpfResp()}}</small>
+<div *ngIf="displayPesquisa; else displayForm">
+    <div class="">
+        <div class="m-1">
+            <label class="row">Informe um CPF ou nome para pesquisar</label>
+            <div class="row">
+                <input type="text" [(ngModel)]="cpf" mask="000.000.000-00" class="col-lg-2" placeholder="informe um CPF"
+                    [disabled]="inConsulta">
+                <input type="text" [(ngModel)]="nome" class="ml-2 col-lg-8" placeholder="ou um nome"
+                    [disabled]="inConsulta">
             </div>
+            <button (click)="pesquisa()" class="row mt-3 btn btn-outline-primary"
+                [disabled]="inConsulta || (!cpf.length && !nome.length)">Pesquisar</button>
         </div>
-
-        <div class="form-group row col-lg-8">
-            <label for="nomeResponsavel">Nome</label>
-            <input type="string" [formControl]="nomeResponsavel" class="form-control text-uppercase"
-                id="nomeResponsavel" aria-describedby="nomehint">
-            <small id="nomehint" class="form-text text-muted">Informe o nome completo do responsável.</small>
-            <div>
-                <button mat-fab color="basic" class="" type="button" aria-label="Buscar dados do responsável"
-                    data-toggle="tooltip" data-placement="top" title="Buscar dados do responsável"
-                    [disabled]="desativaConsulta" *ngIf="!waiting" (click)="verificaCadastro()">
-                    <mat-icon>search</mat-icon>
-                </button>
-            </div>
-            <div *ngIf="waiting" class="spinner-border" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-
-        <div class="form-group row col-lg-2">
-            <label for="dataNascto">Data de Nascimento</label>
-            <input type="date" [formControl]="dataNascto" class="form-control" id="dataNascto"
-                aria-describedby="nasctohint">
-            <small *ngIf="cadastroForm.get('dataNascto').errors?.required" id="cpfResphint"
-                class="form-text text-danger">Data de nascimento deve ser informada</small>
-        </div>
-
-        <div class="form-group row col-lg-2">
-            <label for="telefone">Telefone</label>
-            <input type="text" [formControl]="telefone" class="form-control" id="telefone"
-                aria-describedby="telefonehint" mask="(00)00000-0000" [validation]=false>
-                <small *ngIf="cadastroForm.get('telefone').errors?.required" id="foneResphint"
-                class="form-text text-danger">Telefone deve ser informado</small>
-        </div>
-
-        <div class="form-group">
-            <label for="descricao">Descreva você e sua família</label>
-            <textarea class="form-control" [formControl]="descricao" id="descricao" rows="4"></textarea>
-        </div>
-
-        <div class="form-group row col-lg-10">
-            <label for="endereco">Endereço completo</label>
-            <input type="text" [formControl]="endereco" class="form-control" id="endereco"
-                aria-describedby="enderecohint">
-            <small id="enderecohint" class="form-text text-muted">Informe o endereço.</small>
-        </div>
-
-        <div class="form-group row col-lg-10">
-            <label for="referencia">Ponto de referência</label>
-            <input type="text" [formControl]="referencia" class="form-control" id="referencia"
-                aria-describedby="referenciahint">
-            <small id="referenciahint" class="form-text text-muted">Informe um ponto de referência próximo ao
-                endereço.</small>
-        </div>
-
-        <div class="form-group row col-lg-3">
-            <label for="cidade">Cidade ou região</label>
-            <input type="text" [formControl]="cidade" class="form-control" id="cidade" aria-describedby="cidadehint">
-            <small id="cidadehint" class="form-text text-muted">Informe a cidade ou região.</small>
-        </div>
-
-        <div class="form-group row col-lg-3">
-            <label for="quantidade">Total de pessoas na família</label>
-            <input type="number" [formControl]="quantidade" class="form-control" id="quantidade"
-                aria-describedby="quantidadehint">
-            <small *ngIf="cadastroForm.get('quantidade').errors?.min" class="form-text text-danger">Quantidade de
-                pessoas na família deve ser informada</small>
-        </div>
-
-        <div class="form-group row col-lg-3">
-            <label for="quantcriancas">Total de crianças na residência</label>
-            <input type="number" mask="99" [formControl]="quantcriancas" class="form-control" id="quantcriancas"
-                aria-describedby="quantcriancashint">
-            <small id="quantcriancashint" class="form-text text-muted">Informe o total de crianças na
-                residência.</small>
-        </div>
-
-        <div class="form-group row col-lg-3">
-            <label for="tipomoradia">Tipo da moradia</label>
-            <select class="form-control" [formControl]="tipomoradia" id="tipomoradia">
-                <option *ngFor="let tipomoradia of tiposmoradia" [value]="tipomoradia">{{tipomoradia}}</option>
-            </select>
-        </div>
-
-        <div class="form-group row col-lg-3">
-            <label for="statusemprego">Situação de emprego</label>
-            <select class="form-control" [formControl]="statusemprego" id="statusemprego">
-                <option *ngFor="let statusemprego of statussemprego" [value]="statusemprego">{{statusemprego}}</option>
-            </select>
-        </div>
-
-        <div class="form-group row col-lg-2">
-            <label for="dtstatusemprego">Data situação de emprego</label>
-            <input type="date" [formControl]="dtstatusemprego" class="form-control" id="dtstatusemprego"
-                aria-describedby="dtstatusempregohint">
-            <small id="dtstatusempregohint" class="form-text text-muted">Quando ficou desempregado ?</small>
-        </div>
-
-        <div class="form-group row col-lg-8">
-            <label for="nomeConjuge">Nome do cônjuge</label>
-            <input type="string" [formControl]="nomeConjuge" class="form-control text-uppercase" id="nomeConjuge"
-                aria-describedby="nomeConjugehint">
-            <small id="nomeConjugehint" class="form-text text-muted">Informe o nome completo do cônjuge, se
-                houver.</small>
-        </div>
-
-        <div class="form-group row col-lg-2">
-            <label for="dataNasctoConjuge">Data de nascimento do cônjuge</label>
-            <input type="date" [formControl]="dataNasctoConjuge" class="form-control" id="dataNasctoConjuge"
-                aria-describedby="nasctoconjugehint">
-            <small id="nasctoconjugehint" class="form-text text-muted">Data de nascimento do cônjuge, se houver.</small>
-        </div>
-
-        <div class="form-group row col-lg-2">
-            <label for="cpfConjuge">CPF do cônjuge</label>
-            <input type="text" pattern="\d*" [formControl]="cpfConjuge" class="form-control form-control-danger"
-                id="cpfConjuge" aria-describedby="cpfConjugehint" mask="000.000.000-00">
-            <small *ngIf="!getErrorCpfConjuge()" id="cpfConjugehint" class="form-text text-muted">Informe apenas números
-                no CPF.</small>
-            <small *ngIf="getErrorCpfConjuge()" id="cpfConjugehint"
-                class="form-text text-danger">{{getErrorCpfConjuge()}}</small>
-        </div>
-
-        <div class="form-group form-check">
-            <input class="form-check-input" [formControl]="desejaMsg" type="checkbox" value="" id="desejaMsg">
-            <label class="form-check-label" for="desejaMsg">
-                Deseja receber mensagens apenas para conversar.
-            </label>
-        </div>
-
-        <div class="form-group form-check">
-            <input class="form-check-input" [formControl]="desejaAuxEspiritual" type="checkbox" value=""
-                id="desejaAuxEspiritual">
-            <label class="form-check-label" for="desejaAuxEspiritual">
-                Deseja auxílio espiritual (oração e Palavra).
-            </label>
-        </div>
-
-        <div class="form-group row col-lg-3">
-            <label for="recebeAuxGoverno">Recebe auxílio do governo</label>
-            <select multiple class="form-control" [formControl]="recebeAuxGoverno" id="recebeauxgoverno">
-                <option *ngFor="let recebeAuxGoverno of auxGoverno" [value]="recebeAuxGoverno">
-                    {{recebeAuxGoverno}}
-                </option>
-            </select>
-        </div>
-
-        <button type="submit" aria-label="Grava dados do pré-cadastro" [disabled]="cadastroForm.invalid"
-        class="btn btn-outline-primary" style="cursor: pointer;">
-        {{cadastroForm.invalid ? "Preencha os campos obrigatórios para salvar" : "Salva os dados da família"}}
-    </button>
     </div>
-</form>
+    <div *ngIf="waiting" class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+
+    <div *ngIf="displayGrid" class="mt-3 ">
+        <div class="row">
+            <h4>Clique na família desejada ou </h4>
+            <button class="btn btn-outline-primary ml-2" (click)="novaPesquisa()">faça uma nova pesquisa</button>
+        </div>
+        <table class="table table-sm table-hover table-responsive shadow p-3 mb-5 bg-white rounded">
+            <thead>
+                <th scope="col">CPF</th>
+                <th scope="Data Nascto">Data nascimento</th>
+                <th scope="Nome">Nome</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let familia of familias; index as i" (click)="clicou(i)">
+                    <td>
+                        <span>{{familia.cpf | mask:'000.000.000-00'}}</span></td>
+                    <td class="text-center ml-3 mr-3">
+                        <label>{{familia.datanasc2 | date: 'dd/MM/yyyy' : 'UTC' }}</label></td>
+                    <td>{{familia.nome}}</td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+</div>
+
+
+<ng-template #displayForm>
+    <div class="card overflow-auto pl-2">
+        <form [formGroup]="cadastroForm" (submit)="submitFormulario()">
+            <div [formGroup]="cadastroForm">
+
+                <div class="row">
+                    <div class="form-group col-lg-4">
+                        <label for="cpfResp">CPF</label>
+                        <input type="text" [formControl]="cpfResp" class="form-control form-control-danger" id="cpfResp"
+                            aria-describedby="cpfResphint" mask="000.000.000-00">
+                        <small *ngIf="!getErrorCpfResp()" id="cpfResphint" class="form-text text-muted">Informe apenas
+                            números
+                            no
+                            CPF.</small>
+                        <small *ngIf="getErrorCpfResp()" id="cpfResphint"
+                            class="form-text text-danger">{{getErrorCpfResp()}}</small>
+                    </div>
+                </div>
+
+                <div class="form-group row col-lg-8">
+                    <label for="nomeResponsavel">Nome</label>
+                    <input type="string" [formControl]="nomeResponsavel" class="form-control text-uppercase"
+                        id="nomeResponsavel" aria-describedby="nomehint">
+                    <small *ngIf="cadastroForm.get('nomeResponsavel').errors?.required" id="nomehint"
+                        class="form-text text-danger">Nome completo deve ser informado !!!</small>
+                </div>
+
+                <div class="form-group row col-lg-4">
+                    <label for="dataNascto">Data de nascimento</label>
+                    <input type="text" mask="00/00/0000" [formControl]="dataNascto" class="form-control" id="dataNascto"
+                        aria-describedby="nasctohint">
+                    <small id="nasctohint" class="form-text text-muted"> </small>
+                    <small *ngIf="cadastroForm.get('dataNascto').errors?.data_invalida" id="dataNasctohint"
+                        class="form-text text-danger">Informe usando DD/MM/AAAA </small>
+                    <small *ngIf="cadastroForm.get('dataNascto').errors?.required" id="dataNasctohint"
+                        class="form-text text-danger">Data de nascimento deve ser informada</small>
+                </div>
+
+                <div class="form-group row col-lg-4">
+                    <label for="telefone">Telefone</label>
+                    <input type="text" [formControl]="telefone" class="form-control" id="telefone"
+                        aria-describedby="telefonehint" mask="(00)00000-0000" [validation]=false>
+                    <small *ngIf="cadastroForm.get('telefone').errors?.required" id="foneResphint"
+                        class="form-text text-danger">Telefone deve ser informado</small>
+                </div>
+
+                <div class="form-group row col-lg-10">
+                    <label for="descricao">Descreva você e sua família</label>
+                    <textarea class="form-control" [formControl]="descricao" id="descricao" rows="4"></textarea>
+                </div>
+
+                <div class="form-group row col-lg-10">
+                    <label for="endereco">Endereço completo</label>
+                    <input type="text" [formControl]="endereco" class="form-control" id="endereco"
+                        aria-describedby="enderecohint">
+                    <small *ngIf="cadastroForm.get('endereco').errors?.required" id="enderecohint"
+                        class="form-text text-danger">Endereço deve ser informado</small>
+                </div>
+
+                <div class="form-group row col-lg-10">
+                    <label for="referencia">Ponto de referência</label>
+                    <input type="text" [formControl]="referencia" class="form-control" id="referencia"
+                        aria-describedby="referenciahint">
+                    <small id="referenciahint" class="form-text text-muted">Informe um ponto de referência próximo ao
+                        endereço.</small>
+                </div>
+
+                <div class="form-group row col-lg-6">
+                    <label for="cidade">Cidade ou região</label>
+                    <input type="text" [formControl]="cidade" class="form-control" id="cidade"
+                        aria-describedby="cidadehint">
+                    <small id="cidadehint" class="form-text text-muted">Informe a cidade ou região.</small>
+                </div>
+
+                <div class="form-group row col-lg-4">
+                    <label for="quantidade">Total de pessoas na família</label>
+                    <input type="number" [formControl]="quantidade" class="form-control" id="quantidade"
+                        aria-describedby="quantidadehint">
+                    <small *ngIf="cadastroForm.get('quantidade').errors?.min" class="form-text text-danger">Quantidade
+                        de pessoas na família deve ser maior do que ZERO</small>
+                    <small *ngIf="cadastroForm.get('quantidade').errors?.required"
+                        class="form-text text-danger">Quantidade
+                        de pessoas na família deve ser informada</small>
+                </div>
+
+                <div class="form-group row col-lg-4">
+                    <label for="quantcriancas">Total de crianças na residência</label>
+                    <input type="number" mask="99" [formControl]="quantcriancas" class="form-control" id="quantcriancas"
+                        aria-describedby="quantcriancashint">
+                    <small id="quantcriancashint" class="form-text text-muted">Informe o total de crianças na
+                        residência.</small>
+                </div>
+
+                <div class="form-group row col-lg-5">
+                    <label for="statusemprego">Situação de emprego</label>
+                    <select class="form-control" [formControl]="statusemprego" id="statusemprego">
+                        <option *ngFor="let statusemprego of statussemprego" [value]="statusemprego">{{statusemprego}}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group row col-lg-8">
+                    <label for="nomeConjuge">Nome do cônjuge</label>
+                    <input type="string" [formControl]="nomeConjuge" class="form-control text-uppercase"
+                        id="nomeConjuge" aria-describedby="nomeConjugehint">
+                    <small id="nomeConjugehint" class="form-text text-muted">Informe o nome completo do cônjuge, se
+                        houver.</small>
+                </div>
+
+                <div class="form-group row col-lg-4">
+                    <label for="dataNasctoConjuge">Data de nascimento do cônjuge</label>
+                    <input type="text" mask="00/00/0000" [formControl]="dataNasctoConjuge" class="form-control"
+                        id="dataNasctoConjuge" aria-describedby="nasctohint">
+                    <small id="nascconjtohint" class="form-text text-muted"> </small>
+                    <small *ngIf="cadastroForm.get('dataNasctoConjuge').errors?.data_invalida" id="dataNasctohint"
+                        class="form-text text-danger">Informe usando DD/MM/AAAA </small>
+                </div>
+
+                <div class="form-group row col-lg-4">
+                    <label for="cpfConjuge">CPF do cônjuge</label>
+                    <input type="text" pattern="\d*" [formControl]="cpfConjuge" class="form-control form-control-danger"
+                        id="cpfConjuge" aria-describedby="cpfConjugehint" mask="000.000.000-00">
+                    <small *ngIf="!getErrorCpfConjuge()" id="cpfConjugehint" class="form-text text-muted">Informe apenas
+                        números
+                        no CPF.</small>
+                    <small *ngIf="getErrorCpfConjuge()" id="cpfConjugehint"
+                        class="form-text text-danger">{{getErrorCpfConjuge()}}</small>
+                </div>
+
+                <div class="form-group form-check">
+                    <input class="form-check-input" [formControl]="desejaMsg" type="checkbox" value="" id="desejaMsg">
+                    <label class="form-check-label" for="desejaMsg">
+                        Deseja receber mensagens apenas para conversar.
+                    </label>
+                </div>
+
+                <div class="form-group form-check">
+                    <input class="form-check-input" [formControl]="desejaAuxEspiritual" type="checkbox" value=""
+                        id="desejaAuxEspiritual">
+                    <label class="form-check-label" for="desejaAuxEspiritual">
+                        Deseja auxílio espiritual (oração e Palavra).
+                    </label>
+                </div>
+            </div>
+        </form>
+        <div class="row ml-2 mb-3">
+            <button type="submit" aria-label="Grava dados do pré-cadastro" [disabled]="cadastroForm.invalid"
+                class="btn btn-outline-primary" style="cursor: pointer;" (click)="submitFormulario()">
+                {{cadastroForm.invalid ? "Preencha os campos obrigatórios para salvar" : "Salva os dados da família"}}
+            </button>
+            <button class="btn btn-outline-danger ml-2" (click)="novaPesquisa()">Cancelar alteração</button>
+        </div>
+
+    </div>
+</ng-template>

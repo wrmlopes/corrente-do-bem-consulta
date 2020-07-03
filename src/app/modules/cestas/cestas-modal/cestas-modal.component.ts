@@ -20,10 +20,12 @@ export class CestasModalComponent implements OnInit {
     private mensagem: MensagemBarraService,
     @Inject(MAT_DIALOG_DATA) private data: {
       cestas: CestaBasica[],
-      nome: string
+      nome: string, 
+      codfamilia: number
     }
   ) { }
 
+  displayTabela = true;
   nome: string;
   cestasDaFamilia: MatTableDataSource<CestaBasica>;
   displayedColumns: string[] = [
@@ -35,11 +37,12 @@ export class CestasModalComponent implements OnInit {
     this.nome = this.data.nome;
   }
 
-  private recuperarCestas() {
+  private recuperarCestas(): CestaBasica[] {
     if (!this.cestasDaFamilia) {
       this.inicializaDataSource();
     }
-    this.cestasDaFamilia.data = this.data.cestas;
+    this.cestasDaFamilia.data = this.data.cestas || [];
+    return this.cestasDaFamilia.data;
   }
 
   private inicializaDataSource() {
@@ -69,7 +72,23 @@ export class CestasModalComponent implements OnInit {
   }
 
   incluirCesta() {
+    // let dataprev = this.recuperarCestas();
+    // // add a cestaBasica
+    // consolelog('dataprev: ', dataprev);
+    // dataprev.unshift({
+    //   codfamilia : this.data.codfamilia,
+    //   data : (new Date()).toDateString(),
+    //   voluntario: ''
+    // });
+    // this.cestasDaFamilia.data = dataprev;
+
+    this.displayTabela= false;
+
     this.mensagem.emBreve()
+  }
+
+  fimInclusao(){
+    this.displayTabela = true;
   }
 
   voltar() {
