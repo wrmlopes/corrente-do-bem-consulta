@@ -89,7 +89,15 @@ export class FamiliaModalComponent implements OnInit {
     'EMPREGADO',
     'DESEMPREGADO',
     'AUTÔNOMO',
+    'APOSENTADO',
     'DO LAR'
+  ];
+
+  tiposmoradia = [
+    'PROPRIA',
+    'ALUGADA',
+    'CEDIDA',
+    'SEM TETO'
   ];
 
   auxGoverno = [

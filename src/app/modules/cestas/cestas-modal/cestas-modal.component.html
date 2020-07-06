@@ -36,12 +36,11 @@
             </table>
         </div>
         <ng-template #displayInclusao>
-            <p>inclusao works</p>
-            <button  (click)="fimInclusao()">Fim inclusao</button>
+            <app-cestabasica (temResposta)="onTemResposta($event)" [cestaBasicaFrom]="cestaEmEdicao"></app-cestabasica>
         </ng-template>
     </div>
 </div>
-<div mat-dialog-actions align="center">
+<div mat-dialog-actions align="center" *ngIf="displayTabela">
     <button type="button" aria-label="Volta para a tabela Famílias e Cestas !!!" class="btn btn-outline-danger ml-4"
         style="cursor: pointer;" (click)="voltar()">
         Voltar

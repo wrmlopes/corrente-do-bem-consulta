@@ -1,1 +1,41 @@
-<p>cestabasica works!</p>
+<h1 mat-dialog-title> Incluir entrega de cesta básica </h1>
+<div mat-dialog-content>
+    <div class="card">
+        <form [formGroup]="cestaForm" (submit)="submitFormulario()">
+            <div [formGroup]="cestaForm">
+
+                <div class="row">
+                    <div class="form-group col-lg-4">
+                        <label for="voluntario">Voluntário</label>
+                        <input type="text" [formControl]="voluntario" class="form-control form-control-danger" id="voluntario"
+                            aria-describedby="Informe o nome do voluntário responsável pela entrega">
+                        <small *ngIf="cestaForm.get('voluntario').errors?.required" id="voluntarioreq" class="form-text text-danger">
+                            Informe o nome do voluntário</small>
+                    </div>
+                </div>
+
+                <div class="form-group row col-lg-4">
+                    <label for="dataEntrega">Data da entrega</label>
+                    <input type="date" [formControl]="dataEntrega" class="form-control" id="dataEntrega"
+                        aria-describedby="Informe a data da entrega">
+                    <small *ngIf="cestaForm.get('dataEntrega').errors?.data_invalida" id="dataEntregaErro"
+                        class="form-text text-danger">Informe usando DD/MM/AAAA </small>
+                    <small *ngIf="cestaForm.get('dataEntrega').errors?.required" id="dataEntregaReq"
+                        class="form-text text-danger">Data de nascimento deve ser informada</small>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<div mat-dialog-actions align="center">
+    <button type="button" aria-label="Salva as alterações" [disabled]="cestaForm.invalid"
+        class="btn btn-outline-primary" style="cursor: pointer;" (click)="submitFormulario()">
+        {{cestaForm.invalid ? "Preencha os campos obrigatórios para salvar" : "Salvar"}}
+    </button>
+
+    <button type="button" aria-label="Fecha a janela sem gravar os dados !!!" class="btn btn-outline-danger ml-4"
+        style="cursor: pointer;" (click)="cancelar()">
+        Cancelar
+    </button>
+</div>
