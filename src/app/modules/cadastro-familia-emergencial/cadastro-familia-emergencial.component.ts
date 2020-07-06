@@ -135,6 +135,7 @@ export class CadastroFamiliaEmergencialComponent implements OnInit {
     'EMPREGADO',
     'DESEMPREGADO',
     'AUTÔNOMO',
+    'APOSENTADO',
     'DO LAR'
   ];
 
