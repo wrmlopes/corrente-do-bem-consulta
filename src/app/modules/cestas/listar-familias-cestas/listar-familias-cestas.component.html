@@ -54,8 +54,8 @@
 
             <ng-container matColumnDef="acao">
                 <th mat-header-cell *matHeaderCellDef>
-                    <mat-icon title="Menu" (click)="menuGrid()" style="cursor:pointer" class="td-action mat-icon">
-                        menu
+                    <mat-icon title="Atualize os dados" (click)="recuperarFamilias()" style="cursor:pointer" class="td-action mat-icon">
+                        refresh
                     </mat-icon>
                 </th>
                 <td mat-cell *matCellDef="let element" class="td-action">
@@ -68,7 +68,7 @@
 
             <ng-container matColumnDef="acao_direita">
                 <th mat-header-cell *matHeaderCellDef>
-                    <mat-icon title="Incluir" (click)="menuGrid()" style="cursor:pointer" class="td-action mat-icon">
+                    <mat-icon title="Incluir" (click)="incluirFamilia()" style="cursor:pointer" class="td-action mat-icon">
                         add
                     </mat-icon>
                 </th>

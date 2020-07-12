@@ -80,25 +80,6 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
     this.familiasCestas.data = data;
 
-    // data.map((familia: FamiliaEmergencial) => {
-    //   this.cestasDaFamiliaService.recuperarCestasBasicasDeFamiliaEmergencial(familia.codfamilia)
-    //     .subscribe((cestas: CestaBasica[]) => {
-    //       let dataPrev = this.familiasCestas.data;
-    //       dataPrev.push({
-    //         codfamilia: familia.codfamilia,
-    //         nome: familia.nome,
-    //         cpf: familia.cpf,
-    //         data: familia.data,
-    //         qtcestas: cestas.length,
-    //         status: this.getStatus(familia.status),
-    //         cestas,
-    //         familia,
-    //       });
-    //       this.familiasCestas.data = dataPrev;
-
-    //     })
-    // });
-
   }
 
   getStatus(status: number): string {
@@ -137,6 +118,11 @@ export class ListarFamiliasCestasComponent implements OnInit {
     this.customFilter();
   }
 
+  incluirFamilia(){
+    let novaFamilia: FamiliaEmergencial = {};
+    this.detalharFamilia(novaFamilia);
+  }
+
   detalharFamilia(elemento: FamiliaEmergencial) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
@@ -147,8 +133,9 @@ export class ListarFamiliasCestasComponent implements OnInit {
     const dialogRef = this.dialog.open(FamiliaModalComponent, dialogConfig);
 
     dialogRef.afterClosed()
-      .subscribe(result => {
+      .subscribe((result: FamiliaEmergencial | null) => {
         consolelog('result: ', result);
+        consolelog('codfamilia: ', result.codfamilia);
         if (result) {
           this.atualizaFamiliaNoDatasource(result);
         }
@@ -182,10 +169,11 @@ export class ListarFamiliasCestasComponent implements OnInit {
     let index = dataPrev.findIndex(familiaCesta => familiaCesta.codfamilia == result.codfamilia);
     if (index != -1) {
       dataPrev[index] = result;
-      this.familiasCestas.data = dataPrev;
     } else {
-      this.mensagem.exibeMensagemBarra('Não foi possível atualizar dados do grid. Recarregue a página.');
+      dataPrev.unshift(result);
+      // this.mensagem.exibeMensagemBarra('Não foi possível atualizar dados do grid. Recarregue a página.');
     }
+    this.familiasCestas.data = dataPrev;
   }
 
   private excluirFamiliaNoDatasource(result: FamiliaEmergencial | undefined) {

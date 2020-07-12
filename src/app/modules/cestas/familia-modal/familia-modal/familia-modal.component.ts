@@ -196,7 +196,7 @@ export class FamiliaModalComponent implements OnInit {
       this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
         .subscribe((data: FamiliaEmergencial) => {
           this.mensagem.sucesso('Família incluída com sucesso.');
-          this.fechadialogo(this.familiaEmergencial);
+          this.fechadialogo(data);
         },
           error => {
             this.mensagem.erro('Erro ao incluir os dados da família !!!');
