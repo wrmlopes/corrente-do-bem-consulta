@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnChanges, SimpleChanges } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,45 +9,25 @@ import { cpfValidator } from '../../../../core/validators/cpfValidator';
 import { dataValidator } from '../../../../core/validators/dataValidators';
 import { dateTimeTZToDate, novaDataString, consolelog, dateIntltoDateBrString, dataBrtoDateString } from 'src/app/shared/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
+import { ValidatorCpfService } from '../../../../core/validators/validator-cpf.service';
 
 @Component({
   selector: 'app-familia-modal',
   templateUrl: './familia-modal.component.html',
-  styleUrls: ['./familia-modal.component.css']
+  styleUrls: ['./familia-modal.component.css'],
 })
 export class FamiliaModalComponent implements OnInit {
-
+  
   constructor(
     public dialogRef: MatDialogRef<FamiliaModalComponent>,
     private _snackBar: MatSnackBar,
     private familiaEmergencialService: FamiliasEmergencialService,
+    private cpfValidatorService: ValidatorCpfService,
     private mensagem: MensagemBarraService,
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: { familia: FamiliaEmergencial }
-  ) {
-    this.cadastroForm = fb.group({
-      nomeResponsavel: this.nomeResponsavel,
-      dataNascto: this.dataNascto,
-      cpfResp: this.cpfResp,
-      telefone: this.telefone,
-      endereco: this.endereco,
-      referencia: this.referencia,
-      cidade: this.cidade,
-      quantidade: this.quantidade,
-      quantcriancas: this.quantcriancas,
-      tipomoradia: this.tipomoradia,
-      statusemprego: this.statusemprego,
-      dtstatusemprego: this.dtstatusemprego,
-      nomeConjuge: this.nomeConjuge,
-      cpfConjuge: this.cpfConjuge,
-      dataNasctoConjuge: this.dataNasctoConjuge,
-      desejaMsg: this.desejaMsg,
-      desejaAuxEspiritual: this.desejaAuxEspiritual,
-      descricao: this.descricao,
-      recebeAuxGoverno: this.recebeAuxGoverno,
-    });
-    this.carregaFormulario();
-  }
+  ) {}
+
 
   familiaEmergencial: FamiliaEmergencial;
   cadastroForm: FormGroup;
@@ -56,9 +36,10 @@ export class FamiliaModalComponent implements OnInit {
   ]);
   dataNascto = new FormControl('',
     dataValidator);
-  cpfResp = new FormControl('', [
-    cpfValidator
-  ]);
+  // cpfResp = new FormControl('', [
+  //   cpfValidator,
+  //   this.cpfValidatorService.cpfDuplicado(),
+  // ]);
   telefone = new FormControl('', [
     Validators.required,
     Validators.minLength(8)
@@ -110,6 +91,43 @@ export class FamiliaModalComponent implements OnInit {
 
   ngOnInit(): void {
     consolelog('data init: ', this.data);
+
+    const {cestasBasicasDaFamilia, ...familia} = this.data.familia;
+    this.familiaEmergencial = familia;
+
+
+
+    consolelog( 'init form');
+    this.cadastroForm = this.fb.group({
+      codFamilia: [''],
+      nomeResponsavel: this.nomeResponsavel,
+      dataNascto: this.dataNascto,
+      cpfResp: ['', [
+        cpfValidator,
+        // this.cpfValidatorService.cpfDuplicado(),
+      ]],
+      telefone: this.telefone,
+      endereco: this.endereco,
+      referencia: this.referencia,
+      cidade: this.cidade,
+      quantidade: this.quantidade,
+      quantcriancas: this.quantcriancas,
+      tipomoradia: this.tipomoradia,
+      statusemprego: this.statusemprego,
+      dtstatusemprego: this.dtstatusemprego,
+      nomeConjuge: this.nomeConjuge,
+      cpfConjuge: this.cpfConjuge,
+      dataNasctoConjuge: this.dataNasctoConjuge,
+      desejaMsg: this.desejaMsg,
+      desejaAuxEspiritual: this.desejaAuxEspiritual,
+      descricao: this.descricao,
+      recebeAuxGoverno: this.recebeAuxGoverno,
+      totalPessoasRenda: [0],
+    });
+    consolelog('fimform');
+
+    consolelog('formulário criado');
+    this.carregaFormulario();
     // this.carregaFormulario();
   }
 
@@ -139,6 +157,7 @@ export class FamiliaModalComponent implements OnInit {
       dataNasctoConjuge: familia.data_nasc_conjuge ? dateIntltoDateBrString(familia.data_nasc_conjuge) : null,
       tipomoradia: familia.tipo_moradia,
       statusemprego: familia.status_emprego,
+      totalPessoasRenda: familia.totalPessoasRenda,
       desejaMsg: !!familia.deseja_msg,
       desejaAuxEspiritual: !!familia.deseja_aux_espiritual,
       descricao: familia.descricao,
@@ -159,18 +178,19 @@ export class FamiliaModalComponent implements OnInit {
   submitFormulario() {
     this.familiaEmergencial.nome = this.nomeResponsavel.value.toUpperCase();
     this.familiaEmergencial.datanasc2 = dataBrtoDateString(this.dataNascto.value);
-    this.familiaEmergencial.cpf = this.cpfResp.value;
+    this.familiaEmergencial.cpf = this.getFromForm('cpfResp');
     this.familiaEmergencial.Telefone = this.telefone.value;
     this.familiaEmergencial.quadra = this.endereco.value;
     this.familiaEmergencial.cidade = this.cidade.value;
     this.familiaEmergencial.referencia_endereco = this.referencia.value;
     this.familiaEmergencial.quantcriancas = parseInt(this.quantcriancas.value);
     this.familiaEmergencial.quantidade = parseInt(this.quantidade.value);
-    this.familiaEmergencial.Conjuge = this.nomeConjuge.value.toUpperCase();
+    this.familiaEmergencial.Conjuge = this.getFromForm('nomeConjuge') ? this.getFromForm('nomeConjuge').toUpperCase(): '';
     this.familiaEmergencial.cpf_conjuge = this.cpfConjuge.value;
     this.familiaEmergencial.data_nasc_conjuge = dataBrtoDateString(this.dataNasctoConjuge.value);
     this.familiaEmergencial.tipo_moradia = this.tipomoradia.value;
     this.familiaEmergencial.status_emprego = this.statusemprego.value;
+    this.familiaEmergencial.totalPessoasRenda = this.getFromForm('totalPessoasRenda');
     this.familiaEmergencial.deseja_msg = !!this.desejaMsg.value;
     this.familiaEmergencial.deseja_aux_espiritual = !!this.desejaAuxEspiritual.value;
     this.familiaEmergencial.descricao = this.descricao.value;
@@ -206,25 +226,29 @@ export class FamiliaModalComponent implements OnInit {
   }
 
 
+  private getFromForm(formField: string): any {
+    return this.cadastroForm.controls[formField].value;
+  }
+
   private fechadialogo(dataRetorno: any) {
     this.dialogRef.close(dataRetorno);
   }
 
   getErrorCpfResp() {
-    if (!this.cpfResp.value) return null;
-    if (this.cpfResp.hasError('required')) {
+    if (!this.getFromForm('cpfResp')) return null;
+    if (this.cadastroForm.controls['cpfResp'].hasError('required')) {
       return 'Informe o CPF';
     }
 
-    if (this.cpfResp.hasError('minlength')) {
+    if (this.cadastroForm.controls['cpfResp'].hasError('minlength')) {
       return 'Informe todos os números do CPF';
     }
 
-    if (this.cpfResp.hasError('pattern')) {
+    if (this.cadastroForm.controls['cpfResp'].hasError('pattern')) {
       return 'Informe apenas números';
     }
 
-    return this.cpfResp.hasError('cpf_invalido') ? 'CPF não é válido' : null;
+    return this.cadastroForm.controls['cpfResp'].hasError('cpf_invalido') ? 'CPF não é válido' : null;
   }
 
   getErrorCpfConjuge() {
@@ -243,5 +267,20 @@ export class FamiliaModalComponent implements OnInit {
 
     return this.cpfConjuge.hasError('cpf_invalido') ? 'CPF não é válido' : null;
   }
+
+  verificaCpfDuplicado(evento) {
+    let cpf = this.getFromForm('cpfResp');
+    this.familiaEmergencialService.recuperarFamiliaEmergencialCPFNomeDataNascto(cpf)
+      .subscribe((familias: FamiliaEmergencial[]) => {
+        if (familias.length>0) {
+          if (familias[0].codfamilia != this.familiaEmergencial.codfamilia) {
+            this.cadastroForm.controls['cpfResp'].setErrors({'cpf_duplicado': true});
+          }
+        }
+      })
+  }
+
+
+
 
 }

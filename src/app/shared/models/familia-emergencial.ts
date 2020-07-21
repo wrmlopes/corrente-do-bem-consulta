@@ -17,13 +17,14 @@ export interface FamiliaEmergencial {
     data_nasc_conjuge?: string,
     tipo_moradia?: string,
     status_emprego?: string,
+    totalPessoasRenda?: number,
     nis?: string,
     deseja_msg?: boolean,
     deseja_aux_espiritual?: boolean,
     descricao?: string,
     status?: number,
-    recebe_aux_governo?: string, 
+    recebe_aux_governo?: string,
+    voluntario?:string,
     dataAtualizacao?: string,
-    voluntario?: string,
     cestasBasicasDaFamilia?: CestaBasica[]
 }

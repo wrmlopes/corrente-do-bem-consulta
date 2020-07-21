@@ -135,7 +135,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
     dialogRef.afterClosed()
       .subscribe((result: FamiliaEmergencial | null) => {
         consolelog('result: ', result);
-        consolelog('codfamilia: ', result.codfamilia);
+        consolelog('codfamilia: ', result?.codfamilia);
         if (result) {
           this.atualizaFamiliaNoDatasource(result);
         }
