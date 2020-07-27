@@ -18,7 +18,9 @@ import { FamiliaModalComponent } from './familia-modal/familia-modal/familia-mod
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { EncaminharModalComponent } from './encaminhar-modal/encaminhar-modal.component';
+import { MatMenuModule } from '@angular/material/menu';
+
+import { ReprovarModalComponent } from './reprovar-modal/reprovar-modal.component';
 import { CestasModalComponent } from './cestas-modal/cestas-modal.component';
 import { CestabasicaComponent } from './cestas-modal/cestabasica/cestabasica.component';
 
@@ -26,7 +28,7 @@ import { CestabasicaComponent } from './cestas-modal/cestabasica/cestabasica.com
   declarations: [
     ListarFamiliasCestasComponent, 
     FamiliaModalComponent, 
-    EncaminharModalComponent, 
+    ReprovarModalComponent, 
     CestasModalComponent, CestabasicaComponent
   ],
   imports: [
@@ -39,6 +41,7 @@ import { CestabasicaComponent } from './cestas-modal/cestabasica/cestabasica.com
     MatDialogModule,
     MatSnackBarModule,
     MatFormFieldModule,
+    MatMenuModule,
     RouterModule,
     NgxMaskModule.forRoot(),
     
@@ -47,7 +50,7 @@ import { CestabasicaComponent } from './cestas-modal/cestabasica/cestabasica.com
   ],
   entryComponents: [
     FamiliaModalComponent,
-    EncaminharModalComponent,
+    ReprovarModalComponent,
     CestasModalComponent,
   ]
 })

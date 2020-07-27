@@ -1,0 +1,40 @@
+<h1 mat-dialog-title> Reprovação da família </h1>
+<div mat-dialog-content>
+    <div class="card overflow-auto">
+        <form [formGroup]="cadastroForm">
+            <div [formGroup]="cadastroForm">
+                <div class="row">
+                    <div class="form-group col-lg-4">
+                        <label for="cpfResp">CPF</label>
+                        <input type="text" [formControl]="cpfResp" class="form-control form-control-danger" id="cpfResp"
+                            aria-describedby="cpfResphint" mask="000.000.000-00" readonly>
+                    </div>
+                </div>
+
+                <div class="form-group row col-lg-8">
+                    <label for="nomeResponsavel">Nome</label>
+                    <input type="string" [formControl]="nomeResponsavel" class="form-control text-uppercase"
+                        id="nomeResponsavel" aria-describedby="nomehint" readonly>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="motivoReprovar">Qual o motivo da reprovação ?</label>
+                    <textarea class="form-control" formControlName="motivoReprovar" id="motivoReprovar" rows="3"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div mat-dialog-actions align="center">
+    <button type="button" aria-label="Encaminhar para atendimento" 
+    [disabled]="cadastroForm.invalid"
+        class="btn btn-outline-primary" style="cursor: pointer;" (click)="encaminharParaAtendimento()">
+        Reprovar
+    </button>
+
+    <button type="button" aria-label="Fecha a janela sem gravar os dados !!!" class="btn btn-outline-danger ml-4"
+        style="cursor: pointer;" (click)="onNoClick()">
+        Cancelar
+    </button>
+</div>

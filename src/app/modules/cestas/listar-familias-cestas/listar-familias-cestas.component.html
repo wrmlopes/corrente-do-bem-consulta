@@ -4,10 +4,10 @@
     <div>
         <div>
             <mat-label>Filtro </mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. nome, cpf, cidade ou situação"
+            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. nome, cpf, local de entrega ou situação"
                 class="mr-3 col-lg-5">
         </div>
-        <table mat-table #tblfamiliacestas [dataSource]="familiasCestas" matSort (matSortChange)= "sortColumn($event)"
+        <table mat-table #tblfamiliacestas [dataSource]="familiasCestas" matSort (matSortChange)="sortColumn($event)"
             class="table table-striped table-sm mt-2">
 
             <ng-container matColumnDef="codfamilia">
@@ -16,14 +16,15 @@
             </ng-container>
 
             <ng-container matColumnDef="cpf">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header >CPF</th>
-                <td mat-cell *matCellDef="let element">{{element.cpf}}
-                    <mat-icon id="falha" *ngIf="cpfDuplicado(element.cpf)" class="red-icon" title="Cpf Duplicado">not_interested</mat-icon>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>CPF</th>
+                <td mat-cell *matCellDef="let element">{{element.cpf | mask: '000.000.000-00'}}
+                    <mat-icon id="falha" *ngIf="cpfDuplicado(element.cpf)" class="red-icon"
+                        [title]="cpfDuplicado(element.cpf)">not_interested</mat-icon>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="nome">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header >Nome</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
                 <td mat-cell *matCellDef='let element'>{{element.nome}}</td>
             </ng-container>
 
@@ -37,58 +38,79 @@
                 <td mat-cell *matCellDef='let element'>{{element.cidade}}</td>
             </ng-container>
 
+            <ng-container matColumnDef="locaisEntrega">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Local de entrega</th>
+                <td mat-cell *matCellDef='let element'>{{getLocalEntrega(element.localEntregaId)}}</td>
+            </ng-container>
+
             <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Situação</th>
-                <td mat-cell *matCellDef='let element' [title]="element.voluntario">{{getStatus(element.status)}}</td>
+                <td mat-cell *matCellDef='let element' [title]="getTitleStatus(element)">{{getStatus(element.status)}}</td>
             </ng-container>
 
             <ng-container matColumnDef="qtcestas">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Cestas</th>
-                <td mat-cell *matCellDef='let element'>{{element.cestasBasicasDaFamilia?.length || "0"}}
-                    <button mat-icon-button title="Detalhar cestas" (click)="detalharCestas(element)"
-                        class="mat-button" [disabled]="[6,4,5].includes(element.status)">
-                        <mat-icon>search</mat-icon>
-                    </button>
-                </td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 3em;">Cestas</th>
+                <td mat-cell *matCellDef='let element' style="text-align: right;">
+                    {{element.cestasBasicasDaFamilia?.length || "0"}}</td>
             </ng-container>
 
             <ng-container matColumnDef="acao">
                 <th mat-header-cell *matHeaderCellDef>
-                    <mat-icon title="Atualize os dados" (click)="recuperarFamilias()" style="cursor:pointer" class="td-action mat-icon">
-                        refresh
+                    <mat-icon mat-fab color="primary" title="Incluir família" (click)="incluirFamilia()"
+                        style="cursor:pointer; outline: none;" class="td-action mat-icon icon-over-grid">
+                        add_circle
                     </mat-icon>
                 </th>
                 <td mat-cell *matCellDef="let element" class="td-action">
-                    <button mat-icon-button title="Detalhar família" (click)="detalharFamilia(element)"
-                        class="mat-button">
-                        <mat-icon>person_search</mat-icon>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu"
+                        class="mat-icon-button">
+                        <mat-icon>more_vert</mat-icon>
                     </button>
-                </td>
-            </ng-container>
-
-            <ng-container matColumnDef="acao_direita">
-                <th mat-header-cell *matHeaderCellDef>
-                    <mat-icon title="Incluir" (click)="incluirFamilia()" style="cursor:pointer" class="td-action mat-icon">
-                        add
-                    </mat-icon>
-                </th>
-                <td mat-cell *matCellDef="let element" class="td-action">
-                    <button mat-icon-button title="Encaminhar" (click)="encaminharFamilia(element)"
-                        [disabled]="element.status!=6"
-                        class="mat-button"
-                        *ngIf="element.status!=4; else cancelaEncaminhamento">
-                        <mat-icon>contacts</mat-icon>
-                    </button>
-                    <ng-template #cancelaEncaminhamento>
-                        <button mat-icon-button title="Cancela encaminhamento" (click)="cancelarEncaminhamento(element)"
-                            class="mat-button">
-                            <mat-icon>cancel</mat-icon>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item mat-icon-button title="Atualize os dados" (click)="recuperarFamilias()"
+                            style="cursor:pointer; outline: none;" class="mat-button">
+                            <mat-icon>refresh</mat-icon>
+                            <span> Recarregar tabela</span>
                         </button>
-                    </ng-template>
-                    <button mat-icon-button title="Excluir" (click)="excluirFamilia(element)"
-                    class="mat-button" [disabled]="element.cestasBasicasDaFamilia?.length > 0">
-                    <mat-icon>delete</mat-icon>
-                </button>
+                        <button mat-menu-item mat-icon-button title="Detalhar família"
+                            (click)="detalharFamilia(element)" class="mat-button"
+                            *ngIf="![-7].includes(element.status)">
+                            <mat-icon>person_search</mat-icon>
+                            <span> Detalhar família</span>
+                        </button>
+                        <button mat-menu-item mat-icon-button title="Aprovar família" (click)="aprovarFamilia(element)"
+                             class="mat-button"
+                            *ngIf="[6,-7].includes(element.status)">
+                            <mat-icon>contacts</mat-icon>
+                            <span> Aprovar família</span>
+                        </button>
+                        <!-- <ng-template #cancelaEncaminhamento>
+                            <button mat-menu-item mat-icon-button title="Cancela encaminhamento"
+                                (click)="cancelarEncaminhamento(element)" class="mat-button">
+                                <mat-icon>cancel</mat-icon>
+                                <span>Cancelar Encaminhamento</span>
+                            </button>
+                        </ng-template> -->
+                        <button mat-menu-item mat-icon-button title="Reprovar família"
+                            (click)="reprovarFamilia(element)" 
+                            class="mat-button"
+                            [disabled]="element.cestasBasicasDaFamilia?.length > 0"
+                            *ngIf="[4,6,7].includes(element.status)">
+                            <mat-icon>person_add_disabled</mat-icon>
+                            <span> Reprovar família</span>
+                        </button>
+                        <button mat-menu-item mat-icon-button title="Detalhar cestas" (click)="detalharCestas(element)"
+                            class="mat-button" [disabled]="[6,4,5].includes(element.status)"
+                            *ngIf="![-7].includes(element.status)">
+                            <mat-icon>search</mat-icon>
+                            <span> Detalhar cestas entregues</span>
+                        </button>
+                        <button mat-menu-item mat-icon-button title="Excluir" (click)="excluirFamilia(element)"
+                            class="mat-button" [disabled]="element.cestasBasicasDaFamilia?.length > 0">
+                            <mat-icon mat-fab color="warn">delete</mat-icon>
+                            <span class="text-danger">Excluir família</span>
+                        </button>
+                    </mat-menu>
 
                 </td>
             </ng-container>

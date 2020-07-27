@@ -9,12 +9,13 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { FamiliaModalComponent } from '../familia-modal/familia-modal/familia-modal.component';
 import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensagem-barra.service';
-import { EncaminharModalComponent } from '../encaminhar-modal/encaminhar-modal.component';
-import { consolelog } from 'src/app/shared/utils/mylibs';
+import { consolelog, validaCpf } from 'src/app/shared/utils/mylibs';
 import { CestasModalComponent } from '../cestas-modal/cestas-modal.component';
 import { FamiliasExcluidasService } from 'src/app/core/services/corrente-brasilia/familias-excluidas/familias-excluidas.service';
 import { PlatformDetectorService } from 'src/app/core/plataform-detector/platform-detector.service';
-import { element } from 'protractor';
+import { ReprovarModalComponent } from '../reprovar-modal/reprovar-modal.component';
+import { LocaisEntregaService } from 'src/app/core/services/corrente-brasilia/locais-entrega/locais-entrega.service';
+import { LocaisEntrega } from 'src/app/shared/models/locais-entrega.model';
 
 
 @Component({
@@ -33,6 +34,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
     private familiaEmergencialService: FamiliasEmergencialService,
     private familiasExcluidasService: FamiliasExcluidasService,
     private cestasDaFamiliaService: FamiliaEmergencialCestasBasicasService,
+    private locaisEntregaService: LocaisEntregaService,
     private mensagem: MensagemBarraService,
     private isBrowser: PlatformDetectorService,
     private dialog: MatDialog,
@@ -41,9 +43,12 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
   familiasCestas: MatTableDataSource<FamiliaEmergencial>;
   cpfsDuplicados: string[];
+  cpfsIncorretos: string[];
   displayedColumns: string[] = [
-    'acao', 'nome', 'cpf', 'data', 'cidade', 'status', 'qtcestas', 'acao_direita'
+    'nome', 'cpf', 'data', 'cidade', 'locaisEntrega', 'status', 'qtcestas', 'acao'
   ]
+
+  locaisDeEntrega: LocaisEntrega[] = [];
 
   waiting: boolean;
   pageEvent: PageEvent;
@@ -53,8 +58,20 @@ export class ListarFamiliasCestasComponent implements OnInit {
   pageSizeOptions: number[] = [5, 10, 25, 100];
 
   ngOnInit(): void {
+    this.recuperarLocaisEntrega();
     this.recuperarFamilias();
     consolelog('isbrowser: ', this.isBrowser.isPlatformBrowser());
+  }
+
+  private recuperarLocaisEntrega() {
+    this.locaisEntregaService.recuperarLocaisEntrega()
+      .subscribe((locais: LocaisEntrega[]) => {
+        this.locaisDeEntrega = locais;
+        consolelog('locais: ', locais);
+      },
+        error => {
+          consolelog('Erro ao recuperar locais de entrega');
+        })
   }
 
   recuperarFamilias() {
@@ -64,7 +81,6 @@ export class ListarFamiliasCestasComponent implements OnInit {
       .subscribe((data: FamiliaEmergencial[]) => {
         consolelog('data: ', data);
         this.waiting = false;
-        this.verificarCpfDuplicado(data);
         this.atualizarFamilias(data);
       })
   }
@@ -73,13 +89,18 @@ export class ListarFamiliasCestasComponent implements OnInit {
    * a partir dos dados recebidos recupera as cestas da família e atualiza o datasource
    */
   private atualizarFamilias(data: FamiliaEmergencial[]) {
-    consolelog('atualizar familias');
+    this.atualizarInconsistências(data);
     if (!this.familiasCestas) {
       this.inicializaFamiliaCestas();
     };
 
     this.familiasCestas.data = data;
 
+  }
+
+  private atualizarInconsistências(data: FamiliaEmergencial[]) {
+    this.verificarCpfDuplicado(data);
+    this.verificarCpfsIncorretos(data);
   }
 
   getStatus(status: number): string {
@@ -100,6 +121,10 @@ export class ListarFamiliasCestasComponent implements OnInit {
         return 'Em atendimento';
         break;
 
+      case -7:
+        return 'Reprovada';
+        break;
+
       default:
         return 'Normal'
         break;
@@ -118,7 +143,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
     this.customFilter();
   }
 
-  incluirFamilia(){
+  incluirFamilia() {
     let novaFamilia: FamiliaEmergencial = {};
     this.detalharFamilia(novaFamilia);
   }
@@ -142,28 +167,6 @@ export class ListarFamiliasCestasComponent implements OnInit {
       })
   }
 
-  encaminharFamilia(elemento: FamiliaEmergencial) {
-
-
-
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.data = { familia: elemento };
-    dialogConfig.width = "900px";
-
-    const dialogRef = this.dialog.open(EncaminharModalComponent, dialogConfig);
-
-    dialogRef.afterClosed()
-      .subscribe(result => {
-        consolelog('result: ', result);
-        if (result) {
-          this.atualizaFamiliaNoDatasource(result);
-        }
-      })
-
-  }
-
   private atualizaFamiliaNoDatasource(result: FamiliaEmergencial | undefined) {
     const dataPrev: FamiliaEmergencial[] = this.familiasCestas.data;
     let index = dataPrev.findIndex(familiaCesta => familiaCesta.codfamilia == result.codfamilia);
@@ -174,6 +177,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
       // this.mensagem.exibeMensagemBarra('Não foi possível atualizar dados do grid. Recarregue a página.');
     }
     this.familiasCestas.data = dataPrev;
+    this.atualizarInconsistências(this.familiasCestas.data);
   }
 
   private excluirFamiliaNoDatasource(result: FamiliaEmergencial | undefined) {
@@ -182,6 +186,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
     if (index != -1) {
       dataPrev.splice(index, 1);
       this.familiasCestas.data = dataPrev;
+      this.atualizarInconsistências(this.familiasCestas.data);
     } else {
       this.mensagem.exibeMensagemBarra('Não foi possível atualizar dados do grid. Recarregue a página.');
     }
@@ -283,6 +288,9 @@ export class ListarFamiliasCestasComponent implements OnInit {
         case 'status': {
           return this.getStatus(item.status);
         }
+        case 'locaisEntrega': {
+          return this.getStatus(item.localEntregaId);
+        }
         case 'qtcestas': {
           return item.cestasBasicasDaFamilia ? item.cestasBasicasDaFamilia.length : 0;
         }
@@ -300,10 +308,12 @@ export class ListarFamiliasCestasComponent implements OnInit {
           // consolelog( 'current: ', currentTerm);
           // consolelog( 'key: ', key);
           // consolelog( 'datai: ', (data as { [key: string]: any })[key]);
-          if (['nome', 'cpf', 'status', 'cidade'].includes(key)) {
+          if (['nome', 'cpf', 'status', 'localEntregaId'].includes(key)) {
             let termo: string;
             if (key === 'status') {
               termo = this.getStatus(data.status);
+            } else if (key ==='localEntregaId') {
+              termo = this.getLocalEntrega(data.localEntregaId);
             } else {
               termo = (data as { [key: string]: any })[key];
             }
@@ -331,10 +341,34 @@ export class ListarFamiliasCestasComponent implements OnInit {
         }
       }
     })
+    consolelog('fim verifica duplicados');
   }
 
-  cpfDuplicado(cpf: string): boolean {
-    return this.cpfsDuplicados.indexOf(cpf) != -1;
+  verificarCpfsIncorretos(data: FamiliaEmergencial[]) {
+    this.cpfsIncorretos = [];
+    data.filter((familia: FamiliaEmergencial) => {
+      if (!familia.cpf || familia.cpf.trim() == '') { return; }
+
+      if (!validaCpf(familia.cpf)) {
+        this.cpfsIncorretos.push(familia.cpf);
+      }
+    })
+    consolelog('fim verifica incorretos');
+  }
+
+  cpfDuplicado(cpf: string): string | null {
+    let msg = '';
+
+    if (this.cpfsDuplicados.indexOf(cpf) != -1) {
+      msg += 'CPF duplicado !!! ';
+    }
+
+    if (!cpf || cpf == '' || this.cpfsIncorretos.indexOf(cpf) != -1) {
+      msg = msg ? msg + '\n' : msg;
+      msg += 'CPF inválido !!!';
+    }
+
+    return msg;
   }
 
   private normalizaFamilia(familia: FamiliaEmergencial): FamiliaEmergencial {
@@ -346,6 +380,56 @@ export class ListarFamiliasCestasComponent implements OnInit {
     familia.deseja_msg = !!familia.deseja_msg;
     familia.deseja_aux_espiritual = !!familia.deseja_aux_espiritual;
     return familia;
+  }
+
+  reprovarFamilia(elemento: FamiliaEmergencial) {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = { familia: elemento };
+    dialogConfig.width = "900px";
+
+    const dialogRef = this.dialog.open(ReprovarModalComponent, dialogConfig);
+
+    dialogRef.afterClosed()
+      .subscribe(result => {
+        consolelog('result: ', result);
+        if (result) {
+          this.recuperarFamilias();
+        }
+      })
+
+  }
+
+
+  aprovarFamilia(familia: FamiliaEmergencial) {
+    if (confirm("Confirma a aprovação da família ? ")) {
+      const familiaNormal: FamiliaEmergencial = this.normalizaFamilia(familia);
+      this.familiaEmergencialService.aprovarFamiliaEmergencial(familia)
+        .subscribe(
+          () => {
+            this.mensagem.info('Situação da família alterada para aprovada !!!');
+            this.recuperarFamilias();
+          },
+          error => consolelog('erro: ', error)
+        )
+    } else {
+      this.mensagem.info('Situação da família não foi alterada !!!');
+    }
+  }
+
+  getTitleStatus(familia: FamiliaEmergencial){
+    return (familia.status == -7) ? familia.motivoReprovar : 
+       (familia.status == 4 ) ? familia.voluntario : '';
+  }
+
+  getLocalEntrega(localEntregaId): string {
+    if (!this.locaisDeEntrega) { return localEntregaId; }
+
+    let localEntrega = this.locaisDeEntrega.filter((local: LocaisEntrega) => local.localEntregaId == localEntregaId);
+    
+    return localEntrega.length > 0 ? localEntrega[0].nome: '';
   }
 
 }

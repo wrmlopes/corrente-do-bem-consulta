@@ -38,8 +38,24 @@ export class FamiliasEmergencialService {
   excluirFamiliaEmergencial(familia: FamiliaEmergencial): Observable<any> {
     return this.http
       .delete<FamiliaEmergencial>(this.familiaEmergencialUrl + '/' + familia.codfamilia, this.httpOptions);
-
   }
+
+  aprovarFamiliaEmergencial(familia: FamiliaEmergencial): Observable<any> {
+    return this.http
+      .patch<FamiliaEmergencial>(this.familiaEmergencialUrl + '/' + familia.codfamilia, {status:7}, this.httpOptions);
+  }
+
+  reprovarFamiliaEmergencial(familia: FamiliaEmergencial, motivoReprovar: string): Observable<any> {
+    let camposAtualizar: FamiliaEmergencial = {
+      motivoReprovar,
+      status: -7,
+      dataAtualizacao: new Date().toISOString()
+    };
+
+    return this.http
+      .patch<FamiliaEmergencial>(this.familiaEmergencialUrl + '/' + familia.codfamilia, camposAtualizar, this.httpOptions);
+  }
+
 
   recuperarFamiliaEmergencialCPFNomeDataNascto(cpf?: string, nome?: string, dataNascto?: string): Observable<FamiliaEmergencial[]> {
 

@@ -5,13 +5,15 @@
             <div>
 
                 <div class="row">
-                    <div class="form-group col-lg-4">
-                        <label for="cpfResp">CPF</label>
+                    <div class="form-group col-lg-6">
+                        <label for="cpfResp">CPF {{cpfInvalido}}</label>
                         <input type="text" formControlName="cpfResp" class="form-control form-control-danger"
                             id="cpfResp" aria-describedby="cpfResphint" mask="000.000.000-00"
                             (focusout)="verificaCpfDuplicado($event)">
                         <small *ngIf="cadastroForm.get('cpfResp').errors?.cpf_duplicado"
                             class="form-text text-danger">Este CPF já está cadastrado !!!</small>
+                        <small *ngIf="cpfInvalido"
+                            class="form-text text-danger">Este CPF está incorreto ou é inválido !!!</small>
                         <small *ngIf="getErrorCpfResp()" id="cpfResphint"
                             class="form-text text-danger">{{getErrorCpfResp()}}</small>
                     </div>
@@ -63,6 +65,16 @@
                         aria-describedby="referenciahint">
                     <small id="referenciahint" class="form-text text-muted">Informe um ponto de referência próximo ao
                         endereço.</small>
+                </div>
+
+                <div class="form-group row col-lg-5">
+                    <label for="localEntrega">Local de entrega da cesta</label>
+                    <select class="form-control" formControlName="localEntregaId" id="localEntrega"
+                        (change)="setLocalEntrega()">
+                        <option value="">Selecione</option>
+                        <option *ngFor="let localEntrega of locaisDeEntrega" [value]="localEntrega.localEntregaId">{{localEntrega.nome}}
+                        </option>
+                    </select>
                 </div>
 
                 <div class="form-group row col-lg-6">

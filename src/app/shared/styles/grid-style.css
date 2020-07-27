@@ -56,3 +56,10 @@
 .mat-icon {
     vertical-align: middle;
 }
+
+.icon-over-grid {
+    float: left;
+    position: relative;
+    top: -20px; 
+    cursor: pointer;
+}
