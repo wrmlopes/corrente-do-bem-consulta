@@ -162,7 +162,8 @@ export class ListarFamiliasCestasComponent implements OnInit {
         consolelog('result: ', result);
         consolelog('codfamilia: ', result?.codfamilia);
         if (result) {
-          this.atualizaFamiliaNoDatasource(result);
+          // this.atualizaFamiliaNoDatasource(result);
+          this.recuperarFamilias();
         }
       })
   }
@@ -205,8 +206,6 @@ export class ListarFamiliasCestasComponent implements OnInit {
     dialogConfig.maxWidth = "65vw";
     dialogConfig.maxHeight = "90vh";
 
-    console.log('cestas: ', elemento.cestasBasicasDaFamilia);
-
     const dialogRef = this.dialog.open(CestasModalComponent, dialogConfig);
 
     dialogRef.afterClosed()
@@ -217,10 +216,10 @@ export class ListarFamiliasCestasComponent implements OnInit {
         if (index != -1) {
           dataPrev[index].cestasBasicasDaFamilia = result;
           this.familiasCestas.data = dataPrev;
+          this.recuperarFamilias();
         } else {
           this.mensagem.info('Não foi possível atualizar dados. Recarregue a página.');
         }
-        consolelog('result: ', result);
       })
 
   }
