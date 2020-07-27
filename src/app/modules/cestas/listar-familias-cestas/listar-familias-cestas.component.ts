@@ -203,7 +203,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
     };
     dialogConfig.minWidth = "50vw";
     dialogConfig.maxWidth = "65vw";
-    dialogConfig.maxHeight = "80vh";
+    dialogConfig.maxHeight = "90vh";
 
     console.log('cestas: ', elemento.cestasBasicasDaFamilia);
 
