@@ -6,9 +6,9 @@
 
                 <div class="row">
                     <div class="form-group col-lg-6">
-                        <label for="cpfResp">CPF {{cpfInvalido}}</label>
+                        <label for="cpfResp">CPF </label>
                         <input type="text" formControlName="cpfResp" class="form-control form-control-danger"
-                            id="cpfResp" aria-describedby="cpfResphint" mask="000.000.000-00"
+                            id="cpfResp" aria-describedby="cpfResphint" mask="000.000.000-00" [validation]=false
                             (focusout)="verificaCpfDuplicado($event)">
                         <small *ngIf="cadastroForm.get('cpfResp').errors?.cpf_duplicado"
                             class="form-text text-danger">Este CPF já está cadastrado !!!</small>
