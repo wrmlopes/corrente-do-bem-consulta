@@ -49,9 +49,14 @@
             </ng-container>
 
             <ng-container matColumnDef="qtcestas">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 3em;">Cestas</th>
-                <td mat-cell *matCellDef='let element' style="text-align: right;">
-                    {{element.cestasBasicasDaFamilia?.length || "0"}}</td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 6em;">Cestas</th>
+                <td mat-cell *matCellDef='let element' style="text-align: right; width: 7em;">
+                    {{element.cestasBasicasDaFamilia?.length || "0"}}
+                    <button mat-icon-button title="Detalhar cestas" (click)="detalharCestas(element)"
+                    class="mat-button" [disabled]="[6,4,5].includes(element.status)">
+                    <mat-icon>search</mat-icon>
+                </button>
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="acao">

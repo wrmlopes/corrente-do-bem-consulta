@@ -93,6 +93,11 @@ export class CestasModalComponent implements OnInit {
 
   onTemResposta(evento: CestaBasica | null) {
     consolelog('resposta: ', evento);
+    if (!evento) {
+      this.fimInclusao();
+      return;
+    }
+
     if (evento?.codfamilia) {
       this.atualizaCestaBasica(evento)
     } else {
