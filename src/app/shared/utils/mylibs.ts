@@ -67,19 +67,13 @@ export function dataBrtoDateString(data: any): string {
     } else {
         datas = (data.substring(6,10)|| '0000' ) + '-' + (data.substring(3,5) || '00') + '-' + (data.substring(0,2) || '00');
     }
-    consolelog( 'mylibs data: ', data, '  datas: ', datas);
+    console.log( 'mylibs data: ', data, '  datas: ', datas);
     return datas;
     // return datas == '0000/00/00' ? '' : new Date(datas).toISOString();
   }
 
 export function novaDataString(dataForm: string): string {
-    consolelog('data: ', dataForm);
+    console.log('data: ', dataForm);
     if (!dataForm || dataForm == '' || dataForm == '0000-00-00') { return dataForm; };
     return new Date(dataForm).toISOString();
-}
-
-export function consolelog( ...args){
-    if (!environment.production) {
-        console.log( ...args );
-    }
 }

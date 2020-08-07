@@ -5,9 +5,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { MensagemBarraService } from '../../../../core/services/mensagem-barra/mensagem-barra.service';
-import { cpfValidator } from '../../../../core/validators/cpfValidator';
 import { dataValidator } from '../../../../core/validators/dataValidators';
-import { dateTimeTZToDate, novaDataString, consolelog, dateIntltoDateBrString, dataBrtoDateString, validaCpf } from 'src/app/shared/utils/mylibs';
+import { dateIntltoDateBrString, dataBrtoDateString, validaCpf } from 'src/app/shared/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
 import { LocaisEntregaService } from 'src/app/core/services/corrente-brasilia/locais-entrega/locais-entrega.service';
 import { ValidatorCpfService } from '../../../../core/validators/validator-cpf.service';
@@ -129,7 +128,7 @@ export class FamiliaModalComponent implements OnInit {
       recebeAuxGoverno: this.recebeAuxGoverno,
       totalPessoasRenda: [0],
     });
-    consolelog('fimform');
+    console.log('fimform');
 
     this.cadastroForm.get('cpfResp')
       .valueChanges
@@ -137,10 +136,10 @@ export class FamiliaModalComponent implements OnInit {
       .subscribe(dataValue => {
         this.verificaCpfDuplicado();
         this.cpfInvalido = !validaCpf(dataValue);
-        consolelog('datavalue: ', dataValue);
+        console.log('datavalue: ', dataValue);
       })
 
-    consolelog('formulário criado');
+    console.log('formulário criado');
     this.carregaFormulario();
     // this.carregaFormulario();
   }
@@ -149,10 +148,10 @@ export class FamiliaModalComponent implements OnInit {
     this.locaisEntregaService.recuperarLocaisEntrega()
       .subscribe((locais: LocaisEntrega[]) => {
         this.locaisDeEntrega = locais;
-        consolelog('locais: ', locais);
+        console.log('locais: ', locais);
       },
         error => {
-          consolelog('Erro ao recuperar locais de entrega');
+          console.log('Erro ao recuperar locais de entrega');
         })
   }
 
@@ -161,12 +160,12 @@ export class FamiliaModalComponent implements OnInit {
   }
 
   private carregaFormulario() {
-    consolelog('data carga: ', this.data);
+    console.log('data carga: ', this.data);
 
     const { cestasBasicasDaFamilia, ...familia } = this.data.familia;
     this.familiaEmergencial = familia;
 
-    consolelog('date type: ', familia.datanasc2);
+    console.log('date type: ', familia.datanasc2);
     this.cadastroForm.patchValue({
       cpfResp: familia.cpf,
       nomeResponsavel: familia.nome,
@@ -231,13 +230,13 @@ export class FamiliaModalComponent implements OnInit {
       this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
-          consolelog('dados atualizados');
+          console.log('dados atualizados');
           this.mensagem.sucesso('Cadastro atualizado com sucesso.');
           this.fechadialogo(this.familiaEmergencial);
         },
           error => {
             this.mensagem.erro('Erro ao salvar os dados da família !!!');
-            consolelog('error: ', error);
+            console.log('error: ', error);
           })
     } else {
       this.familiaEmergencial.data = new Date().toISOString();
@@ -248,7 +247,7 @@ export class FamiliaModalComponent implements OnInit {
         },
           error => {
             this.mensagem.erro('Erro ao incluir os dados da família !!!');
-            consolelog('error: ', error);
+            console.log('error: ', error);
           })
     }
   }
@@ -297,15 +296,15 @@ export class FamiliaModalComponent implements OnInit {
   }
 
   verificaCpfDuplicado(evento: any = '') {
-    consolelog('familia: ', this.familiaEmergencial);
+    console.log('familia: ', this.familiaEmergencial);
     let cpf = this.getFromForm('cpfResp');
     if (!cpf || cpf == '') { return; }
     this.familiaEmergencialService.recuperarFamiliaEmergencialCPFNomeDataNascto(cpf)
       .subscribe((familias: FamiliaEmergencial[]) => {
         if (familias.length > 0) {
-          consolelog('duplicados: ', familias);
+          console.log('duplicados: ', familias);
           let dup = familias.filter((familia: FamiliaEmergencial) => familia.codfamilia == this.familiaEmergencial.codfamilia);
-          consolelog('dup: ', dup);
+          console.log('dup: ', dup);
           if (dup.length == 0) {
             this.cadastroForm.controls['cpfResp'].setErrors({ 'cpf_duplicado': true });
           }

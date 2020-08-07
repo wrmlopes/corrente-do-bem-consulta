@@ -5,3 +5,4 @@ export * from './municipio.model';
 export * from './beneficios-df-disponibilizado.model';
 export * from './data-beneficio-df.model';
 export * from './exercicios';
+export * from './user-profile';

@@ -60,7 +60,11 @@
             </ng-container>
 
             <ng-container matColumnDef="acao">
-                <th mat-header-cell *matHeaderCellDef>
+                <th mat-header-cell *matHeaderCellDef style="width: 7em; display: flex; border:none">
+                    <mat-icon mat-fab color="primary" title="Recarregar tabela" (click)="recuperarFamilias()"
+                        style="cursor:pointer; outline: none;" class="td-action mat-icon icon-over-grid mr-1">
+                        refresh
+                    </mat-icon>
                     <mat-icon mat-fab color="primary" title="Incluir família" (click)="incluirFamilia()"
                         style="cursor:pointer; outline: none;" class="td-action mat-icon icon-over-grid">
                         add_circle

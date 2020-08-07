@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl } from
 
 import { cpfValidator } from '../../../core/validators/cpfValidator';
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
-import { dateTimeTZToDate, novaDataString, consolelog } from 'src/app/shared/utils/mylibs';
+import { dateTimeTZToDate, novaDataString } from 'src/app/shared/utils/mylibs';
 import { FamiliasEmergencialService } from 'src/app/core/services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -48,11 +48,11 @@ export class CadastroFilaDeAtendimentoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    consolelog('init cad fila');
+    console.log('init cad fila');
   }
 
   carregaDadosFamiliaEmergencial(data: FamiliaEmergencial) {
-    consolelog('data: ', data);
+    console.log('data: ', data);
     this.emAtendimento = true;
     this.familiaEmergencial = data;
     this.normalizaFamilia();
@@ -60,11 +60,11 @@ export class CadastroFilaDeAtendimentoComponent implements OnInit {
     this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
     this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
       .subscribe(
-        () => consolelog('em atendimento'),
-        error => consolelog('erro: ', error)
+        () => console.log('em atendimento'),
+        error => console.log('erro: ', error)
       )
 
-    consolelog('date type: ', typeof data.datanasc2);
+    console.log('date type: ', typeof data.datanasc2);
     this.cadastroForm.patchValue({
       cpfResp: data.cpf,
       nomeResponsavel: data.nome,
@@ -132,7 +132,7 @@ export class CadastroFilaDeAtendimentoComponent implements OnInit {
    */
   submitFormulario() {
 
-    consolelog('data nascto conj: ', this.dataNasctoConjuge.value);
+    console.log('data nascto conj: ', this.dataNasctoConjuge.value);
 
     this.familiaEmergencial.nome = this.nomeResponsavel.value.toUpperCase();
     this.familiaEmergencial.datanasc2 = novaDataString(this.dataNascto.value);
@@ -156,29 +156,29 @@ export class CadastroFilaDeAtendimentoComponent implements OnInit {
     this.familiaEmergencial.dataAtualizacao = new Date().toISOString();
     this.familiaEmergencial.nis = '';
     this.familiaEmergencial.status = 7;
-    consolelog('familia emergencial: ', this.familiaEmergencial);
+    console.log('familia emergencial: ', this.familiaEmergencial);
 
     if (this.familiaEmergencial.codfamilia) {
 
       this.familiaEmergencialService.atualizarFamiliaEmergencial(this.familiaEmergencial)
         .subscribe(() => {
-          consolelog('dados atualizados');
+          console.log('dados atualizados');
           this.exibeMensagem('Cadastro atualizado com sucesso.', 'sucesso', 8000)
           this.inicializaFormulario();
         },
           error => {
-            consolelog('error: ', error);
+            console.log('error: ', error);
           })
     } else {
       this.familiaEmergencialService.incluirFamiliaEmergencial(this.familiaEmergencial)
         .subscribe((data: FamiliaEmergencial) => {
-          consolelog('data: ', data);
+          console.log('data: ', data);
           this.exibeMensagem('Família incluída com sucesso.', 'sucesso', 10000)
           this.inicializaFormulario();
 
         },
           error => {
-            consolelog('error: ', error);
+            console.log('error: ', error);
           })
     }
   }
@@ -247,7 +247,7 @@ export class CadastroFilaDeAtendimentoComponent implements OnInit {
             this.inicializaFormulario();
             this.exibeMensagem('O atendimento foi cancelado e a família voltou para a fila de atendimento !!!', 'sucesso', 5000);
           },
-          error => consolelog('erro: ', error)
+          error => console.log('erro: ', error)
         )
       return true;
     } else {
@@ -267,7 +267,7 @@ export class CadastroFilaDeAtendimentoComponent implements OnInit {
             this.inicializaFormulario();
             this.exibeMensagem('O atendimento foi marcado como encaminhado !!!', 'sucesso', 5000);
           },
-          error => consolelog('erro: ', error)
+          error => console.log('erro: ', error)
         )
       return true;
     } else {

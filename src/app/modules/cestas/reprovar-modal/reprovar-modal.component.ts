@@ -6,7 +6,7 @@ import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensa
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { FamiliaEmergencial } from 'src/app/shared/models/familia-emergencial';
 import { cpfValidator } from 'src/app/core/validators/cpfValidator';
-import { dateTimeTZToDate, novaDataString, consolelog } from 'src/app/shared/utils/mylibs';
+import { dateTimeTZToDate, novaDataString } from 'src/app/shared/utils/mylibs';
 
 @Component({
   selector: 'app-encaminhar-modal',
@@ -42,7 +42,7 @@ export class ReprovarModalComponent implements OnInit {
   ]);
 
   ngOnInit(): void {
-    consolelog('data init: ', this.data);
+    console.log('data init: ', this.data);
     // this.carregaFormulario();
   }
 
@@ -51,12 +51,12 @@ export class ReprovarModalComponent implements OnInit {
   }
 
   private carregaFormulario() {
-    consolelog('data carga: ', this.data);
+    console.log('data carga: ', this.data);
 
     this.familiaEmergencial = this.data.familia;
     let familia = this.data.familia;
 
-    consolelog('date type: ', typeof familia.datanasc2);
+    console.log('date type: ', typeof familia.datanasc2);
     this.cadastroForm.patchValue({
       cpfResp: familia.cpf,
       nomeResponsavel: familia.nome,
@@ -69,13 +69,13 @@ export class ReprovarModalComponent implements OnInit {
       this.familiaEmergencial,
       this.cadastroForm.controls['motivoReprovar'].value)
       .subscribe(() => {
-        consolelog('dados atualizados');
+        console.log('dados atualizados');
         this.mensagem.sucesso('Situação da família alterada para reprovada.');
         this.fechadialogo(this.familiaEmergencial);
       },
         error => {
           this.mensagem.erro('Erro ao encaminhar família para atendimento !!!');
-          consolelog('error: ', error);
+          console.log('error: ', error);
         })
   }
 

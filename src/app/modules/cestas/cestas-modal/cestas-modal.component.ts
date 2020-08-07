@@ -4,9 +4,6 @@ import { CestaBasica } from 'src/app/shared/models/cesta-basica';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensagem-barra.service';
 import { CestasBasicasService } from 'src/app/core/services/corrente-brasilia/cestas-basicas/cestas-basicas.service';
-import { consolelog, dateIntltoDateBrString } from 'src/app/shared/utils/mylibs';
-import { CestabasicaComponent } from './cestabasica/cestabasica.component';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-cestas-modal',
@@ -67,7 +64,7 @@ export class CestasModalComponent implements OnInit {
         },
           error => {
             this.mensagem.erro('Erro ao tentar excluir a cesta básica !!!');
-            consolelog('erro ao excluir família: ', error);
+            console.log('erro ao excluir família: ', error);
           })
 
     } else {
@@ -92,7 +89,7 @@ export class CestasModalComponent implements OnInit {
   }
 
   onTemResposta(evento: CestaBasica | null) {
-    consolelog('resposta: ', evento);
+    console.log('resposta: ', evento);
     if (!evento) {
       this.fimInclusao();
       return;

@@ -9,7 +9,7 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { FamiliaModalComponent } from '../familia-modal/familia-modal/familia-modal.component';
 import { MensagemBarraService } from 'src/app/core/services/mensagem-barra/mensagem-barra.service';
-import { consolelog, validaCpf } from 'src/app/shared/utils/mylibs';
+import { validaCpf } from 'src/app/shared/utils/mylibs';
 import { CestasModalComponent } from '../cestas-modal/cestas-modal.component';
 import { FamiliasExcluidasService } from 'src/app/core/services/corrente-brasilia/familias-excluidas/familias-excluidas.service';
 import { PlatformDetectorService } from 'src/app/core/plataform-detector/platform-detector.service';
@@ -60,17 +60,17 @@ export class ListarFamiliasCestasComponent implements OnInit {
   ngOnInit(): void {
     this.recuperarLocaisEntrega();
     this.recuperarFamilias();
-    consolelog('isbrowser: ', this.isBrowser.isPlatformBrowser());
+    console.log('isbrowser: ', this.isBrowser.isPlatformBrowser());
   }
 
   private recuperarLocaisEntrega() {
     this.locaisEntregaService.recuperarLocaisEntrega()
       .subscribe((locais: LocaisEntrega[]) => {
         this.locaisDeEntrega = locais;
-        consolelog('locais: ', locais);
+        console.log('locais: ', locais);
       },
         error => {
-          consolelog('Erro ao recuperar locais de entrega');
+          console.log('Erro ao recuperar locais de entrega');
         })
   }
 
@@ -79,7 +79,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
     this.waiting = true;
     this.cestasDaFamiliaService.recuperarFamiliaEmergencialECestas()
       .subscribe((data: FamiliaEmergencial[]) => {
-        consolelog('data: ', data);
+        console.log('data: ', data);
         this.waiting = false;
         this.atualizarFamilias(data);
       })
@@ -159,8 +159,8 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
     dialogRef.afterClosed()
       .subscribe((result: FamiliaEmergencial | null) => {
-        consolelog('result: ', result);
-        consolelog('codfamilia: ', result?.codfamilia);
+        console.log('result: ', result);
+        console.log('codfamilia: ', result?.codfamilia);
         if (result) {
           // this.atualizaFamiliaNoDatasource(result);
           this.recuperarFamilias();
@@ -235,12 +235,12 @@ export class ListarFamiliasCestasComponent implements OnInit {
                 this.excluirFamiliaNoDatasource(familia);
                 this.mensagem.info('Família foi excluída !!!');
               },
-              error => consolelog('erro: ', error)
+              error => console.log('erro: ', error)
             )
         },
           error => {
             this.mensagem.erro('Erro ao tentar excluir família emergencial !!!');
-            consolelog('erro ao excluir família: ', error);
+            console.log('erro ao excluir família: ', error);
           })
 
     } else {
@@ -268,7 +268,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
           () => {
             this.atualizaFamiliaNoDatasource(familia);
           },
-          error => consolelog('erro: ', error)
+          error => console.log('erro: ', error)
         )
     } else {
       this.mensagem.exibeMensagemBarra('Encaminhamento não cancelado !!!', 'sucesso', 2000);
@@ -276,13 +276,13 @@ export class ListarFamiliasCestasComponent implements OnInit {
   }
 
   sortColumn($event: Sort) {
-    consolelog($event);
+    console.log($event);
   }
 
 
   customSort() {
     this.familiasCestas.sortingDataAccessor = (item, property) => {
-      // consolelog('item: ' + JSON.stringify(item) + ' ' + ' property: ' + property);
+      // console.log('item: ' + JSON.stringify(item) + ' ' + ' property: ' + property);
       switch (property) {
         case 'status': {
           return this.getStatus(item.status);
@@ -304,9 +304,9 @@ export class ListarFamiliasCestasComponent implements OnInit {
     this.familiasCestas.filterPredicate = (data: FamiliaEmergencial, filter: string): boolean => {
       const dataStr = Object.keys(data).reduce(
         (currentTerm: string, key: string) => {
-          // consolelog( 'current: ', currentTerm);
-          // consolelog( 'key: ', key);
-          // consolelog( 'datai: ', (data as { [key: string]: any })[key]);
+          // console.log( 'current: ', currentTerm);
+          // console.log( 'key: ', key);
+          // console.log( 'datai: ', (data as { [key: string]: any })[key]);
           if (['nome', 'cpf', 'status', 'localEntregaId'].includes(key)) {
             let termo: string;
             if (key === 'status') {
@@ -340,7 +340,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
         }
       }
     })
-    consolelog('fim verifica duplicados');
+    console.log('fim verifica duplicados');
   }
 
   verificarCpfsIncorretos(data: FamiliaEmergencial[]) {
@@ -352,7 +352,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
         this.cpfsIncorretos.push(familia.cpf);
       }
     })
-    consolelog('fim verifica incorretos');
+    console.log('fim verifica incorretos');
   }
 
   cpfDuplicado(cpf: string): string | null {
@@ -393,7 +393,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
 
     dialogRef.afterClosed()
       .subscribe(result => {
-        consolelog('result: ', result);
+        console.log('result: ', result);
         if (result) {
           this.recuperarFamilias();
         }
@@ -411,7 +411,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
             this.mensagem.info('Situação da família alterada para aprovada !!!');
             this.recuperarFamilias();
           },
-          error => consolelog('erro: ', error)
+          error => console.log('erro: ', error)
         )
     } else {
       this.mensagem.info('Situação da família não foi alterada !!!');

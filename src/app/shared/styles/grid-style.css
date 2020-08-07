@@ -60,6 +60,8 @@
 .icon-over-grid {
     float: left;
     position: relative;
-    top: -20px; 
+    top: -0.5em; 
     cursor: pointer;
+    background: none;
+    outline: none;
 }

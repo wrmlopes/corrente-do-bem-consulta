@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CestaBasica } from 'src/app/shared/models/cesta-basica';
-import { consolelog, dataBrtoDateString } from 'src/app/shared/utils/mylibs';
 
 @Component({
   selector: 'app-cestabasica',
@@ -18,15 +17,15 @@ export class CestabasicaComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    consolelog('changes: ', changes);
+    console.log('changes: ', changes);
   }
 
   ngOnInit(): void {
-    consolelog('init edit cestas');
+    console.log('init edit cestas');
     this.inicializaFormulario();
     this.carregaFormulario();
 
-    consolelog('cestasfrom: ', this.cestaBasicaFrom);
+    console.log('cestasfrom: ', this.cestaBasicaFrom);
   }
 
 
@@ -57,7 +56,7 @@ export class CestabasicaComponent implements OnInit, OnChanges {
 
   // atualiza a cestaBasicaFrom e retorna com os valores atualizados
   submitFormulario() {
-    consolelog(this.dataEntrega.value);
+    console.log(this.dataEntrega.value);
     this.cestaBasicaFrom.voluntario = this.voluntario.value;
     this.cestaBasicaFrom.data = new Date(this.dataEntrega.value).toISOString();
     this.temResposta.emit(this.cestaBasicaFrom);
