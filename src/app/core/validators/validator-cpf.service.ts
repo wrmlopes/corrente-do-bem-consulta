@@ -3,7 +3,6 @@ import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { debounceTime, switchMap, map, tap, first } from 'rxjs/operators';
 import { FamiliasEmergencialService } from '../services/corrente-brasilia/familias-emergencial/familias-emergencial.service';
 import { FamiliaEmergencial } from '../../shared/models/familia-emergencial';
-import { consolelog } from 'src/app/shared/utils/mylibs';
 
 @Injectable({
   providedIn: 'root'
