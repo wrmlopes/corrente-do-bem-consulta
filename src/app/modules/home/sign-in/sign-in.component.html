@@ -2,13 +2,13 @@
     <form [formGroup]="signinForm" (submit)="login()" class="m-2">
         <div class="form-group">
             <div class="form-group">
-                <label for="usuario">Usuário</label>
-                <input type="text" [formControl]="usuario" class="form-control form-control-danger" id="usuario"
+                <label for="email">Email</label>
+                <input type="text" [formControl]="email" class="form-control form-control-danger" id="email"
                     aria-describedby="informe seu email" placeholder="Informe seu email" >
-                <small *ngIf="signinForm.get('usuario').errors?.required" class="form-text text-danger">
+                <small *ngIf="signinForm.get('email').errors?.required" class="form-text text-danger">
                     Informe seu email
                 </small>
-                <small *ngIf="signinForm.get('usuario').errors?.email" class="form-text text-danger">
+                <small *ngIf="signinForm.get('email').errors?.email" class="form-text text-danger">
                     Sua identificação deverá ser um email válido
                 </small>
             </div>
@@ -35,4 +35,5 @@
 
         </div>
     </form>
+    <p>Não é um usário registrado ? <a [routerLink]="['/signup']">Registre agora</a></p>
 </div>
