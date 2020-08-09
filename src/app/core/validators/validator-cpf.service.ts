@@ -25,7 +25,7 @@ export class ValidatorCpfService {
               let codFamilia = control.parent.get('codfamilia').value;
               console.log('codfamilia from form: ', codFamilia);
               if (familiaEmergencial.length > 0) {
-                return familiaEmergencial[0].codfamilia == codFamilia ? null : { cpf_duplicado: true };
+                return familiaEmergencial[0].codfamilia === codFamilia ? null : { cpf_duplicado: true };
               }
               return null;
             }))

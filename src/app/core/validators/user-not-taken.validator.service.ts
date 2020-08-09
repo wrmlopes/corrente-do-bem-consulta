@@ -24,6 +24,6 @@ export class UserNotTakenValidatorService {
                 .pipe(map(isTaken => isTaken ? { emailTaken: true } : null))
                 .pipe(tap(r => console.log(r)))
                 .pipe(first());
-        }
+        };
     }
 }

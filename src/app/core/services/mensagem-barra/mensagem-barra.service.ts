@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import {
+  MatSnackBar, MatSnackBarConfig, MatSnackBarRef,
+  MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition
+} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +17,7 @@ export class MensagemBarraService {
 
   constructor(private snackBar: MatSnackBar) { }
 
-  exibeMensagemBarra(message, tipo='sucesso', duracao=this.snackBarAutoHide) {
+  exibeMensagemBarra(message, tipo = 'sucesso', duracao = this.snackBarAutoHide) {
     this.snackBarConfig = new MatSnackBarConfig();
     this.snackBarConfig.horizontalPosition = 'center';
     this.snackBarConfig.verticalPosition = 'top';
@@ -23,20 +26,20 @@ export class MensagemBarraService {
     this.snackBarRef = this.snackBar.open(message, 'x', this.snackBarConfig);
   }
 
-  sucesso(mensagem, duracao: number = 3000){
-    this.exibeMensagemBarra( mensagem, 'sucesso', duracao);
+  sucesso(mensagem, duracao: number = 3000) {
+    this.exibeMensagemBarra(mensagem, 'sucesso', duracao);
   }
 
-  erro(mensagem, duracao: number = 3000){
-    this.exibeMensagemBarra( mensagem, 'erro', duracao);
+  erro(mensagem, duracao: number = 3000) {
+    this.exibeMensagemBarra(mensagem, 'erro', duracao);
   }
 
-  alerta(mensagem, duracao: number = 3000){
-    this.exibeMensagemBarra( mensagem, 'alerta', duracao);
+  alerta(mensagem, duracao: number = 3000) {
+    this.exibeMensagemBarra(mensagem, 'alerta', duracao);
   }
 
-  info(mensagem, duracao: number = 3000){
-    this.exibeMensagemBarra( mensagem, 'info', duracao);
+  info(mensagem, duracao: number = 3000) {
+    this.exibeMensagemBarra(mensagem, 'info', duracao);
   }
 
   emBreve() {

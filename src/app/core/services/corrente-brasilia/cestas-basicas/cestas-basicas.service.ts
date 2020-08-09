@@ -30,7 +30,7 @@ export class CestasBasicasService {
   }
 
   excluirCestaBasica(cestaBasica: CestaBasica): Observable<any> {
-    const URL_EXCLUIR = `${this.cestaBasicaUrl}/${cestaBasica.codcestabasica}`
+    const URL_EXCLUIR = `${this.cestaBasicaUrl}/${cestaBasica.codcestabasica}`;
     return this.http
       .delete<CestaBasica>(URL_EXCLUIR, this.httpOptions);
   }

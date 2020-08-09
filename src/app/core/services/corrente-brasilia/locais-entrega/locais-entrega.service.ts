@@ -26,7 +26,7 @@ export class LocaisEntregaService {
 
   /**
    * atualiza os campos informados no regstro de família emergencial
-   * @param localEntrega 
+   * @param localEntrega local de entrega a ser atualizado
    */
   atualizarLocaisEntrega(localEntrega: LocaisEntrega): Observable<LocaisEntrega> {
     return this.http
@@ -40,7 +40,7 @@ export class LocaisEntregaService {
 
   aprovarLocaisEntrega(localEntrega: LocaisEntrega): Observable<any> {
     return this.http
-      .patch<LocaisEntrega>(this.locaisEntregaUrl + '/' + localEntrega.localEntregaId, {status:7}, this.httpOptions);
+      .patch<LocaisEntrega>(this.locaisEntregaUrl + '/' + localEntrega.localEntregaId, { status: 7 }, this.httpOptions);
   }
 
   recuperarLocaisEntrega(): Observable<LocaisEntrega[]> {

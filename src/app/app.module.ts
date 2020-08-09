@@ -6,7 +6,7 @@ import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { ConsultaBeneficiarioModule } from './modules/consulta-beneficiario/consulta-beneficiario.module';
 import { CadastroFamiliaEmergencialModule } from './modules/cadastro-familia-emergencial/cadastro-familia-emergencial.module';
-import { FilaDeAtendimentoModule } from './modules/fila-de-atendimento/fila-de-atendimento.module'
+import { FilaDeAtendimentoModule } from './modules/fila-de-atendimento/fila-de-atendimento.module';
 
 import { CestasRoutingModule } from './modules/cestas/cestas-routing.module';
 
@@ -26,7 +26,7 @@ import { CanDeactivateGuard } from './core/guards/can-deactivate.guard';
 
   ],
   providers: [
-    {provide: LocationStrategy, useClass: HashLocationStrategy},
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
     CanDeactivateGuard
   ],
   bootstrap: [AppComponent]

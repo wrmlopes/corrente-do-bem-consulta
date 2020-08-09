@@ -28,7 +28,7 @@ export class FamiliasEmergencialService {
 
   /**
    * atualiza os campos informados no regstro de família emergencial
-   * @param familia 
+   * 
    */
   atualizarFamiliaEmergencial(familia: FamiliaEmergencial): Observable<FamiliaEmergencial> {
     return this.http
@@ -42,11 +42,11 @@ export class FamiliasEmergencialService {
 
   aprovarFamiliaEmergencial(familia: FamiliaEmergencial): Observable<any> {
     return this.http
-      .patch<FamiliaEmergencial>(this.familiaEmergencialUrl + '/' + familia.codfamilia, {status:7}, this.httpOptions);
+      .patch<FamiliaEmergencial>(this.familiaEmergencialUrl + '/' + familia.codfamilia, { status: 7 }, this.httpOptions);
   }
 
   reprovarFamiliaEmergencial(familia: FamiliaEmergencial, motivoReprovar: string): Observable<any> {
-    let camposAtualizar: FamiliaEmergencial = {
+    const camposAtualizar: FamiliaEmergencial = {
       motivoReprovar,
       status: -7,
       dataAtualizacao: new Date().toISOString()
@@ -56,19 +56,18 @@ export class FamiliasEmergencialService {
       .patch<FamiliaEmergencial>(this.familiaEmergencialUrl + '/' + familia.codfamilia, camposAtualizar, this.httpOptions);
   }
 
-
   recuperarFamiliaEmergencialCPFNomeDataNascto(cpf?: string, nome?: string, dataNascto?: string): Observable<FamiliaEmergencial[]> {
 
-    if (!cpf && !nome && !dataNascto) { throw new Error('Obrigatório informar cpf ou nome ou dataNascto !!!') }
+    if (!cpf && !nome && !dataNascto) { throw new Error('Obrigatório informar cpf ou nome ou dataNascto !!!') };
 
-    let where: { cpf?: string, nome?: any, datanasc2?: string } = {};
+    const where: { cpf?: string, nome?: any, datanasc2?: string } = {};
 
     if (cpf) {
       where.cpf = cpf;
     }
 
     if (nome) {
-      where.nome = { regexp: `/^${nome}/`};
+      where.nome = { regexp: `/^${nome}/` };
     }
 
     if (dataNascto) {
@@ -86,7 +85,7 @@ export class FamiliasEmergencialService {
 
   recuperarFamiliaEmergencialNaFilaDeAtendimento(): Observable<FamiliaEmergencial[]> {
 
-    let where = { status: "6" };
+    const where = { status: '6' };
 
     const params = new HttpParams()
       .append('filter', JSON.stringify({ where }));
@@ -99,6 +98,4 @@ export class FamiliasEmergencialService {
     return this.http
       .get<FamiliaEmergencial[]>(this.familiaEmergencialUrl);
   }
-
-
 }

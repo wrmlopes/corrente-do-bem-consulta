@@ -22,20 +22,20 @@ export class ConsultaBeneficiosBrService {
 
   httpOptions = {
     headers: new HttpHeaders({
-       'Content-Type': 'application/json'
-      })
+      'Content-Type': 'application/json'
+    })
   };
 
   constructor(
     private http: HttpClient,
     private messageService: MessageService) { }
 
-  
+
   getBeneficioBolsaFamilia(cpfBeneficiario: string, anoMesReferencia: string): Observable<BfDisponibilizado[]> {
     const url = this.urlTransparencia + this.endpointBF +
       '?codigo=' + cpfBeneficiario +
       '&anoMesReferencia=' + anoMesReferencia + '&pagina=1';
-    const urlProxy = `${this.correnteBrasiliaUrlProxy}${encodeURIComponent(url)}`
+    const urlProxy = `${this.correnteBrasiliaUrlProxy}${encodeURIComponent(url)}`;
     return this.http.get<BfDisponibilizado[]>(urlProxy, this.httpOptions).pipe(
       tap(_ => this.log('fetched Beneficio BF disponibilizado codigo=' + cpfBeneficiario))
     );
@@ -44,8 +44,8 @@ export class ConsultaBeneficiosBrService {
   getAuxilioEmergencial(cpfBeneficiario: string): Observable<AuxilioEmergencial[]> {
     const url = this.urlTransparencia + this.endpointAuxiliEmergencial +
       '?codigoBeneficiario=' + cpfBeneficiario + '&pagina=1';
-      let uri = encodeURIComponent(url);
-    const urlProxy = `${this.correnteBrasiliaUrlProxy}${encodeURIComponent(url)}`
+    const uri = encodeURIComponent(url);
+    const urlProxy = `${this.correnteBrasiliaUrlProxy}${encodeURIComponent(url)}`;
     return this.http.get<AuxilioEmergencial[]>(urlProxy, this.httpOptions).pipe(
       tap(_ => this.log('fetched Auxílio Emergencial disponibilizado codigo=' + cpfBeneficiario))
     );

@@ -11,7 +11,7 @@ function xcpfValidator(cb: (((_: string) => boolean))): ValidatorFn {
 }
 
 export function cpfValidator(control: AbstractControl) {
-    if (!control.value) { return null };
+    if (!control.value) { return null; }
 
-    return validaCpf(control.value) ? null : {cpf_invalido: true };
+    return validaCpf(control.value) ? null : { cpf_invalido: true };
 }
