@@ -13,9 +13,13 @@ const routes: Routes = [
     path: '', component: HomeComponent,
     canActivate: [LoginGuard],
     children: [
-      { path: 'consulta',  pathMatch: 'full', component: ConsultaBeneficiarioComponent },
+      { path: 'consulta',  pathMatch: 'full', component: ConsultaBeneficiarioComponent, canActivate: [LoginGuard], },
       { path: 'cadastro', component: CadastroFamiliaEmergencialComponent, canActivate: [LoginGuard], },
       { path: 'fila-de-atendimento', component: FilaDeAtendimentoComponent, canDeactivate: [CanDeactivateGuard] },
+      { 
+        path: 'cestas',
+        loadChildren: () => import('../../modules/cestas/cestas.module').then(m => m.CestasModule)
+    },
     ]
   },
 

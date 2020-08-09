@@ -1,25 +1,17 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { ConsultaBeneficiarioComponent } from './modules/consulta-beneficiario/consulta-beneficiario.component';
-import { CadastroFamiliaEmergencialComponent } from './modules/cadastro-familia-emergencial/cadastro-familia-emergencial.component';
-import { FilaDeAtendimentoComponent } from './modules/fila-de-atendimento/fila-de-atendimento.component';
-import { CanDeactivateGuard } from './core/guards/can-deactivate.guard';
+import { SignInComponent } from './modules/home/sign-in/sign-in.component';
+import { SignUpComponent } from './modules/home/sign-up/sign-up.component';
 
-//This is my case 
 const routes: Routes = [
-    { path: '',  redirectTo: '', pathMatch: 'full', component: CadastroFamiliaEmergencialComponent },
-    // { path: '',  redirectTo: 'home', pathMatch: 'full' },
-    { path: 'consulta',  pathMatch: 'full', component: ConsultaBeneficiarioComponent },
-    { path: 'cadastro', component: CadastroFamiliaEmergencialComponent},
-    { path: 'fila-de-atendimento', component: FilaDeAtendimentoComponent, canDeactivate: [CanDeactivateGuard] },
-    { 
-      path: 'home',
-      loadChildren: () => import('./core/home/home.module').then(m => m.HomeModule)
-  },
-    { 
-      path: 'cestas',
-      loadChildren: () => import('./modules/cestas/cestas.module').then(m => m.CestasModule)
+  // { path: '',  redirectTo: '', pathMatch: 'full', component: CadastroFamiliaEmergencialComponent },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'signin', component: SignInComponent },
+  { path: 'signup', component: SignUpComponent },
+  {
+    path: 'home',
+    loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule)
   },
 ];
 

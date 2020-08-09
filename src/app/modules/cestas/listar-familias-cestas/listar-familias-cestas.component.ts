@@ -45,7 +45,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
   cpfsDuplicados: string[];
   cpfsIncorretos: string[];
   displayedColumns: string[] = [
-    'nome', 'cpf', 'data', 'cidade', 'locaisEntrega', 'status', 'qtcestas', 'acao'
+    'nome', 'cpf', 'telefone', 'data', 'cidade', 'locaisEntrega', 'status', 'qtcestas', 'acao'
   ]
 
   locaisDeEntrega: LocaisEntrega[] = [];
@@ -290,6 +290,9 @@ export class ListarFamiliasCestasComponent implements OnInit {
         case 'locaisEntrega': {
           return this.getStatus(item.localEntregaId);
         }
+        case 'telefone': {
+          return item.Telefone;
+        }
         case 'qtcestas': {
           return item.cestasBasicasDaFamilia ? item.cestasBasicasDaFamilia.length : 0;
         }
@@ -307,7 +310,7 @@ export class ListarFamiliasCestasComponent implements OnInit {
           // console.log( 'current: ', currentTerm);
           // console.log( 'key: ', key);
           // console.log( 'datai: ', (data as { [key: string]: any })[key]);
-          if (['nome', 'cpf', 'status', 'localEntregaId'].includes(key)) {
+          if (['nome', 'cpf', 'status', 'localEntregaId', 'Telefone'].includes(key)) {
             let termo: string;
             if (key === 'status') {
               termo = this.getStatus(data.status);

@@ -1,12 +1,13 @@
 <div style="margin: 62 auto 32;" class="mat-elevation-z8">
     <form [formGroup]="consultaForm" (submit)="consultaBeneficiario()">
         <div [formGroup]="consultaForm">
-            <div class="form-group row col-lg-2 ml-1 mt-3">
+            <div class="form-group row col-lg-3 ml-1 mt-1">
                 <label>CPF ou NIS do beneficiário</label>
-                <input matInput maxlength="14" mask="000.000.000-00" [formControl]="cpfOuNis" (keyup)="ativarNovaConsulta()" type="text">
+                <input matInput maxlength="14" mask="000.000.000-00" [formControl]="cpfOuNis"
+                    type="text">
                 <small class="form-text text-danger" *ngIf="cpfOuNis.invalid">{{getErrorMessage()}}</small>
             </div>
-            <div class="form-group row ml-1 mt-1">
+            <div class="form-group row ml-1">
                 <div class=col-lg-2>
                     <label>Mês de referência</label>
                     <input type="text" [formControl]="mesReferencia" mask="00/0000">
@@ -14,7 +15,7 @@
 
                 <div style="align-self: center;">
                     <button mat-icon-button type="submit" aria-label="Consulta Benefícios"
-                        [disabled]="consultaForm.invalid || emConsulta">
+                        [disabled]="consultaForm.invalid || emConsulta" style="margin-left: 2em; position: absolute; cursor: pointer;">
                         <mat-icon [inline]="true" style="font-size: xx-large;">search</mat-icon>
                     </button>
                 </div>
@@ -22,59 +23,65 @@
         </div>
     </form>
 
-    <div *ngIf=consultaBFDisponivel>
+    <div>
         <mat-card>
             <mat-card-title>Benefícios</mat-card-title>
             <mat-card-content>
                 <table>
-                    <tr>
+                    <tr *ngIf="dataBF.nome">
                         <td> Nome </td>
                         <td> {{dataBF.nome}} </td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="dataBF.nis">
                         <td> NIS </td>
                         <td> {{dataBF.nis}} </td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="dataBF.quantidadeDependentes">
                         <td> Dependentes </td>
                         <td style="padding-left: 2em;"> {{dataBF.quantidadeDependentes}} </td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="dataBF.municipio">
                         <td> Município </td>
                         <td> {{dataBF.municipio}} </td>
                     </tr>
-                    <tr *ngIf=consultaDFDisponivel>
+                    <tr *ngIf="dataBF.valorBolsaFamilia">
                         <td> Bolsa Família </td>
                         <td> {{dataBF.valorBolsaFamilia | currency: 'R$ '}} </td>
                     </tr>
-                    <tr *ngIf=consultaDFDisponivel>
+                    <tr *ngIf="dataBF.valorDfSemMiseria">
                         <td> DF sem miśeria </td>
                         <td> {{dataBF.valorDfSemMiseria | currency: 'R$ '}} </td>
                     </tr>
-                    <tr *ngIf=consultaDFDisponivel>
+                    <tr *ngIf="dataBF.valorBolsaSocial">
                         <td> Bolsa Social </td>
                         <td> {{dataBF.valorBolsaSocial | currency: 'R$ '}} </td>
                     </tr>
-                    <tr *ngIf=consultaDFDisponivel>
+                    <tr *ngIf="dataBF.valorOutros">
                         <td> Outros </td>
                         <td> {{dataBF.valorOutros | currency: 'R$ '}} </td>
                     </tr>
-                    <tr *ngIf=consultaDFDisponivel>
+                    <tr *ngIf="dataBF.valorTotal" l>
                         <td><strong> Total </strong></td>
                         <td><strong>{{dataBF.valorTotal | currency: 'R$ ' }} </strong></td>
                     </tr>
                 </table>
             </mat-card-content>
-            <div>
-                <p>Auxílio Emergencial</p>
+            <div *ngIf="auxilios?.length>0">
+                <p><strong>Auxílio Emergencial</strong></p>
                 <div class="row">
                     <span class="col-lg-1">Mês </span>
                     <span class="col-lg-2">Valor recebido </span>
+                    <span class="col-lg-4">Nome informado </span>
+                    <span class="col-lg-2">Município </span>
+                    <span class="col-lg-1">UF </span>
                 </div>
                 <div *ngFor="let auxilio of auxilios">
                     <div class="row">
                         <span class="col-lg-1">{{auxilio?.mesDisponibilizacao}} </span>
                         <span class="col-lg-2">{{auxilio?.valor | currency:'BRL' }} </span>
+                        <span class="col-lg-4">{{auxilio?.beneficiario?.nome}} </span>
+                        <span class="col-lg-2">{{auxilio?.municipio?.nomeIBGE}} </span>
+                        <span class="col-lg-1">{{auxilio?.municipio?.uf?.sigla}} </span>
                     </div>
                 </div>
             </div>
@@ -85,16 +92,10 @@
     <div *ngIf="!consultaBFDisponivel && !emConsulta">
         <h5>Consulta não realizada ou dados não disponíveis</h5>
     </div>
-    <div *ngIf="waitingGovBr">
+    <div *ngIf="emConsulta || emConsultaAuxilioEmergencial">
         <div class="spinner-border" role="status">
-            <span class="sr-only">Buscando dados em gov.br ...</span>
+            <span class="sr-only">Buscando dados ...</span>
         </div>
         <span class="ml-3">Buscando dados em gov.br ...</span>
-    </div>
-    <div *ngIf="waitingGovDf">
-        <div class="spinner-border" role="status">
-            <span class="sr-only">Buscando dados em gov.df ...</span>
-        </div>
-        <span class="ml-3">Buscando dados em gov.df ...</span>
     </div>
 </div>

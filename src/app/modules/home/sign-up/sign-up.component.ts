@@ -5,7 +5,7 @@ import { SignUpService } from './sign-up.service';
 import { Router } from '@angular/router';
 import { PlatformDetectorService } from 'src/app/core/plataform-detector/platform-detector.service';
 import { UserNotTakenValidatorService } from 'src/app/core/validators/user-not-taken.validator.service';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './sign-up.component.html',
@@ -15,6 +15,8 @@ export class SignUpComponent implements OnInit {
     
     signupForm: FormGroup;
     @ViewChild('emailInput') emailInput: ElementRef<HTMLInputElement>;
+
+    writing = false;
     
     constructor(
         private formBuilder: FormBuilder,
@@ -40,10 +42,11 @@ export class SignUpComponent implements OnInit {
                 ]
             ],
             telefone: [''],
+            aniversario: [''],
             password: ['', 
                 [
                     Validators.required,
-                    Validators.minLength(8),
+                    Validators.minLength(6),
                     Validators.maxLength(15)
                 ]
             ]
@@ -52,21 +55,23 @@ export class SignUpComponent implements OnInit {
         this.signupForm.get('email')
         .valueChanges
         .pipe(debounceTime(500))
-        .subscribe(dataValue => {
-            
-          console.log('datavalue: ', dataValue);
-          console.log('errors: ', this.signupForm.get('email'));
-          console.log('rawValue: ', this.signupForm.getRawValue())
-        })
+        .subscribe(dataValue => {})
 
         // this.platformDetectorService.isPlatformBrowser() && 
         //     this.emailInput.nativeElement.focus();    
     } 
 
     signup() {
+        this.writing=true;
         const newUser = this.signupForm.getRawValue() as NewUser;
         this.signUpService
             .signup(newUser)
+            .pipe(
+                finalize(() => {
+                    console.log('Finally callback');
+                    this.writing=false;
+                }),
+              )
             .subscribe(
                 () => this.router.navigate(['']),
                 err => console.log(err)

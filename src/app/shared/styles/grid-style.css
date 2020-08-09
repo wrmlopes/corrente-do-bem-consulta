@@ -9,11 +9,11 @@
     }
 
 .mat-row{
-    height: 2.1em;
+    height: 1.7em;
 }
 
 .mat-header-row{
-    height: 2.1em;
+    height: 2em;
 }
 
 ::ng-deep .mat-checkbox-checked .mat-checkbox-background, .mat-checkbox-indeterminate .mat-checkbox-background {
@@ -64,4 +64,5 @@
     cursor: pointer;
     background: none;
     outline: none;
+    transform: scale(1.3) !important;
 }

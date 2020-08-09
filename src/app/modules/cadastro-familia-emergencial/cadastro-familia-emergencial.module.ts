@@ -38,6 +38,7 @@ import { CadastroFamiliaEmergencialComponent } from './cadastro-familia-emergenc
         MatProgressSpinnerModule,
         NgxMaskModule.forRoot(),
      ],
+     exports: [ CadastroFamiliaEmergencialComponent],
      providers: [
          { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } },
         DatePipe

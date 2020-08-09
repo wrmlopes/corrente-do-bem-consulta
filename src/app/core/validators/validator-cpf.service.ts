@@ -15,7 +15,7 @@ export class ValidatorCpfService {
 
   cpfDuplicado(): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} | null => {
-        consolelog( 'control: ', control);
+        console.log( 'control: ', control);
         return control
             .valueChanges
             .pipe(debounceTime(300))
@@ -23,7 +23,7 @@ export class ValidatorCpfService {
               ))
             .pipe( map((familiaEmergencial: FamiliaEmergencial[]) => {
               let codFamilia = control.parent.get('codfamilia').value;
-              consolelog('codfamilia from form: ', codFamilia);
+              console.log('codfamilia from form: ', codFamilia);
               if (familiaEmergencial.length > 0) {
                 return familiaEmergencial[0].codfamilia == codFamilia ? null : { cpf_duplicado: true };
               }

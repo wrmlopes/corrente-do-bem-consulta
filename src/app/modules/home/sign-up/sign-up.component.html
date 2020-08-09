@@ -1,64 +1,60 @@
 <h4 class="text-center">Registro de novos usuários</h4>
 
-<form [formGroup]="signupForm" class="form mt-4" (submit)="signup()">
-    <div class="form-group">
-        <input #emailInput formControlName="email" class="form-control" placeholder="email" autofocus>
-        <app-vmessage 
-            *ngIf="signupForm.get('email').errors?.required"
-            text="Email é obrigatório!">
-        </app-vmessage>
-        <app-vmessage 
-            *ngIf="signupForm.get('email').errors?.email"
-            text="Informe um email válido">
-        </app-vmessage>   
-        <app-vmessage 
-            *ngIf="signupForm.get('email').errors?.emailTaken"
-            text="Atenção este email já está registrado.">
-        </app-vmessage>            
+<div class="row justify-content-center">
+    <div class="card border-primary col-lg-6">
+
+        <form [formGroup]="signupForm" class="form mt-4" (submit)="signup()">
+            <div class="form-group">
+                <input #emailInput formControlName="email" class="form-control" placeholder="email" autofocus>
+                <app-vmessage *ngIf="signupForm.get('email').errors?.required" text="Email é obrigatório!">
+                </app-vmessage>
+                <app-vmessage *ngIf="signupForm.get('email').errors?.email" text="Informe um email válido">
+                </app-vmessage>
+                <app-vmessage *ngIf="signupForm.get('email').errors?.emailTaken"
+                    text="Atenção este email já está registrado.">
+                </app-vmessage>
+            </div>
+
+            <div class="form-group">
+                <input formControlName="nome" class="form-control" placeholder="nome">
+                <app-vmessage *ngIf="signupForm.get('nome').errors?.required" text="Informe seu nome">
+                </app-vmessage>
+                <app-vmessage *ngIf="signupForm.get('nome').errors?.minlength" text="Mínimo de 5 letras">
+                </app-vmessage>
+                <app-vmessage *ngIf="signupForm.get('nome').errors?.maxlength"
+                    text="Máximo de 40 letras, incluindo espaços">
+                </app-vmessage>
+            </div>
+
+            <div class="form-group">
+                <input type="text" formControlName="telefone" class="form-control" mask="(00)0000-0000||(00)00000-0000"
+                    placeholder="telefone">
+                <app-vmessage *ngIf="signupForm.get('telefone').errors?.required" text="Informe o número do telefone">
+                </app-vmessage>
+            </div>
+
+            <div class="form-group">
+                <input type="text" formControlName="aniversario" class="form-control" mask="00/00"
+                    placeholder="Dia/Mês nascimento">
+            </div>
+
+            <div class="form-group">
+                <input formControlName="password" type="password" class="form-control" placeholder="senha">
+                <app-vmessage *ngIf="signupForm.get('password').errors?.required" text="Senha é obrigatória !">
+                </app-vmessage>
+                <app-vmessage *ngIf="signupForm.get('password').errors?.minlength"
+                    text="Tamanho mínimo é de 6 caracteres">
+                </app-vmessage>
+                <app-vmessage *ngIf="signupForm.get('password').errors?.maxlength"
+                    text="Tamanho máximo é de 15 caracteres">
+                </app-vmessage>
+            </div>
+
+            <button [disabled]="signupForm.invalid || signupForm.pending || writing"
+                class="btn btn-primary btn-block">Registre-se</button>
+
+            <p>Já está registrado ? <a [routerLink]="['']">Faça o login!</a></p>
+
+        </form>
     </div>
-
-    <div class="form-group">
-        <input formControlName="nome" class="form-control" placeholder="nome completo">
-        <app-vmessage 
-            *ngIf="signupForm.get('nome').errors?.required"
-            text="Informe seu nome">
-        </app-vmessage>
-        <app-vmessage 
-            *ngIf="signupForm.get('nome').errors?.minlength"
-            text="Mínimo de 5 letras">
-        </app-vmessage>
-        <app-vmessage 
-            *ngIf="signupForm.get('nome').errors?.maxlength"
-            text="Máximo de 40 letras, incluindo espaços">
-        </app-vmessage>              
-    </div>
-
-    <div class="form-group">
-        <input type="text" formControlName="telefone" class="form-control" mask="(00)0000-0000||(00)00000-0000" placeholder="telefone" >
-        <app-vmessage 
-            *ngIf="signupForm.get('telefone').errors?.required"
-            text="Informe o número do telefone">
-        </app-vmessage>
-    </div>
-
-    <div class="form-group">
-        <input formControlName="password" type="password" class="form-control" placeholder="senha">
-        <app-vmessage 
-            *ngIf="signupForm.get('password').errors?.required"
-            text="Senha é obrigatória !">
-        </app-vmessage>
-        <app-vmessage 
-            *ngIf="signupForm.get('password').errors?.minlength"
-            text="Tamanho mínimo é de 6 caracteres">
-        </app-vmessage>
-        <app-vmessage 
-            *ngIf="signupForm.get('password').errors?.maxlength"
-            text="Tamanho máximo é de 15 caracteres">
-        </app-vmessage>
-    </div>
-
-    <button [disabled]="signupForm.invalid || signupForm.pending" class="btn btn-primary btn-block">Registre-se</button>
-
-    <p>Já está registrado ? <a [routerLink]="['']">Faça o login!</a></p>
-
-</form>
+</div>

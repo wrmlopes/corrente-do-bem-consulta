@@ -1,0 +1,7 @@
+.mat-icon {
+    position: relative;
+    background: none;
+    outline: none;
+    transform: scale(1.3) !important;
+    vertical-align: middle;
+}

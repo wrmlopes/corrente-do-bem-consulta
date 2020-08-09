@@ -23,6 +23,11 @@ import { CadastroFilaDeAtendimentoComponent } from './cadastro-fila-de-atendimen
     MatIconModule,
     MatSnackBarModule,
     NgxMaskModule.forRoot(),
+  ],
+  exports: [
+    FilaDeAtendimentoComponent,
+    CadastroFilaDeAtendimentoComponent
   ]
+
 })
 export class FilaDeAtendimentoModule { }

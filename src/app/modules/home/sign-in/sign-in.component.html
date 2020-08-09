@@ -1,39 +1,42 @@
-<div class="card col-lg-5">
-    <form [formGroup]="signinForm" (submit)="login()" class="m-2">
-        <div class="form-group">
+<h4 class="text-center">Acesso ao Sac do Bem</h4>
+<div class="row justify-content-center">
+    <div class="card col-lg-7 border-primary">
+        <form [formGroup]="signinForm" (submit)="login()" class="m-2">
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="text" [formControl]="email" class="form-control form-control-danger" id="email"
-                    aria-describedby="informe seu email" placeholder="Informe seu email" >
-                <small *ngIf="signinForm.get('email').errors?.required" class="form-text text-danger">
-                    Informe seu email
-                </small>
-                <small *ngIf="signinForm.get('email').errors?.email" class="form-text text-danger">
-                    Sua identificação deverá ser um email válido
-                </small>
-            </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" [formControl]="email" class="form-control form-control-danger" id="email"
+                        aria-describedby="informe seu email" placeholder="Informe seu email">
+                    <small *ngIf="signinForm.get('email').errors?.required" class="form-text text-danger">
+                        Informe seu email
+                    </small>
+                    <small *ngIf="signinForm.get('email').errors?.email" class="form-text text-danger">
+                        Sua identificação deverá ser um email válido
+                    </small>
+                </div>
 
-            <div class="form-group">
-                <label for="senha">Senha</label>
-                <input type="password" [formControl]="password" class="form-control form-control-danger" id="password"
-                    aria-describedby="informe sua senha" >
-                <small *ngIf="signinForm.get('password').errors?.required" class="form-text text-danger">
-                    Informe sua senha informe no mínimo 5 e nomáximo 10 letras e/ou números
-                </small>
-                <small *ngIf="signinForm.get('password').errors?.minlength" class="form-text text-danger">
-                    Senha deve ter no mínimo 5 caracteres
-                </small>
-                <small *ngIf="signinForm.get('password').errors?.maxlength" class="form-text text-danger">
-                    Senha deve ter no máximo 10 caracteres
-                </small>
-            </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" [formControl]="password" class="form-control form-control-danger"
+                        id="password" aria-describedby="informe sua senha">
+                    <small *ngIf="signinForm.get('password').errors?.required" class="form-text text-danger">
+                        Informe sua senha informe no mínimo 5 e nomáximo 10 letras e/ou números
+                    </small>
+                    <small *ngIf="signinForm.get('password').errors?.minlength" class="form-text text-danger">
+                        Senha deve ter no mínimo 5 caracteres
+                    </small>
+                    <small *ngIf="signinForm.get('password').errors?.maxlength" class="form-text text-danger">
+                        Senha deve ter no máximo 10 caracteres
+                    </small>
+                </div>
 
-            <div class="form-group col-lg-6">
-                <button type="submit" [disabled]="signinForm.invalid" class="btn btn-outline-primary"
-                    aria-describedby="Acessar o sistema">Acessar o Sac do Bem</button>
-            </div>
+                <div class="form-group col-lg-6">
+                    <button type="submit" [disabled]="signinForm.invalid || loggingIn" class="btn btn-outline-primary"
+                        aria-describedby="Acessar o sistema">Acessar o Sac do Bem</button>
+                </div>
 
-        </div>
-    </form>
-    <p>Não é um usário registrado ? <a [routerLink]="['/signup']">Registre agora</a></p>
+            </div>
+        </form>
+        <p>Não é um usário registrado ? <a [routerLink]="['/signup']">Registre agora</a></p>
+    </div>
 </div>

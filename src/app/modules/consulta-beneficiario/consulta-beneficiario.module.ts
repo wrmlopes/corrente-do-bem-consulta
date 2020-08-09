@@ -34,6 +34,7 @@ import { NgxMaskModule } from 'ngx-mask';
         MatSnackBarModule,
         NgxMaskModule.forRoot(),
      ],
+     exports: [ConsultaBeneficiarioComponent],
      providers: [{ provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'fill' } }],
 })
 export class ConsultaBeneficiarioModule { }

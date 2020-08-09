@@ -12,6 +12,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 export class SignInComponent implements OnInit {
 
   private rotaOrg: string;
+  loggingIn = false;
 
   constructor(
     private formBuilder : FormBuilder,
@@ -34,13 +35,10 @@ export class SignInComponent implements OnInit {
 
   // dados formulário
   email = new FormControl('',[
-    Validators.required,
-    Validators.email
+    Validators.required
   ]);
   password = new FormControl('', [
-    Validators.required,
-    Validators.minLength(5),
-    Validators.maxLength(10),
+    Validators.required
   ]);
   signinForm: FormGroup;
 
@@ -49,11 +47,14 @@ export class SignInComponent implements OnInit {
 
   async login() {
     try {
+      this.loggingIn = true;
       let authToken = await this.signinService.signin(this.signinForm.getRawValue());
+      this.signinForm.reset();
       this.userService.setToken(authToken.token);
         console.log(`User ${this.email} authenticated with token ${authToken.token}`);
         this.router.navigate([this.rotaOrg || 'home'])
     } catch (error) {
+      this.loggingIn = false;
       alert('Email e/ou senha incorreto(s)')
     }
   }

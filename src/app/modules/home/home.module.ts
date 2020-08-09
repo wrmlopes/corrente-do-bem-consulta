@@ -27,9 +27,9 @@ import { FilaDeAtendimentoModule } from '../fila-de-atendimento/fila-de-atendime
 
     HomeRoutingModule,
     NavbarModule,
-    CadastroFamiliaEmergencialModule,
-    ConsultaBeneficiarioModule,
-    FilaDeAtendimentoModule,
+    // CadastroFamiliaEmergencialModule,
+    // ConsultaBeneficiarioModule,
+    // FilaDeAtendimentoModule,
   ]
 })
 export class HomeModule { }

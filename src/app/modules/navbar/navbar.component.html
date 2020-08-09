@@ -1,22 +1,44 @@
-<nav class="navbar navbar-expand-lg bg-light">
-    <a class="navbar-brand fnt-bitter" href="#">
-      <img src="assets/images/logocorrente.png" width="30" height="30" class="d-inline-block align-top"
-        alt="Corrente do Bem - Brasília DF">
-      {{title}}
-    </a>
-    <button class="navbar-toggler btn-outline-primary fa-search" type="button" data-toggle="collapse"
-      data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link fnt-bitter btn-outline-primary" href="#/consulta">Consulta<span
-              class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link fnt-bitter btn-outline-primary" href="#/cadastro">Cadastro</a>
-        </li>
-      </ul>
+<nav class="navbar navbar-expand-lg bg-light border-primary">
+  <a class="navbar-brand fnt-bitter" href="#">
+    <img src="assets/images/logocorrente.png" width="30" height="30" class="d-inline-block align-top"
+      alt="Corrente do Bem - Brasília DF">
+    {{title}}
+  </a>
+  <button class="navbar-toggler btn-outline-primary fa-search" type="button" data-toggle="collapse"
+    data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse justify-content-end mr-3" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link fnt-bitter btn-outline-primary" href="#/home/consulta">Consulta<span
+            class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link fnt-bitter btn-outline-primary" href="#/home/cadastro">Cadastro</a>
+      </li>
+    </ul>
+  </div>
+  <div>
+
+    <div *ngIf="(user$ | async) as user;else login" class="align-middle">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <i class="fa fa-user-circle mr-1"></i>
+          <mat-icon mat-fab color="primary" class="mr-1">person_outline</mat-icon>
+        </div>
+      <a class="mr-2">{{user.nome}}</a>
+      <div class="input-group-append">
+        <mat-icon title="Sair do sistema" style="cursor: pointer;" (click)="logout()">exit_to_app</mat-icon>
+      </div>
+      </div>
     </div>
-  </nav>
+
+    <ng-template #login>
+      <span class="navbar-text">
+        <a [routerLink]="['/signin']">Faça o login!</a>
+      </span>
+    </ng-template>
+
+  </div>
+</nav>

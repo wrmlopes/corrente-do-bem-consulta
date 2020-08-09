@@ -3,7 +3,7 @@ import { FormControl, Validators, AbstractControl, ValidatorFn, FormGroup, FormB
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDatepicker } from '@angular/material/datepicker';
-import  localept  from '@angular/common/locales/pt';
+import localept from '@angular/common/locales/pt';
 import * as _moment from 'moment';
 // tslint:disable-next-line:no-duplicate-imports
 import { default as _rollupMoment, Moment } from 'moment';
@@ -16,6 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuxilioEmergencial } from 'src/app/shared/models/auxilio-emergencial';
 import { registerLocaleData } from '@angular/common';
 import { validaCpf, validaNis } from 'src/app/shared/utils/mylibs';
+import { finalize, debounceTime } from 'rxjs/operators';
 
 registerLocaleData(localept, 'pt');
 
@@ -55,16 +56,11 @@ export const MY_FORMATS = {
 export class ConsultaBeneficiarioComponent implements OnInit {
 
   constructor(
-    fb: FormBuilder,
+    private fb: FormBuilder,
     private consultaBeneficioDfService: ConsultaBeneficiosDfService,
     private consultaBeneficiosBrService: ConsultaBeneficiosBrService,
     private _snackBar: MatSnackBar
-  ) {
-    this.consultaForm = fb.group({
-      cpfOuNis: this.cpfOuNis,
-      mesReferencia: this.mesReferencia
-    });
-  }
+  ) {}
 
   // controles de formulário
   consultaForm: FormGroup;
@@ -78,19 +74,33 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   // _regxpCpf: RegExp = /([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/;
   private _RegxpCpf: RegExp = /([0-9]{11})/;
   private _consultaDFDisponivel = false;
-  
-  
+
+
   consultaBFDisponivel = false;
   dataBF: BFApresentado = {};
-  
+
   emConsulta: boolean;
-  waitingGovBr = false;
-  waitingGovDf: boolean;
+  emConsultaAuxilioEmergencial: boolean;
 
   auxilios: AuxilioEmergencial[];
 
   ngOnInit(): void {
+
+    this.consultaForm = this.fb.group({
+      cpfOuNis: this.cpfOuNis,
+      mesReferencia: this.mesReferencia
+    });
+
+    this.consultaForm.get('cpfOuNis')
+    .valueChanges
+    .pipe(debounceTime(500))
+    .subscribe(dataValue => {
+      this.ativarNovaConsulta();
+    })
+
   }
+
+
 
   get maxDate() {
     return new Date();
@@ -129,10 +139,26 @@ export class ConsultaBeneficiarioComponent implements OnInit {
 
   consultaBeneficiario() {
     this.emConsulta = true;
-  
-    this.waitingGovBr = true;
+    this.emConsultaAuxilioEmergencial = true;
 
+    this.consultaBolsaFamilia();
+
+    this.consultaAuxilioEmergencial();
+
+  }
+
+  private consultaAuxilioEmergencial() {
+    this.consultaBeneficiosBrService.getAuxilioEmergencial(this.cpfOuNis.value)
+      .pipe(finalize(() => this.emConsultaAuxilioEmergencial = false))
+      .subscribe((data: AuxilioEmergencial[]) => {
+        console.log('data aux: ', data);
+        this.auxilios = data;
+      });
+  }
+
+  private consultaBolsaFamilia() {
     this.consultaBeneficiosBrService.getBeneficioBolsaFamilia(this.cpfOuNis.value, this.getMesReferenciaConsulta())
+      .pipe(finalize(() => this.emConsulta = false))
       .subscribe((data: BfDisponibilizado[]) => {
         this.dataBF = {};
         if (data && data.length > 0) {
@@ -141,22 +167,12 @@ export class ConsultaBeneficiarioComponent implements OnInit {
           this.dataBF.municipio = data[0].municipio.nomeIBGE;
           this.dataBF.quantidadeDependentes = data[0].quantidadeDependentes;
           this.consultaDFSM(data[0].titularBolsaFamilia.nis);
-          this.waitingGovBr = false;
           this.consultaBFDisponivel = true;
-        } else {
-          this.exibeMensagem('Não encontrou dados de benefícios para o período');
-          this.consultaBFDisponivel = false;
+        }
+        else {
+          this.exibeMensagem('Não encontrou dados do Bolsa Família para o período');
         }
       });
-
-    this.waitingGovBr = true;
-    this.consultaBeneficiosBrService.getAuxilioEmergencial(this.cpfOuNis.value)
-      .subscribe((data: AuxilioEmergencial[]) => {
-        console.log('data aux: ', data);
-        this.auxilios = data;
-        this.waitingGovBr = false;
-      })
-
   }
 
   private getMesReferenciaConsulta() {
@@ -164,8 +180,8 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   }
 
   private consultaDFSM(nis: string) {
-    this.waitingGovDf = true;
     this.consultaBeneficioDfService.getBeneficiosNoDF(nis, this.getMesReferenciaConsulta())
+
       .subscribe((data: DataBeneficioDF) => {
         if (data && data.content.length > 0) {
           this.dataBF.valorBolsaFamilia = data.content[0].valorBolsaFamilia;
@@ -176,9 +192,7 @@ export class ConsultaBeneficiarioComponent implements OnInit {
           this._consultaDFDisponivel = true;
         } else {
           this.exibeMensagem('Não encontrou dados de benefícios para o período');
-          this._consultaDFDisponivel = false;
         }
-        this.waitingGovDf = false;
       });
   }
 
@@ -218,12 +232,10 @@ export class ConsultaBeneficiarioComponent implements OnInit {
   }
 
   ativarNovaConsulta() {
-    if (this.emConsulta) {
-      this.auxilios=[];
-      this.emConsulta=false;
-      this.dataBF={};
-      this.consultaBFDisponivel=false;
-    }
+      this.auxilios = [];
+      this.emConsulta = false;
+      this.dataBF = {};
+      this.consultaBFDisponivel = false;
   }
 
 }
